@@ -1,0 +1,22 @@
+<mat-label *ngIf="label" class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">{{
+  label }}</mat-label>
+<mat-form-field [appearance]="appearance" [color]="color" class="w-100">
+  <input
+    matInput
+    #inputElement
+    [type]="type"
+    [placeholder]="placeholder"
+    [formControl]="formControl"
+    [required]="required"
+    (input)="onInputChange(inputElement.value)"
+    (blur)="onTouched()">
+
+  <!-- Dynamic Error Messages -->
+  @if (formControl.invalid && (formControl.dirty || formControl.touched)) {
+  <mat-hint class="m-b-16 error-msg">
+    @for (error of getErrorKeys(formControl.errors); track error) {
+    <div class="text-error">{{ getDefaultMessage(error) }}</div>
+    }
+  </mat-hint>
+  }
+</mat-form-field>

@@ -1,0 +1,7 @@
+@media (max-width: 576px) {
+  .h-25-mobile {
+    height: 45vh; /* 25% of the viewport height */
+    margin-bottom: -40px !important;
+    margin-top: -20px !important;
+  }
+}

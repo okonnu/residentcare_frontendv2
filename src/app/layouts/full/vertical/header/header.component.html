@@ -1,0 +1,126 @@
+<mat-toolbar class="topbar">
+  <!-- --------------------------------------------------------------- -->
+  <!-- Desktop Menu -->
+  @if(showToggle) {
+  <button mat-icon-button (click)="toggleCollapsed.emit()" class="d-flex justify-content-center">
+    <i-tabler name="align-left" class="icon-20 d-flex"></i-tabler>
+  </button>
+  }
+
+  <!-- Mobile Menu -->
+  @if(!showToggle) {
+  <button mat-icon-button (click)="toggleMobileNav.emit()" class="d-flex justify-content-center">
+    <i-tabler name="align-left" class="icon-20 d-flex"></i-tabler>
+  </button>
+  }
+
+  <!-- --------------------------------------------------------------- -->
+  <!--  Search -->
+  <!-- --------------------------------------------------------------- -->
+<button mat-stroked-button class="d-flex align-items-center" (click)="openDialog()">
+  <div class="d-flex align-items-center">
+     Search Resident
+  </div>
+</button>
+
+  <span class="flex-1-auto"></span>
+
+   <!-- Mobile Menu -->
+  <!-- <button
+    mat-icon-button
+    (click)="toggleMobileFilterNav.emit()"
+    class="d-flex d-lg-none justify-content-center"
+  >
+    <i-tabler name="grid-dots" class="icon-20 d-flex"></i-tabler>
+  </button> -->
+
+  <!-- --------------------------------------------------------------- -->
+  <!-- Notifications Dropdown -->
+  <!-- --------------------------------------------------------------- -->
+ <button mat-icon-button [matMenuTriggerFor]="msgMenu" aria-label="Notifications">
+    <i-tabler class="d-flex" name="bell"></i-tabler>
+    <div class="pulse">
+      <span class="heartbit border-primary"></span>
+      <span class="point bg-primary"></span>
+    </div>
+  </button> 
+  <mat-menu #msgMenu="matMenu" xPosition="before" class="topbar-dd cardWithShadow">
+    <div class="d-flex align-items-center p-x-32 p-y-16">
+      <h6 class="f-s-16 f-w-600 m-0 mat-subtitle-1">Notifications</h6>
+      <span class="m-l-16">
+        <span class="bg-warning text-white p-x-8 p-y-4 f-w-500 rounded f-s-12">5 new</span>
+      </span>
+    </div>
+
+    @for(notification of notifications; track notification.title) {
+    <button mat-menu-item class="p-x-32 p-y-16">
+      <div class="d-flex align-items-center">
+        <img [src]="notification.img" class="rounded-circle" width="48" />
+        <div class="m-l-16">
+          <h5 class="f-s-14 f-w-600 m-0 mat-subtitle-1">
+            {{ notification.title }}
+          </h5>
+          <span>{{ notification.subtitle }}</span>
+        </div>
+      </div>
+    </button>
+    }
+
+    <div class="p-y-12 p-x-32">
+      <button mat-flat-button color="primary" class="w-100">
+        See All Notifications
+      </button>
+    </div>
+  </mat-menu>
+
+  <!-- --------------------------------------------------------------- -->
+  <!-- profile Dropdown -->
+  <!-- --------------------------------------------------------------- -->
+  <button mat-fab extended color="inherit" [matMenuTriggerFor]="profileMenu" aria-label="Notifications">
+    <div class="d-flex align-items-center">
+      <img src="/assets/images/profile/user5.jpg" class="rounded-circle object-cover" width="40" />
+
+      <div class="m-l-16 text-left d-none d-lg-flex">
+        <div>
+          <h5 class="f-s-16">John Keen</h5>
+          <span class="f-s-14 mat-body-1">Resident</span>
+        </div>
+      </div>
+    </div>
+  </button>
+  <mat-menu #profileMenu="matMenu" xPosition="before" class="topbar-dd cardWithShadow">
+    <ng-scrollbar class="position-relative" style="height: 495px">
+      <div class="p-x-32 p-y-16">
+        <h6 class="f-s-16 f-w-600 m-0 mat-subtitle-1">User Profile</h6>
+
+        <div class="d-flex align-items-center p-b-24 b-b-1 m-t-16">
+          <img src="/assets/images/profile/user5.jpg" class="rounded-circle" width="95" />
+          <div class="m-l-16">
+            <h6 class="f-s-16 f-w-600 m-0 mat-subtitle-1">Mike Nielsen</h6>
+            <span class="f-s-14 mat-body-1 d-block m-b-4">Admin</span>
+            <span class="d-flex align-items-center">
+              <i-tabler name="mail" class="icon-15 m-r-4"></i-tabler>
+              info&#64;ResidentCare.co.ke
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="p-x-32 p-y-16">
+        <button mat-menu-item class="p-x-0 p-y-12 d-flex align-items-center">
+          <i-tabler name="settings" class="icon-18 m-r-16"></i-tabler> Event Log
+        </button>
+        <button mat-menu-item class="p-x-0 p-y-12 d-flex align-items-center">
+          <i-tabler name="user" class="icon-18 m-r-16"></i-tabler> Care Plan
+        </button>
+        <button mat-menu-item class="p-x-0 p-y-12 d-flex align-items-center">
+          <i-tabler name="calendar" class="icon-18 m-r-16"></i-tabler> Calendar
+        </button>
+        </div>
+      <div class="p-y-12 p-x-32">
+        <button [routerLink]="['/authentication/login']" mat-flat-button color="primary" class="w-100">
+          Logout
+        </button>
+      </div>
+    </ng-scrollbar>
+  </mat-menu>
+</mat-toolbar>

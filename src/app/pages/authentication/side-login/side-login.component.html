@@ -1,0 +1,101 @@
+<div class="blank-layout-container justify-content-center">
+  <div class="auth-wrapper">
+    <div class="position-relative shaper-wrapper">
+      <div class="w-100 position-relative rounded bg-white auth-card">
+        <div class="auth-body">
+          <div class="row">
+            <div class="col-lg-6">
+              <div
+                class="align-items-center justify-content-center d-flex w-100 logo-container"
+              >
+                <img
+                  src="./assets/images/logos/fth/dark-vertical-logo.svg"
+                  class="align-middle m-0 h-25-mobile w-100"
+                  alt="logo"
+                />
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div
+                class="d-flex align-items-start align-items-lg-center justify-content-center"
+              >
+                <div class="row justify-content-center w-100">
+                  <div class="col-lg-11">
+                    <h3 class="m-20 d-flex justify-content-center">
+                      Account Login
+                    </h3>
+
+                    <form
+                      class="m-t-10"
+                      [formGroup]="loginForm"
+                      (ngSubmit)="onLoginFormSubmitted()"
+                    >
+                      <!-- Email Field -->
+                      <form-input
+                        label="Email"
+                        type="email"
+                        formControlName="email"
+                        appearance="outline"
+                        color="primary"
+                        [required]="true"
+                        [errorMessages]="{
+                          required: 'Email is required',
+                          email: 'Please enter a valid email address'
+                        }"
+                        class="m-b-12"
+                      ></form-input>
+
+                      <!-- Password Field -->
+                      <form-input
+                        label="Password"
+                        type="password"
+                        formControlName="password"
+                        appearance="outline"
+                        color="primary"
+                        [required]="true"
+                        [errorMessages]="{
+                          required: 'Password is required',
+                          minlength: 'Password must be at least 8 characters'
+                        }"
+                        class="m-b-12"
+                      ></form-input>
+
+                      <div class="d-block d-lg-flex align-items-center m-b-12">
+                      
+                        <a
+                          [routerLink]="['/']"
+                          class="text-primary f-w-600 text-decoration-none m-l-auto d-block f-s-14"
+                        >
+                          Forgot Password?
+                        </a>
+                      </div>
+
+                      <button
+                        mat-flat-button
+                        color="primary"
+                        class="w-100"
+                        type="submit"
+                      >
+                        Sign In
+                      </button>
+                     
+                    </form>
+                    <span class="d-block f-w-500 d-block m-t-24"
+                      >New to Fast Thrive Holdings?
+                      <a
+                        [routerLink]="['/authentication/register']"
+                        class="text-decoration-none text-primary f-w-500 f-s-14"
+                      >
+                        Create an account</a
+                      >
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
