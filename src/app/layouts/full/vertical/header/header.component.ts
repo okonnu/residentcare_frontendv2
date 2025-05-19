@@ -17,7 +17,9 @@ import { FormsModule } from '@angular/forms';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
-import {MatSidenavModule} from '@angular/material/sidenav';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { SearchResidentServicesService } from 'src/app/services/search-resident.service';
+
 
 interface notifications {
   id: number;
@@ -25,30 +27,6 @@ interface notifications {
   title: string;
   subtitle: string;
 }
-
-interface profiledd {
-  id: number;
-  img: string;
-  title: string;
-  subtitle: string;
-  link: string;
-  color: string;
-}
-
-interface apps {
-  id: number;
-  img: string;
-  title: string;
-  subtitle: string;
-  link: string;
-}
-
-interface quicklinks {
-  id: number;
-  title: string;
-  link: string;
-}
-
 @Component({
   selector: 'app-header',
   standalone: true,
@@ -70,16 +48,7 @@ export class HeaderComponent {
   searchText: string = '';
   navItems = navItems;
 
- navItemsData = [
-    { name: "Janet Lawrence", dob: "1990-01-01" },
-    { name: "John Doe", dob: "1985-05-15" },
-    { name: "Jane Smith", dob: "1992-03-20" },
-    { name: "Michael Johnson", dob: "1988-11-30" },
-    { name: "Emily Davis", dob: "1995-07-10" },
-    { name: "David Wilson", dob: "1983-09-25" },
-    { name: "Sarah Brown", dob: "1991-12-05" },
-    { name: "Daniel Garcia", dob: "1987-04-18" },
-  ]
+  navItemsData = navItems.filter((navitem) => navitem.displayName);
 
   @Input() showToggle = true;
   @Input() toggleChecked = false;
@@ -96,32 +65,8 @@ export class HeaderComponent {
     icon: '/assets/images/flag/icon-flag-en.svg',
   };
 
-  public languages: any[] = [
-    {
-      language: 'English',
-      code: 'en',
-      type: 'US',
-      icon: '/assets/images/flag/icon-flag-en.svg',
-    },
-    {
-      language: 'Español',
-      code: 'es',
-      icon: '/assets/images/flag/icon-flag-es.svg',
-    },
-    {
-      language: 'Français',
-      code: 'fr',
-      icon: '/assets/images/flag/icon-flag-fr.svg',
-    },
-    {
-      language: 'German',
-      code: 'de',
-      icon: '/assets/images/flag/icon-flag-de.svg',
-    },
-  ];
-
   constructor(
-    private vsidenav: CoreService,
+    private sidenav: CoreService,
     public dialog: MatDialog,
     private translate: TranslateService
   ) {
@@ -144,158 +89,21 @@ export class HeaderComponent {
   notifications: notifications[] = [
     {
       id: 1,
-      img: '/assets/images/profile/user-1.jpg',
-      title: 'Roman Joined the Team!',
-      subtitle: 'Congratulate him',
-    },
-    {
-      id: 2,
-      img: '/assets/images/profile/user-2.jpg',
-      title: 'New message received',
-      subtitle: 'Salma sent you new message',
-    },
-    {
-      id: 3,
-      img: '/assets/images/profile/user-3.jpg',
-      title: 'New Payment received',
-      subtitle: 'Check your earnings',
-    },
-    {
-      id: 4,
-      img: '/assets/images/profile/user-4.jpg',
-      title: 'Jolly completed tasks',
-      subtitle: 'Assign her new tasks',
-    },
-
-  ];
-
-  profiledd: profiledd[] = [
-    {
-      id: 1,
-      img: 'wallet',
-      color: 'primary',
-      title: 'My Profile',
-      subtitle: 'Account Settings',
-      link: '/',
-    },
-    {
-      id: 2,
-      img: 'shield',
-      color: 'success',
-      title: 'My Inbox',
-      subtitle: 'Messages & Email',
-      link: '/',
-    },
-    {
-      id: 3,
-      img: 'credit-card',
-      color: 'error',
-      title: 'My Tasks',
-      subtitle: 'To-do and Daily Tasks',
-      link: '/',
-    },
-  ];
-  apps: apps[] = [
-    {
-      id: 1,
-      img: '/assets/images/svgs/icon-dd-chat.svg',
-      title: 'Chat Application',
-      subtitle: 'Messages & Emails',
-      link: '/',
-    },
-    {
-      id: 2,
-      img: '/assets/images/svgs/icon-dd-cart.svg',
-      title: 'Todo App',
-      subtitle: 'Completed task',
-      link: '/',
-    },
-    {
-      id: 3,
-      img: '/assets/images/svgs/icon-dd-invoice.svg',
-      title: 'Invoice App',
-      subtitle: 'Get latest invoice',
-      link: '/',
-    },
-    {
-      id: 4,
-      img: '/assets/images/svgs/icon-dd-date.svg',
-      title: 'Calendar App',
-      subtitle: 'Get Dates',
-      link: '/',
+      img: 'https://cdn-icons-png.flaticon.com/512/1046/1046784.png',
+      title: 'Shower Reminder',
+      subtitle: 'Time for the resident to take a shower.',
     },
     {
       id: 5,
-      img: '/assets/images/svgs/icon-dd-mobile.svg',
-      title: 'Contact Application',
-      subtitle: '2 Unsaved Contacts',
-      link: '/',
-    },
-    {
-      id: 6,
-      img: '/assets/images/svgs/icon-dd-lifebuoy.svg',
-      title: 'Tickets App',
-      subtitle: 'Create new ticket',
-      link: '/',
-    },
-    {
-      id: 7,
-      img: '/assets/images/svgs/icon-dd-message-box.svg',
-      title: 'Email App',
-      subtitle: 'Get new emails',
-      link: '/',
-    },
-    {
-      id: 8,
-      img: '/assets/images/svgs/icon-dd-application.svg',
-      title: 'Courses',
-      subtitle: 'Create new course',
-      link: '/',
+      img: 'https://cdn-icons-png.flaticon.com/512/3014/3014174.png',
+      title: 'Exercise Session',
+      subtitle: 'Time for the resident’s scheduled physical activity.',
     },
   ];
 
-  quicklinks: quicklinks[] = [
-    {
-      id: 1,
-      title: 'Pricing Page',
-      link: '/',
-    },
-    {
-      id: 2,
-      title: 'Authentication Design',
-      link: '/',
-    },
-    {
-      id: 3,
-      title: 'Register Now',
-      link: '/',
-    },
-    {
-      id: 4,
-      title: '404 Error Page',
-      link: '/',
-    },
-    {
-      id: 5,
-      title: 'Notes App',
-      link: '/',
-    },
-    {
-      id: 6,
-      title: 'Employee App',
-      link: '/',
-    },
-    {
-      id: 7,
-      title: 'Todo Application',
-      link: '/',
-    },
-    {
-      id: 8,
-      title: 'Treeview',
-      link: '/',
-    },
-  ];
+
+
+
 }
 
 @Component({
@@ -314,15 +122,12 @@ export class AppSearchDialogComponent {
   searchText: string = '';
   navItems = navItems;
 
-  navItemsData = [
-    { name: "Janet Lawrence", dob: "1990-01-01" },
-    { name: "John Doe", dob: "1985-05-15" },
-    { name: "Jane Smith", dob: "1992-03-20" },
-    { name: "Michael Johnson", dob: "1988-11-30" },
-    { name: "Emily Davis", dob: "1995-07-10" },
-    { name: "David Wilson", dob: "1983-09-25" },
-    { name: "Sarah Brown", dob: "1991-12-05" },
-    { name: "Daniel Garcia", dob: "1987-04-18" },
-  ]
+  constructor(public searchService: SearchResidentServicesService) { }
+
+  searchResident(): void {
+    this.searchService.searchResident(this.searchText.trim());
+
+  }
+  navItemsData = this.searchService.searchResults()
 
 }

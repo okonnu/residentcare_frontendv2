@@ -58,9 +58,10 @@ export class AppNavItemComponent implements OnChanges {
 
   ngOnChanges() {
     this.navService.currentUrl.subscribe((url: string) => {
-      if (this.item.route && url) {
-        // console.log(`Checking '/${this.item.route}' against '${url}'`);
-        this.expanded = url.indexOf(`/${this.item.route}`) === 0;
+      if (this.item && this.item.route && url) {
+        const route = this.item.route.startsWith('/') ? this.item.route : `/${this.item.route}`;
+        // console.log(`Checking '${route}' against '${url}'`);
+        this.expanded = url.indexOf(route) === 0;
         this.ariaExpanded = this.expanded;
         //console.log(`${this.item.route} is expanded: ${this.expanded}`);
       }
@@ -69,8 +70,11 @@ export class AppNavItemComponent implements OnChanges {
 
   onItemSelected(item: NavItem) {
     if (!item.children || !item.children.length) {
-      this.router.navigate([item.route]);
-      
+      // Add a leading slash if not present
+      if (item.route) {
+        const route = item.route.startsWith('/') ? item.route : `/${item.route}`;
+        this.router.navigate([route]);
+      }
     }
     if (item.children && item.children.length) {
       this.expanded = !this.expanded;
@@ -81,15 +85,19 @@ export class AppNavItemComponent implements OnChanges {
       left: 0,
       behavior: 'smooth',
     });
-    if (!this.expanded){
-    if (window.innerWidth < 1024) {
-      this.notify.emit();
+    if (!this.expanded) {
+      if (window.innerWidth < 1024) {
+        this.notify.emit();
+      }
     }
-  }
   }
 
   onSubItemSelected(item: NavItem) {
-    if (!item.children || !item.children.length){
+    if (!item.children || !item.children.length) {
+      if (item.route) {
+        const route = item.route.startsWith('/') ? item.route : `/${item.route}`;
+        this.router.navigate([route]);
+      }
       if (this.expanded && window.innerWidth < 1024) {
         this.notify.emit();
       }

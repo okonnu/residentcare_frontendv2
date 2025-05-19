@@ -9,16 +9,16 @@ import { CoreService } from 'src/app/services/core.service';
       @if(options.theme === 'light') {
       <a href="/">
         <img
-          src="./assets/images/logos/dark-logo.svg"
-          class="align-middle m-2"
+          src="./assets/images/logos/fth/dark-horizontal-logo.svg"
+          class="align-middle m-2 w-100"
           alt="logo"
         />
       </a>
       } @if(options.theme === 'dark') {
       <a href="/">
         <img
-          src="./assets/images/logos/light-logo.svg"
-          class="align-middle m-2"
+          src="./assets/images/logos/light-horizontal-logo.png"
+          class="align-middle m-2 w-100"
           alt="logo"
         />
       </a>

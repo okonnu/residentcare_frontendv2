@@ -1,5 +1,5 @@
 import { BreakpointObserver, MediaMatcher } from '@angular/cdk/layout';
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, inject, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MatSidenav, MatSidenavContent } from '@angular/material/sidenav';
 import { CoreService } from 'src/app/services/core.service';
@@ -16,10 +16,10 @@ import { SidebarComponent } from './vertical/sidebar/sidebar.component';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { HeaderComponent } from './vertical/header/header.component';
-import { AppHorizontalHeaderComponent } from './horizontal/header/header.component';
-import { AppHorizontalSidebarComponent } from './horizontal/sidebar/sidebar.component';
 import { AppBreadcrumbComponent } from './shared/breadcrumb/breadcrumb.component';
 import { CustomizerComponent } from './shared/customizer/customizer.component';
+import { UserService, User } from 'src/app/services/user.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 const MOBILE_VIEW = 'screen and (max-width: 768px)';
 const TABLET_VIEW = 'screen and (min-width: 769px) and (max-width: 1024px)';
@@ -35,12 +35,6 @@ interface apps {
   link: string;
 }
 
-interface quicklinks {
-  id: number;
-  title: string;
-  link: string;
-}
-
 @Component({
   selector: 'app-full',
   standalone: true,
@@ -53,8 +47,6 @@ interface quicklinks {
     NgScrollbarModule,
     TablerIconsModule,
     HeaderComponent,
-    AppHorizontalHeaderComponent,
-    AppHorizontalSidebarComponent,
     AppBreadcrumbComponent,
     CustomizerComponent,
   ],
@@ -66,16 +58,33 @@ export class FullComponent implements OnInit {
   navItems = navItems;
 
   @ViewChild('leftsidenav')
-  public sidenav: MatSidenav;
+  public leftsidenav: MatSidenav;
+
+  // Alias for leftsidenav to maintain compatibility with template references
+  get sidenav(): MatSidenav {
+    return this.leftsidenav;
+  }
   resView = false;
   @ViewChild('content', { static: true }) content!: MatSidenavContent;
-  //get options from service
-  options = this.settings.getOptions();
   private layoutChangesSubscription = Subscription.EMPTY;
   private isMobileScreen = false;
   private isContentWidthFixed = true;
   private isCollapsedWidthFixed = false;
   private htmlElement!: HTMLHtmlElement;
+  public userService = inject(UserService);
+  private settings = inject(CoreService);
+  private mediaMatcher = inject(MediaMatcher);
+  private router = inject(Router);
+  private breakpointObserver = inject(BreakpointObserver);
+  private navService = inject(NavService);
+  private authService = inject(AuthService);
+  public loggedinUser: User | null = this.userService.getUser();
+  //get options from service
+  options = this.settings.getOptions();
+
+  logout(): void {
+    this.authService.logout();
+  }
 
   get isOver(): boolean {
     return this.isMobileScreen;
@@ -145,55 +154,8 @@ export class FullComponent implements OnInit {
     },
   ];
 
-  quicklinks: quicklinks[] = [
-    {
-      id: 1,
-      title: 'Pricing Page',
-      link: '/theme-pages/pricing',
-    },
-    {
-      id: 2,
-      title: 'Authentication Design',
-      link: '/authentication/side-login',
-    },
-    {
-      id: 3,
-      title: 'Register Now',
-      link: '/authentication/side-register',
-    },
-    {
-      id: 4,
-      title: '404 Error Page',
-      link: '/authentication/error',
-    },
-    {
-      id: 5,
-      title: 'Notes App',
-      link: '/apps/notes',
-    },
-    {
-      id: 6,
-      title: 'Employee App',
-      link: '/apps/employee',
-    },
-    {
-      id: 7,
-      title: 'Todo Application',
-      link: '/apps/todo',
-    },
-    {
-      id: 8,
-      title: 'Treeview',
-      link: '/theme-pages/treeview',
-    },
-  ];
-
   constructor(
-    private settings: CoreService,
-    private mediaMatcher: MediaMatcher,
-    private router: Router,
-    private breakpointObserver: BreakpointObserver,
-    private navService: NavService
+
   ) {
     this.htmlElement = document.querySelector('html')!;
     this.layoutChangesSubscription = this.breakpointObserver
@@ -220,7 +182,11 @@ export class FullComponent implements OnInit {
       });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log('FullComponent userService: on init ',);
+    console.log(this.userService.getUser());
+    console.log('FullComponent userService: on init ',);
+  }
 
   ngOnDestroy() {
     this.layoutChangesSubscription.unsubscribe();
