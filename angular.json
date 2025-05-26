@@ -20,7 +20,7 @@
             "allowedCommonJsDependencies": [
               "bezier-easing"
             ],
-            "outputPath": "dist/Residentcare",
+            "outputPath": "dist/residentcare",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
