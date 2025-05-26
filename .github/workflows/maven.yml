@@ -35,7 +35,7 @@ jobs:
       - name: Update index.html with Version Info
         run: |
           sed -i "s@<head>@<head>\n<!-- App Version: ${{ env.app_version }} | Build Time: ${{ env.build_time }} -->@" src/index.html
-
+          sed -i "s@<title>.*</title>@<title>${{ env.app_name }} - ${{ env.app_version }}</title>@" src/index.html
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3.6.1
 
