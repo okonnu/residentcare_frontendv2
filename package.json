@@ -1,5 +1,5 @@
 {
-  "name": "spike",
+  "name": "residentcare",
   "version": "3.0.0",
   "scripts": {
     "ng": "ng",
@@ -29,9 +29,9 @@
     "date-fns": "^4.1.0",
     "ng-apexcharts": "^1.11.0",
     "ngx-scrollbar": "^12.0.0",
+    "residentcare": "file:",
     "rxjs": "~7.5.0",
     "sass": "^1.57.1",
-    "spike": "file:",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.7"
   },

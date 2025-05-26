@@ -1,0 +1,63 @@
+name: Angular CI/CD
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract App Info
+        run: |
+          export app_name=$(node -p "require('./package.json').name")
+          export app_version=$(node -p "require('./package.json').version")
+          echo "app_name=$app_name" >> $GITHUB_ENV
+          echo "app_version=$app_version" >> $GITHUB_ENV
+
+      - name: Get Build Time
+        run: |
+          build_time=$(TZ='Asia/Colombo' date '+%Y-%m-%d %H:%M:%S')
+          echo "build_time=$build_time" >> $GITHUB_ENV
+
+      - name: Update index.html with Version Info
+        run: |
+          sed -i "s@<head>@<head>\n<!-- App Version: ${{ env.app_version }} | Build Time: ${{ env.build_time }} -->@" src/index.html
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.6.1
+
+      - name: Create a new builder instance
+        run: docker buildx create --use
+
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Build and Push to DockerHub using BuildKit
+        run: |
+          docker buildx build --push \
+           --tag "${{ secrets.DOCKER_USERNAME }}/${app_name}:${app_version}" \
+           --tag "${{ secrets.DOCKER_USERNAME }}/${app_name}:latest" \
+           --cache-from=type=local,src=/tmp/.buildx-cache \
+           --cache-to=type=local,dest=/tmp/.buildx-cache .
+      - name: Version Info
+        run: |
+          echo "App Name: ${{ env.app_name }}"
+          echo "App Version: ${{ env.app_version }}"

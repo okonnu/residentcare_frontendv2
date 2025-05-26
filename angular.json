@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "Spike": {
+    "Residentcare": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -20,13 +20,18 @@
             "allowedCommonJsDependencies": [
               "bezier-easing"
             ],
-            "outputPath": "dist/Spike",
+            "outputPath": "dist/Residentcare",
             "index": "src/index.html",
             "main": "src/main.ts",
-            "polyfills": ["zone.js"],
+            "polyfills": [
+              "zone.js"
+            ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "assets": ["src/favicon.ico", "src/assets"],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
             "styles": [
               "src/styles.scss",
               "src/assets/scss/style.scss"
@@ -66,10 +71,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "Spike:build:production"
+              "buildTarget": "Residentcare:build:production"
             },
             "development": {
-              "buildTarget": "Spike:build:development"
+              "buildTarget": "Residentcare:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -77,17 +82,25 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "Spike:build"
+            "buildTarget": "Residentcare:build"
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "polyfills": ["zone.js", "zone.js/testing"],
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
-            "assets": ["src/favicon.ico", "src/assets"],
-            "styles": ["src/styles.scss"],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles.scss"
+            ],
             "scripts": [
               "node_modules/apexcharts/dist/apexcharts.min.js"
             ]
