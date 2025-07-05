@@ -2,7 +2,7 @@
   <mat-card class="cardWithShadow m-8">
     <img *ngIf="image" class="w-100" mat-card-image src="{{ image }}" alt="Resident Photo" />
     <!-- Display -->
-    <mat-card-content class="p-y-24">
+    <mat-card-content class="p-y-24" *ngIf="!editMode">
       <mat-card-title>{{title}}</mat-card-title>
       <hr /><br />
       @for(data of dataSet; track data.title) {
@@ -32,8 +32,39 @@
             <mat-label class="mat-subtitle-2 f-w-600 d-block m-b-10">{{ data.title }}</mat-label>
           </div>
           <div class="col-sm-8">
-            <mat-form-field appearance="outline" class="w-100">
-              <input matInput [(ngModel)]="data.value" name="{{data.title}}" />
+            <!-- Text, Number, Date, Email inputs -->
+            <mat-form-field *ngIf="['text', 'number', 'date', 'email', 'tel'].includes(data.dataType)" appearance="outline" class="w-100">
+              <input type="{{data.dataType}}" matInput [(ngModel)]="data.value" name="{{data.title}}" />
+            </mat-form-field>
+            
+            <!-- Dropdown (Select) -->
+            <mat-form-field *ngIf="data.dataType === 'select'" appearance="outline" class="w-100">
+              <mat-select [(ngModel)]="data.value" name="{{data.title}}">
+                <mat-option *ngFor="let option of data.options" [value]="option.value">
+                  {{option.label}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            
+            <!-- Radio Buttons -->
+            <div *ngIf="data.dataType === 'radio'" class="radio-group">
+              <mat-radio-group [(ngModel)]="data.value" name="{{data.title}}">
+                <mat-radio-button *ngFor="let option of data.options" [value]="option.value" class="radio-button">
+                  {{option.label}}
+                </mat-radio-button>
+              </mat-radio-group>
+            </div>
+             <!-- SSN input with mask -->
+            <mat-form-field *ngIf="data.dataType === 'ssn'" appearance="outline">
+              <input 
+                type="text" 
+                matInput 
+                [(ngModel)]="data.value" 
+                name="{{data.title}}" 
+                [mask]="'000-00-0000'"
+                [showMaskTyped]="true"
+                placeholder="___-__-____"
+              />
             </mat-form-field>
           </div>
         </div>

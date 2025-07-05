@@ -1,7 +1,7 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { AuthService } from "../../../services/auth.service";
-import { Login } from "../../../types/auth.interface";
+import { Login } from "../../../models/auth.interface";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { InputComponent } from "../../../components/form-input/form-input.component";
 import { RouterModule } from '@angular/router';
@@ -28,13 +28,19 @@ export class AppSideLoginComponent implements OnInit {
 
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8)]],
+      email: ['example@email.com', [Validators.required, Validators.email]],
+      password: ['hgvH@gvgv23', [Validators.required, Validators.minLength(8)]],
     });
   }
 
   onLoginFormSubmitted() {
     if (!this.loginForm.valid) {
+      // Mark all form controls as touched to trigger validation displays
+      Object.keys(this.loginForm.controls).forEach(key => {
+        const control = this.loginForm.get(key);
+        control?.markAsTouched();
+        control?.markAsDirty();
+      });
       return;
     }
     this.authService.login(this.loginForm.value as Login).pipe(

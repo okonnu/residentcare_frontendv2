@@ -4,7 +4,7 @@ import { Router } from "@angular/router";
 import { Observable } from "rxjs";
 import { JwtHelperService } from "@auth0/angular-jwt";
 import { environment } from "../../environments/environment.production";
-import { Login, User, LoginResponse, LoginSuccess, RestResponse } from "../types/auth.interface";
+import { Login, User, LoginResponse, LoginSuccess, RestResponse } from "../models/auth.interface";
 import { IS_PUBLIC } from "./auth.interceptor";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { catchError, tap } from 'rxjs/operators';

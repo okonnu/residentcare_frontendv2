@@ -29,14 +29,22 @@ import { ThemePalette } from '@angular/material/core';
   ]
 })
 export class InputComponent implements ControlValueAccessor {
-  @Input() label: string = '';
-  @Input() type: string = 'text';
-  @Input() placeholder: string = '';
-  @Input() appearance: MatFormFieldAppearance = 'outline';
-  @Input() color: ThemePalette = 'primary';
-  @Input() formControl: FormControl = new FormControl();
-  @Input() required: boolean = false;
-  @Input() errorMessages: { [key: string]: string } = {};
+  @Input()
+  label: string = '';
+  @Input()
+  type: string = 'text';
+  @Input()
+  placeholder: string = '';
+  @Input()
+  appearance: MatFormFieldAppearance = 'outline';
+  @Input()
+  color: ThemePalette = 'primary';
+  @Input()
+  formControl: FormControl = new FormControl();
+  @Input()
+  required: boolean = false;
+  @Input()
+  errorMessages: { [key: string]: string } = {};
 
   // ControlValueAccessor implementation
   private _value: any;

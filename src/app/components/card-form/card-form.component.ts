@@ -3,19 +3,25 @@ import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../../material.module';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { FormsModule } from '@angular/forms';
+import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 
 export interface Structure {
-  icon: string;
-  title: string;
-  value: string;
   color: string;
+  title: string;
+  icon: string;
+  value: any;
+  dataType: string; // 'text', 'number', 'date', 'select', 'radio', etc.
+  options?: Array<{ value: string, label: string }>; // For dropdowns and radio buttons
 }
 
 @Component({
   selector: 'card-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, MaterialModule, TablerIconsModule],
+  imports: [CommonModule, FormsModule, MaterialModule, TablerIconsModule, NgxMaskDirective],
   templateUrl: './card-form.component.html',
+  providers: [
+    provideNgxMask()
+  ]
 })
 export class CardFormComponent {
   @Input() dataSet: Structure[] = [];
