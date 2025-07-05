@@ -29,7 +29,7 @@ export class AppSideLoginComponent implements OnInit {
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
       email: ['example@email.com', [Validators.required, Validators.email]],
-      password: ['hgvH@gvgv23', [Validators.required, Validators.minLength(8)]],
+      password: ['xxxxxxxxxxx', [Validators.required]],
     });
   }
 
@@ -48,4 +48,20 @@ export class AppSideLoginComponent implements OnInit {
     ).subscribe();
   }
 
+  
+  isFieldInvalid(fieldName: string): boolean {
+    const field = this.loginForm.get(fieldName);
+    return field ? (field.invalid && (field.dirty || field.touched)) : false;
+  }
+  
+  getErrorMessage(fieldName: string): string {
+    const field = this.loginForm.get(fieldName);
+    
+    if (!field || !field.errors) return '';
+    
+    if (field.errors['required']) return 'This field is required';
+    if (field.errors['email']) return 'Please enter a valid email address';
+    
+    return 'Invalid input';
+  }
 }
