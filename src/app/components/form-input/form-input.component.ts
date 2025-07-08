@@ -40,7 +40,7 @@ export class InputComponent implements ControlValueAccessor {
   @Input()
   color: ThemePalette = 'primary';
   @Input()
-  formControl: FormControl = new FormControl();
+  formControl!: FormControl;
   @Input()
   required: boolean = false;
   @Input()

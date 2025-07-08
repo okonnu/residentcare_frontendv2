@@ -1,11 +1,12 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { AuthService } from "../../../services/auth.service";
 import { Login } from "../../../models/auth.interface";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { InputComponent } from "../../../components/form-input/form-input.component";
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from '../../../material.module';
+import { MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
@@ -24,22 +25,22 @@ export class AppSideLoginComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly formBuilder = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
+  private _snackBar = inject(MatSnackBar);
   loginForm!: FormGroup;
 
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
-      email: ['example@email.com', [Validators.required, Validators.email]],
-      password: ['xxxxxxxxxxx', [Validators.required]],
+      email: ['admin1', [Validators.required, Validators.email]],
+      password: ['admin1', [Validators.required, Validators.minLength(8)]],
     });
   }
 
   onLoginFormSubmitted() {
-    if (!this.loginForm.valid) {
-      // Mark all form controls as touched to trigger validation displays
-      Object.keys(this.loginForm.controls).forEach(key => {
-        const control = this.loginForm.get(key);
-        control?.markAsTouched();
-        control?.markAsDirty();
+    console.log("Form is valid : " + this.loginForm.valid)
+    console.log(this.loginForm)
+    if (this.loginForm.invalid) {
+      this._snackBar.open('Something is off, please check your entries', '', {
+        duration: 3000
       });
       return;
     }
@@ -48,20 +49,8 @@ export class AppSideLoginComponent implements OnInit {
     ).subscribe();
   }
 
-  
-  isFieldInvalid(fieldName: string): boolean {
-    const field = this.loginForm.get(fieldName);
-    return field ? (field.invalid && (field.dirty || field.touched)) : false;
-  }
-  
-  getErrorMessage(fieldName: string): string {
-    const field = this.loginForm.get(fieldName);
-    
-    if (!field || !field.errors) return '';
-    
-    if (field.errors['required']) return 'This field is required';
-    if (field.errors['email']) return 'Please enter a valid email address';
-    
-    return 'Invalid input';
+
+  getFormControl(field: string): FormControl {
+    return this.loginForm.get(field) as FormControl;
   }
 }

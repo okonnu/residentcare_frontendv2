@@ -13,10 +13,10 @@
 
   <!-- Dynamic Error Messages -->
   @if (formControl.invalid && (formControl.dirty || formControl.touched)) {
-  <mat-hint class="m-b-16 error-msg">
+  <mat-error class="m-b-16 error-msg">
     @for (error of getErrorKeys(formControl.errors); track error) {
     <div class="text-error">{{ getDefaultMessage(error) }}</div>
     }
-  </mat-hint>
+  </mat-error>
   }
 </mat-form-field>

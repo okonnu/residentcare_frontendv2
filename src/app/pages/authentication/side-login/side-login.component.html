@@ -34,30 +34,14 @@
                       <form-input
                         label="Email"
                         type="email"
-                        formControlName="email"
-                        appearance="outline"
-                        color="primary"
-                        [required]="true"
-                        [errorMessages]="{
-                          required: 'Email is required',
-                          email: 'Please enter a valid email address'
-                        }"
-                        class="m-b-12"
+                        [formControl]="getFormControl('email')"
                       ></form-input>
 
                       <!-- Password Field -->
                       <form-input
                         label="Password"
                         type="password"
-                        formControlName="password"
-                        appearance="outline"
-                        color="primary"
-                        [required]="true"
-                        [errorMessages]="{
-                          required: 'Password is required',
-                          minlength: 'Password must be at least 8 characters'
-                        }"
-                        class="m-b-12"
+                        [formControl]="getFormControl('password')"
                       ></form-input>
 
                       <div class="d-block d-lg-flex align-items-center m-b-12">
