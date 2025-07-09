@@ -16,13 +16,12 @@
 <mat-divider></mat-divider>
 <mat-dialog-content class="mat-typography search-dialog w-100">
   <h4 class="f-s-20 f-w-600 mat-subtitle-1 m-b-16">Results</h4>
-
-  @for(item of navItemsData; track item.route) {
+  @for(item of searchResults; track item.id) {
   <a [routerLink]="[item.route]" mat-dialog-close class="p-y-12 text-decoration-none d-block">
     <h5 class="f-s-14 f-w-500 d-block mat-subtitle-1 m-0">
-      {{ item.displayName }} another one
+      {{ item.firstName }} {{ item.lastName }}
     </h5> 
-    <span class="f-s-12 mat-body-2">{{ item.route }}</span>
+    <span class="f-s-12 mat-body-2 text-muted">{{ item.email }}</span>
   </a>
   }
 

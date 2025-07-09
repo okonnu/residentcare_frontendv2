@@ -120,14 +120,14 @@ export class HeaderComponent {
 })
 export class AppSearchDialogComponent {
   searchText: string = '';
-  navItems = navItems;
+  searchResults!: any[];
 
   constructor(public searchService: SearchResidentServicesService) { }
 
   searchResident(): void {
     this.searchService.searchResident(this.searchText.trim());
-
+    this.searchResults = this.searchService.searchResults
+    console.log(this.searchResults)
   }
-  navItemsData = this.searchService.searchResults()
 
 }
