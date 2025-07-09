@@ -14,7 +14,7 @@ export class SearchResidentServicesService {
   async searchResident(query: string): Promise<void> {
     this.isLoading.set(true); // Set loading to true
     try {
-      const response = await fetch(`http://localhost:8081/api/v1/resident/search/${query}`, {
+      const response = await fetch(`https://residentcare-api.pepea.net/api/v1/resident/search/${query}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
