@@ -9,6 +9,7 @@ import { IS_PUBLIC } from "./auth.interceptor";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
     providedIn: 'root'
@@ -19,6 +20,7 @@ export class AuthService {
     private readonly router = inject(Router);
     private readonly jwtHelper = inject(JwtHelperService);
     private readonly destroyRef = inject(DestroyRef);
+    private snackBar = inject(MatSnackBar);
     private readonly CONTEXT = { context: new HttpContext().set(IS_PUBLIC, true) };
     private readonly TOKEN_EXPIRY_THRESHOLD_MINUTES = 5;
 
@@ -35,9 +37,13 @@ export class AuthService {
         return this.http.post<RestResponse>(`${environment.apiUrl}/login`, body, this.CONTEXT)
             .pipe(
                 catchError(error => {
-                    if (error.status === 401) {
+                    if (error.status === 401 || error.status === 400) {
                         // Handle invalid credentials
                         console.error('Invalid credentials');
+                        this.snackBar.open('Wrong Password or Username', '', {
+                            duration: 5000,
+                            panelClass: ['error-snackbar']
+                        });
                     }
                     return of();
                 }),
@@ -47,6 +53,10 @@ export class AuthService {
                     this.storeTokens(loginSuccessData);
                     console.log('Login response:', loginSuccessData);
                     this.scheduleTokenRefresh(loginSuccessData.access_token);
+                    this.snackBar.open('Login successful', '', {
+                        duration: 5000,
+                        panelClass: ['success-snackbar']
+                    });
                     this.router.navigate(['/pages']);
                 })
             );
@@ -57,7 +67,7 @@ export class AuthService {
         sessionStorage.removeItem('access_token');
         sessionStorage.removeItem('refresh_token');
         sessionStorage.removeItem('user_info');
-        this.router.navigate(['login']);
+        this.router.navigate(['authentication/login']);
     }
 
     storeTokens(data: LoginSuccess): void {

@@ -6,7 +6,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { InputComponent } from "../../../components/form-input/form-input.component";
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from '../../../material.module';
-import { MatSnackBar} from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
@@ -30,17 +30,16 @@ export class AppSideLoginComponent implements OnInit {
 
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
-      email: ['admin1', [Validators.required, Validators.email]],
-      password: ['admin1', [Validators.required, Validators.minLength(8)]],
+      email: ['admin2@gmail.com', [Validators.required, Validators.email]],
+      password: ['Qwerty54321', [Validators.required, Validators.minLength(8)]],
     });
   }
 
   onLoginFormSubmitted() {
-    console.log("Form is valid : " + this.loginForm.valid)
-    console.log(this.loginForm)
     if (this.loginForm.invalid) {
-      this._snackBar.open('Something is off, please check your entries', '', {
-        duration: 3000
+      this._snackBar.open('Something is not right, please check your entries', '', {
+        duration: 4000,
+        panelClass: ['error-snackbar']
       });
       return;
     }

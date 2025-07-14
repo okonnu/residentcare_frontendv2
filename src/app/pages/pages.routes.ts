@@ -7,16 +7,16 @@ import { FaceSheetComponent } from './face-sheet/face-sheet.component';
 export const PagesRoutes: Routes = [
   {
     path: '',
-    component: StarterComponent,
+    component: DashboardComponent,
     data: {
-      title: 'Starter Page',
+      title: 'Dashboard',
     },
   },
   {
     path: 'vitals',
     component: VitalsComponent,
     data: {
-      title: 'Vitals Page',
+      title: 'Vitals',
     },
   },
   {
