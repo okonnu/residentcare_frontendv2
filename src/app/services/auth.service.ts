@@ -72,7 +72,7 @@ export class AuthService {
 
     storeTokens(data: LoginSuccess): void {
         sessionStorage.setItem('access_token', data.access_token);
-        sessionStorage.setItem('user_info', JSON.stringify(data));
+        sessionStorage.setItem('user_info', JSON.stringify(this.decodeToken(data.access_token)));
         sessionStorage.setItem('refresh_token', data.refresh_token);
     }
 
@@ -107,5 +107,27 @@ export class AuthService {
             }, refreshInterval);
         }
     }
+
+      private decodeToken(token: string): User {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const roles = [
+          ...payload.resource_access?.['residentcare-api']?.roles || []
+        ];
+        const firstname = payload.given_name || '';
+        const lastname = payload.family_name || '';
+        return {
+          id: payload.sub,
+          firstname: firstname,
+          lastname: lastname,
+          email: payload.email || '',
+          fullname: `${firstname} ${lastname}`.trim(),
+          roles: roles,
+        };
+    }
+    
+    public getUserFromSessionStorage(): User | null {
+        const userInfo = sessionStorage.getItem('user_info');
+        return userInfo ? JSON.parse(userInfo) : null;
+      }
 
 }

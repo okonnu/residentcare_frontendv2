@@ -17,7 +17,7 @@
 <mat-dialog-content class="mat-typography search-dialog w-100">
   <h4 class="f-s-20 f-w-600 mat-subtitle-1 m-b-16">Results</h4>
   @for(item of searchService.searchResults; track item.id) {
-  <a [routerLink]="[item.route]" mat-dialog-close class="p-y-12 text-decoration-none d-block">
+  <a (click)="searchService.getResidentDetails(item.id)" mat-dialog-close class="p-y-12 text-decoration-none d-block">
     <h5 class="f-s-14 f-w-500 d-block mat-subtitle-1 m-0">
       {{ item.firstName }} {{ item.lastName }}
     </h5> 

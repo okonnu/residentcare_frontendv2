@@ -14,18 +14,25 @@ export class SearchResidentServicesService {
   // Signal to track loading state
   isLoading = signal<boolean>(false);
   private CONTEXT = {};
+  resident = signal<any>({});
 
   constructor(private http: HttpClient, private router: Router) {}
 
   searchResident(query: string): void {
     console.log("searching ........")
     this.isLoading.set(true); // Set loading to true
-    this.http.get<any[]>(`${environment.apiUrl}/resident/search/${query}`)
+    
+    // Create request body with the search query
+    const requestBody = {
+      searchString: query
+    };
+    
+    this.http.post<any[]>(`${environment.apiUrl}/resident/search`, requestBody)
       .pipe(
-        tap(data => {
+        tap(response => {
           console.log("search complete .....")
-          console.log(data)
-          this.searchResults = data ; // Update search results signal
+          console.log(response)
+          this.searchResults = response || []; // Extract data from RestResponse
           this.isLoading.set(false); // Set loading to false on success
         }),
         catchError(error => {
@@ -33,6 +40,30 @@ export class SearchResidentServicesService {
           this.searchResults = [] // Clear results on error
           this.isLoading.set(false); // Set loading to false on error
           return of([]); // Return an empty observable to prevent the error from propagating
+        })
+      )
+      .subscribe(); // Subscribe to initiate the HTTP request
+  }
+
+  getResidentDetails(residentId: string): void {
+    this.isLoading.set(true); // Set loading to true
+
+    const requestBody = {
+      id: residentId
+    };
+
+    this.http.post<any>(`${environment.apiUrl}/resident/getResidentById`, requestBody)
+      .pipe(
+        tap(response => {
+          console.log("Resident details fetched successfully");
+          this.resident.set(response); // Update resident signal with the fetched data
+          this.isLoading.set(false); // Set loading to false on success
+          this.router.navigate(['/pages/face-sheet']); // Navigate to resident details page
+        }),
+        catchError(error => {
+          console.error('Error fetching resident details:', error);
+          this.isLoading.set(false); // Set loading to false on error
+          return of(null); // Return null on error
         })
       )
       .subscribe(); // Subscribe to initiate the HTTP request

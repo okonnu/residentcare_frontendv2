@@ -18,7 +18,7 @@ import { TablerIconsModule } from 'angular-tabler-icons';
 import { HeaderComponent } from './vertical/header/header.component';
 import { AppBreadcrumbComponent } from './shared/breadcrumb/breadcrumb.component';
 import { CustomizerComponent } from './shared/customizer/customizer.component';
-import { UserService, User } from 'src/app/services/user.service';
+import { User } from 'src/app/models/auth.interface';
 import { AuthService } from 'src/app/services/auth.service';
 
 const MOBILE_VIEW = 'screen and (max-width: 768px)';
@@ -71,14 +71,13 @@ export class FullComponent implements OnInit {
   private isContentWidthFixed = true;
   private isCollapsedWidthFixed = false;
   private htmlElement!: HTMLHtmlElement;
-  public userService = inject(UserService);
   private settings = inject(CoreService);
   private mediaMatcher = inject(MediaMatcher);
   private router = inject(Router);
   private breakpointObserver = inject(BreakpointObserver);
   private navService = inject(NavService);
   private authService = inject(AuthService);
-  public loggedinUser: User | null = this.userService.getUser();
+  public loggedinUser: User | null = this.authService.getUserFromSessionStorage();
   //get options from service
   options = this.settings.getOptions();
 
@@ -183,9 +182,8 @@ export class FullComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('FullComponent userService: on init ',);
-    console.log(this.userService.getUser());
-    console.log('FullComponent userService: on init ',);
+    console.log('FullComponent logged in user: on init ', this.loggedinUser);
+    console.log('FullComponent userService: on init ', this.authService.getUserFromSessionStorage());
   }
 
   ngOnDestroy() {

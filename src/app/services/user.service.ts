@@ -1,14 +1,7 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
 
-export interface User {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  roles: string[];
-  tokenExpiry: string;
-}
+import { User } from '../models/auth.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -17,12 +10,12 @@ export class UserService {
   private loading = signal(false);
   private tokenExpiry = signal<number | null>(null);
   private currentUser = signal<User>({
-    id: 0,
-    firstName: '...',
-    lastName: '...',
-    email: '...@...com',
-    roles: [],
-    tokenExpiry: ''
+    id: '',
+    email: '',
+    firstname: '',
+    lastname: '',
+    fullname: '',
+    roles: []
   });
 
   // Computed signal for countdown
@@ -34,74 +27,12 @@ export class UserService {
   });
   constructor(private router: Router) { }
 
-  async login(email: string, password: string) {
-    this.loading.set(true);
-    const headers = new Headers({ 'Content-Type': 'application/json' });
-    const body = JSON.stringify({ email, password });
+  
 
-    try {
-      const response = await fetch('http://localhost:8081/api/v1/login', {
-        method: 'POST',
-        headers: headers,
-        body: body
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        const token = data.data.access_token;
-        const expiry = data.data.expires_in;
-        sessionStorage.setItem('access_token', JSON.stringify(data.data));
-
-        // Decode the token to extract user information
-        const userInfo = this.decodeToken(token);
-
-        // Store user information in session storage
-        sessionStorage.setItem('user_info', JSON.stringify(userInfo));
-        console.log('Non Updated User info:');
-        console.log(this.currentUser());
-        // Update the currentUser signal
-        this.currentUser.update(() => ({
-          id: userInfo.id,
-          firstName: userInfo.firstName,
-          lastName: userInfo.lastName,
-          email: userInfo.email,
-          roles: userInfo.roles,
-          tokenExpiry: userInfo.tokenExpiry
-        }));
-        console.log('Updated User info:');
-        console.log(this.currentUser());
-
-        // Set the token expiry time
-        this.tokenExpiry.set(Math.floor(Date.now() / 1000) + expiry);
-        console.log('Login successful:', userInfo);
-        return true;
-      } else {
-        console.error('Login failed:', response.statusText);
-        return false;
-      }
-    } catch (error) {
-      console.error('Login error:', error);
-      return false;
-    } finally {
-      this.loading.set(false);
-    }
-  }
-
-  async logout() {
-    sessionStorage.removeItem('access_token');
-    sessionStorage.removeItem('user_info');
-    this.currentUser.set({
-      id: 0,
-      firstName: '...',
-      lastName: '...',
-      email: '...@...com',
-      roles: [],
-      tokenExpiry: ''
-    });
-    this.router.navigate(['/login']);
-  }
+ 
   public getUser() : User | null {
-    return this.currentUser();
+    // return this.currentUser();
+    return this.getUserFromSessionStorage();
   }
 
   public getUserFromSessionStorage(): User | null {
@@ -109,18 +40,5 @@ export class UserService {
     return userInfo ? JSON.parse(userInfo) : null;
   }
 
-  private decodeToken(token: string): User {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    const roles = [
-      ...payload.resource_access?.['pepea-rest-api']?.roles || []
-    ];
-    return {
-      id: payload.sub,
-      firstName: payload.given_name || '',
-      lastName: payload.family_name || '',
-      email: payload.email || '',
-      roles: roles,
-      tokenExpiry: new Date(payload.exp * 1000).toISOString()
-    };
-  }
+  
 }

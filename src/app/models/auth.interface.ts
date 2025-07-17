@@ -6,6 +6,7 @@ export interface Login {
 
 // user.interface.ts ==> Please, adapt to your actual auth user shape
 export interface User {
+    id: string;
     email: string;
     firstname: string;
     lastname: string;
