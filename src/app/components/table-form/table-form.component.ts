@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, ViewChild, OnInit, AfterViewInit, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { MaterialModule } from '../../material.module';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { MatTableDataSource } from '@angular/material/table';
@@ -8,6 +8,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { InputComponent } from '../form-input/form-input.component';
 
 // Interface to define column configuration
 export interface TableColumn {
@@ -20,6 +21,8 @@ export interface TableColumn {
     options?: Array<{ value: string, label: string }>; // For dropdowns and radio buttons
     width?: string;     // Optional width (e.g., '100px', '10%')
     displayFn?: (item: any) => string; // Function to format display value
+    required?: boolean; // Whether field is required
+    validators?: any[]; // Custom validators for the field
 }
 
 @Component({
@@ -31,7 +34,8 @@ export interface TableColumn {
         ReactiveFormsModule,
         MaterialModule,
         TablerIconsModule,
-        NgxMaskDirective
+        NgxMaskDirective,
+        InputComponent
     ],
     templateUrl: './table-form.component.html',
     styleUrls: ['./table-form.component.scss'],
@@ -76,8 +80,10 @@ export class TableFormComponent implements OnInit, AfterViewInit {
     currentMode: 'view' | 'edit' | 'add' = 'view';
     selectedRecord: any = null;
     originalRecordData: any = null;
+    recordForm!: FormGroup;
     private _dataSet: any[] = [];
     private _snackbar = inject(MatSnackBar);
+    private formBuilder = inject(FormBuilder);
 
     constructor() {
         // Initialize with empty array
@@ -126,6 +132,7 @@ export class TableFormComponent implements OnInit, AfterViewInit {
         this.selectedRecord = { ...row }; // Clone the record
         this.originalRecordData = { ...row }; // Store original for cancellation
         this.currentMode = 'edit';
+        this.createForm(); // Create form with record data
     }
 
     // Start adding a new record
@@ -133,16 +140,28 @@ export class TableFormComponent implements OnInit, AfterViewInit {
         this.selectedRecord = this.createBlankRecord();
         this.originalRecordData = null; // No original data for new records
         this.currentMode = 'add';
+        this.createForm(); // Create form with blank data
     }
 
     // Save the record (either edited or new)
     saveRecord() {
-        if (!this.selectedRecord) {
-            this._snackbar.open('No record selected', 'Close', { duration: 4000 });
+        if (!this.recordForm) {
+            this._snackbar.open('Form not initialized', 'Close', { duration: 4000 });
             return;
         }
+
+        if (this.recordForm.invalid) {
+            this._snackbar.open('Please fix form errors before saving', 'Close', { duration: 4000 });
+            this.markFormGroupTouched(this.recordForm);
+            return;
+        }
+
+        // Get form values and merge with selected record
+        const formValues = this.recordForm.value;
+        const recordToSave = { ...this.selectedRecord, ...formValues };
+
         // Emit the record
-        this.save.emit(this.selectedRecord);
+        this.save.emit(recordToSave);
         this.switchToViewMode();
     }
 
@@ -218,6 +237,64 @@ export class TableFormComponent implements OnInit, AfterViewInit {
     // Utility method to get value from nested property path (e.g., 'user.name')
     getPropertyValue(obj: any, path: string): any {
         return path.split('.').reduce((o, key) => (o && o[key] !== undefined ? o[key] : null), obj);
+    }
+
+    // Create reactive form based on columns and current record
+    private createForm(): void {
+        const formControls: { [key: string]: FormControl } = {};
+
+        this.columns.forEach(column => {
+            if (!column.hidden && !column.hide) {
+                const validators = [];
+
+                // Add required validator if specified
+                if (column.required) {
+                    validators.push(Validators.required);
+                }
+
+                // Add email validator for email fields
+                if (column.dataType === 'email') {
+                    validators.push(Validators.email);
+                }
+
+                // Add custom validators if specified
+                if (column.validators && column.validators.length > 0) {
+                    validators.push(...column.validators);
+                }
+
+                // Get initial value from selected record
+                const initialValue = this.selectedRecord ? this.selectedRecord[column.key] : '';
+
+                // Handle custom fields
+                if (column.dataType === 'custom' && column.key === 'bloodPressure') {
+                    formControls['systolicBP'] = new FormControl(
+                        this.selectedRecord ? this.selectedRecord['systolicBP'] : null,
+                        column.required ? [Validators.required] : []
+                    );
+                    formControls['diastolicBP'] = new FormControl(
+                        this.selectedRecord ? this.selectedRecord['diastolicBP'] : null,
+                        column.required ? [Validators.required] : []
+                    );
+                } else {
+                    formControls[column.key] = new FormControl(initialValue, validators);
+                }
+            }
+        });
+
+        this.recordForm = this.formBuilder.group(formControls);
+    }
+
+    // Helper method to mark all form controls as touched
+    private markFormGroupTouched(formGroup: FormGroup): void {
+        Object.keys(formGroup.controls).forEach(field => {
+            const control = formGroup.get(field);
+            control?.markAsTouched({ onlySelf: true });
+        });
+    }
+
+    // Get form control for template
+    getFormControl(field: string): FormControl {
+        return this.recordForm?.get(field) as FormControl;
     }
 
     // Helper methods for template

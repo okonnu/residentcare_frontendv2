@@ -53,9 +53,9 @@ export class ResidentService {
       .pipe(
         tap(response => {
           console.log("Resident details fetched successfully");
-          this.resident.set(response); // Update resident signal with the fetched data
+          console.log(response);
+          this.resident.set(response.data); // Update resident signal with the fetched data
           this.isLoading.set(false); // Set loading to false on success
-          this.router.navigate(['/pages/face-sheet']); // Navigate to resident details page
         }),
         catchError(error => {
           console.error('Error fetching resident details:', error);
@@ -83,6 +83,13 @@ export class ResidentService {
         })
       )
       .subscribe(); // Subscribe to initiate the HTTP request
+  }
+
+  residentFullName(): string {
+    if (!this.resident()) {
+      return 'No Resident Selected';
+    }
+    return `${this.resident().firstName || ''} ${this.resident().lastName || ''}`.trim();
   }
 
 }

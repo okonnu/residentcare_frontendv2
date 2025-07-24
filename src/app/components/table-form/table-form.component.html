@@ -106,8 +106,8 @@
           </button>
         </div>
         
-        <!-- Edit Form -->
-        <form>
+        <!-- Form -->
+        <form [formGroup]="recordForm">
           @for (column of columns; track column.key) {
             @if (!column.hidden && !column.hide) {
               <div class="row mb-3">
@@ -115,68 +115,65 @@
                   <mat-label class="mat-subtitle-2 f-w-600 d-block">{{ column.title }}</mat-label>
                 </div>
                 <div class="col-sm-8">
-                  <!-- Text, Number, Date, Email inputs -->
+                  <!-- Text, Number, Date, Email inputs using enhanced form-input component -->
                   @if (['text', 'number', 'date', 'email', 'tel'].includes(column.dataType)) {
-                    <mat-form-field appearance="outline" class="w-100">
-                      <input type="{{column.dataType}}" matInput [(ngModel)]="selectedRecord[column.key]" 
-                             [name]="column.key" />
-                    </mat-form-field>
+                    <form-input
+                      [type]="column.dataType"
+                      [label]="''"
+                      [formControl]="getFormControl(column.key)"
+                      [required]="column.required || false"
+                      [placeholder]="column.title">
+                    </form-input>
                   }
                   
-                  <!-- Dropdown (Select) -->
-                  @if (column.dataType === 'select') {
-                    <mat-form-field appearance="outline" class="w-100">
-                      <mat-select [(ngModel)]="selectedRecord[column.key]" [name]="column.key">
-                        @for (option of column.options; track option.value) {
-                          <mat-option [value]="option.value">
-                            {{option.label}}
-                          </mat-option>
-                        }
-                      </mat-select>
-                    </mat-form-field>
-                  }
-                  
-                  <!-- Radio Buttons -->
-                  @if (column.dataType === 'radio') {
-                    <div class="radio-group">
-                      <mat-radio-group [(ngModel)]="selectedRecord[column.key]" [name]="column.key">
-                        @for (option of column.options; track option.value) {
-                          <mat-radio-button [value]="option.value" class="radio-button">
-                            {{option.label}}
-                          </mat-radio-button>
-                        }
-                      </mat-radio-group>
-                    </div>
-                  }
-                  
-                  <!-- SSN input with mask -->
+                  <!-- SSN input using enhanced form-input component -->
                   @if (column.dataType === 'ssn') {
-                    <mat-form-field appearance="outline" class="w-100">
-                      <input 
-                        type="text" 
-                        matInput 
-                        [(ngModel)]="selectedRecord[column.key]" 
-                        [name]="column.key" 
-                        [mask]="'000-00-0000'"
-                        [showMaskTyped]="true"
-                        placeholder="___-__-____"
-                      />
-                    </mat-form-field>
+                    <form-input
+                      type="ssn"
+                      [label]="''"
+                      [formControl]="getFormControl(column.key)"
+                      [required]="column.required || false">
+                    </form-input>
+                  }
+                  
+                  <!-- Select dropdown using enhanced form-input component -->
+                  @if (column.dataType === 'select') {
+                    <form-input
+                      type="select"
+                      [label]="''"
+                      [formControl]="getFormControl(column.key)"
+                      [required]="column.required || false"
+                      [options]="column.options || []"
+                      [placeholder]="'Select ' + column.title">
+                    </form-input>
+                  }
+                  
+                  <!-- Radio buttons using enhanced form-input component -->
+                  @if (column.dataType === 'radio') {
+                    <form-input
+                      type="radio"
+                      [label]="''"
+                      [formControl]="getFormControl(column.key)"
+                      [required]="column.required || false"
+                      [options]="column.options || []">
+                    </form-input>
                   }
 
                   <!-- Custom input (e.g., for blood pressure) -->
                   @if (column.dataType === 'custom') {
                     @if (column.key === 'bloodPressure') {
                       <div class="d-flex gap-2">
-                        <mat-form-field appearance="outline" class="compact-form-field">
-                          <input type="number" matInput [(ngModel)]="selectedRecord['systolicBP']" 
-                                 name="systolicBP" placeholder="Systolic" />
-                        </mat-form-field>
+                        <form-input
+                          type="number"
+                          [formControl]="getFormControl('systolicBP')"
+                          [required]="column.required || false">
+                        </form-input>
                         <span class="align-self-center">/</span>
-                        <mat-form-field appearance="outline" class="compact-form-field">
-                          <input type="number" matInput [(ngModel)]="selectedRecord['diastolicBP']" 
-                                 name="diastolicBP" placeholder="Diastolic" />
-                        </mat-form-field>
+                        <form-input
+                          type="number"
+                          [formControl]="getFormControl('diastolicBP')"
+                          [required]="column.required || false">
+                        </form-input>
                       </div>
                     }
                   }

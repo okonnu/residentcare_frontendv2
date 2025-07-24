@@ -18,7 +18,7 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { SearchResidentServicesService } from 'src/app/services/search-resident.service';
+import { ResidentService } from 'src/app/services/resident.service';
 
 
 interface notifications {
@@ -69,9 +69,10 @@ export class HeaderComponent {
     private sidenav: CoreService,
     public dialog: MatDialog,
     private translate: TranslateService
+    , public residentService: ResidentService
   ) {
     translate.setDefaultLang('en');
-  }
+  } 
 
   openDialog() {
     const dialogRef = this.dialog.open(AppSearchDialogComponent);
@@ -122,7 +123,7 @@ export class AppSearchDialogComponent {
   searchText: string = '';
   searchResults!: any[];
 
-  constructor(public searchService: SearchResidentServicesService) { }
+  constructor(public searchService: ResidentService) { }
 
   searchResident(): void {
     this.searchService.searchResident(this.searchText.trim());

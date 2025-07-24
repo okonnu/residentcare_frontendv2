@@ -1,22 +1,114 @@
 <mat-label *ngIf="label" class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">{{
   label }}</mat-label>
-<mat-form-field [appearance]="appearance" [color]="color" class="w-100">
-  <input
-    matInput
-    #inputElement
-    [type]="type"
-    [placeholder]="placeholder"
-    [formControl]="formControl"
-    [required]="required"
-    (input)="onInputChange(inputElement.value)"
-    (blur)="onTouched()">
 
-  <!-- Dynamic Error Messages -->
-  @if (formControl.invalid && (formControl.dirty || formControl.touched)) {
-  <mat-error class="m-b-16 error-msg">
-    @for (error of getErrorKeys(formControl.errors); track error) {
-    <div class="text-error">{{ getDefaultMessage(error) }}</div>
+<!-- Standard Text Inputs (text, number, date, email, tel, password, url) -->
+@if (isTextInput) {
+  <mat-form-field [appearance]="appearance" [color]="color" class="w-100">
+    <input
+      matInput
+      #inputElement
+      [type]="type"
+      [placeholder]="placeholder"
+      [formControl]="formControl"
+      [required]="required"
+      [disabled]="disabled"
+      (input)="onInputChange(inputElement.value)"
+      (blur)="onTouched()">
+
+    <!-- Dynamic Error Messages -->
+    @if (formControl.invalid && (formControl.dirty || formControl.touched)) {
+      <mat-error class="m-b-16 error-msg">
+        @for (error of getErrorKeys(formControl.errors); track error) {
+          <div class="text-error">{{ getDefaultMessage(error) }}</div>
+        }
+      </mat-error>
     }
-  </mat-error>
-  }
-</mat-form-field>
+  </mat-form-field>
+}
+
+<!-- SSN Input with Masking -->
+@if (isSSNInput) {
+  <mat-form-field [appearance]="appearance" [color]="color" class="w-100">
+    <input
+      matInput
+      #maskedInput
+      type="text"
+      [placeholder]="effectivePlaceholder"
+      [formControl]="formControl"
+      [required]="required"
+      [disabled]="disabled"
+      [mask]="effectiveMask"
+      [showMaskTyped]="showMaskTyped"
+      (input)="onInputChange(maskedInput.value)"
+      (blur)="onTouched()">
+
+    <!-- Dynamic Error Messages -->
+    @if (formControl.invalid && (formControl.dirty || formControl.touched)) {
+      <mat-error class="m-b-16 error-msg">
+        @for (error of getErrorKeys(formControl.errors); track error) {
+          <div class="text-error">{{ getDefaultMessage(error) }}</div>
+        }
+      </mat-error>
+    }
+  </mat-form-field>
+}
+
+<!-- Select Dropdown -->
+@if (isSelectInput) {
+  <mat-form-field [appearance]="appearance" [color]="color" class="w-100">
+    <mat-select 
+      [formControl]="formControl"
+      [required]="required"
+      [disabled]="disabled"
+      [multiple]="multiple"
+      [placeholder]="placeholder"
+      (selectionChange)="onInputChange($event.value)"
+      (blur)="onTouched()">
+      
+      @for (option of options; track option.value) {
+        <mat-option [value]="option.value" [disabled]="option.disabled || false">
+          {{ option.label }}
+        </mat-option>
+      }
+    </mat-select>
+
+    <!-- Dynamic Error Messages -->
+    @if (formControl.invalid && (formControl.dirty || formControl.touched)) {
+      <mat-error class="m-b-16 error-msg">
+        @for (error of getErrorKeys(formControl.errors); track error) {
+          <div class="text-error">{{ getDefaultMessage(error) }}</div>
+        }
+      </mat-error>
+    }
+  </mat-form-field>
+}
+
+<!-- Radio Button Group -->
+@if (isRadioInput) {
+  <div [class]="radioGroupClass">
+    <mat-radio-group 
+      [formControl]="formControl"
+      [required]="required"
+      [disabled]="disabled"
+      (change)="onInputChange($event.value)">
+      
+      @for (option of options; track option.value) {
+        <mat-radio-button 
+          [value]="option.value" 
+          [disabled]="option.disabled || false"
+          [class]="radioButtonClass">
+          {{ option.label }}
+        </mat-radio-button>
+      }
+    </mat-radio-group>
+
+    <!-- Dynamic Error Messages -->
+    @if (formControl.invalid && (formControl.dirty || formControl.touched)) {
+      <div class="m-b-16 error-msg">
+        @for (error of getErrorKeys(formControl.errors); track error) {
+          <div class="text-error">{{ getDefaultMessage(error) }}</div>
+        }
+      </div>
+    }
+  </div>
+}

@@ -7,48 +7,59 @@ import { FormsModule } from '@angular/forms';
 import { MaterialModule } from '../../material.module';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { ThemePalette } from '@angular/material/core';
+import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
+
+// Interface for select and radio options
+export interface FormInputOption {
+  value: any;
+  label: string;
+  disabled?: boolean;
+}
 
 
 @Component({
   standalone: true,
   selector: 'form-input',
   templateUrl: './form-input.component.html',
-  imports: [MatFormFieldModule,
+  imports: [
+    MatFormFieldModule,
     CommonModule,
     FormsModule,
     MaterialModule,
     TablerIconsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgxMaskDirective
   ],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => InputComponent),
       multi: true
-    }
+    },
+    provideNgxMask()
   ]
 })
 export class InputComponent implements ControlValueAccessor {
-  @Input()
-  label: string = '';
-  @Input()
-  type: string = 'text';
-  @Input()
-  placeholder: string = '';
-  @Input()
-  appearance: MatFormFieldAppearance = 'outline';
-  @Input()
-  color: ThemePalette = 'primary';
-  @Input()
-  formControl!: FormControl;
-  @Input()
-  required: boolean = false;
-  @Input()
-  errorMessages: { [key: string]: string } = {};
+  @Input() label: string = '';
+  @Input() type: string = 'text';
+  @Input() placeholder: string = '';
+  @Input() appearance: MatFormFieldAppearance = 'outline';
+  @Input() color: ThemePalette = 'primary';
+  @Input() formControl!: FormControl;
+  @Input() required: boolean = false;
+  @Input() errorMessages: { [key: string]: string } = {};
+
+  // Enhanced inputs for different field types
+  @Input() options: FormInputOption[] = []; // For select and radio inputs
+  @Input() mask: string = ''; // For masked inputs like SSN, phone
+  @Input() showMaskTyped: boolean = false; // Whether to show mask while typing
+  @Input() radioButtonClass: string = 'radio-button'; // CSS class for radio buttons
+  @Input() radioGroupClass: string = 'radio-group'; // CSS class for radio group
+  @Input() multiple: boolean = false; // For multiple select
+  @Input() disabled: boolean = false; // To disable the input
 
   // ControlValueAccessor implementation
   private _value: any;
-  disabled = false;
   onChange: any = () => { };
   onTouched: any = () => { };
 
@@ -96,5 +107,36 @@ export class InputComponent implements ControlValueAccessor {
     this._value = value;
     this.onChange(value);
     this.onTouched();
+  }
+
+  // Helper methods for template
+  get isTextInput(): boolean {
+    return ['text', 'number', 'date', 'email', 'tel', 'password', 'url'].includes(this.type);
+  }
+
+  get isSelectInput(): boolean {
+    return this.type === 'select';
+  }
+
+  get isRadioInput(): boolean {
+    return this.type === 'radio';
+  }
+
+  get isSSNInput(): boolean {
+    return this.type === 'ssn';
+  }
+
+  get effectiveMask(): string {
+    if (this.type === 'ssn' && !this.mask) {
+      return '000-00-0000';
+    }
+    return this.mask;
+  }
+
+  get effectivePlaceholder(): string {
+    if (this.type === 'ssn' && !this.placeholder) {
+      return '___-__-____';
+    }
+    return this.placeholder;
   }
 }

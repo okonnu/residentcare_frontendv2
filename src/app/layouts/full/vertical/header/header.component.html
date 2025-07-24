@@ -78,12 +78,12 @@
   <!-- --------------------------------------------------------------- -->
   <button mat-fab extended color="inherit" [matMenuTriggerFor]="profileMenu" aria-label="Notifications">
     <div class="d-flex align-items-center">
-      <img src="/assets/images/profile/user5.jpg" class="rounded-circle object-cover" width="40" />
+      <img src="{{ residentService.resident().profilePicture || '/assets/images/profile/user5.jpg' }}" class="rounded-circle object-cover" width="40" />
 
       <div class="m-l-16 text-left d-none d-lg-flex">
         <div>
-          <h5 class="f-s-16">John Keen</h5>
-          <span class="f-s-14 mat-body-1">Resident</span>
+          <span class="f-s-14 mat-body-1">Selected Resident:</span>
+        <h5 class="f-s-16">{{ residentService.residentFullName() }}</h5>
         </div>
       </div>
     </div>
@@ -91,21 +91,8 @@
   <mat-menu #profileMenu="matMenu" xPosition="before" class="topbar-dd cardWithShadow">
     <ng-scrollbar class="position-relative" style="height: 495px">
       <div class="p-x-32 p-y-16">
-        <h6 class="f-s-16 f-w-600 m-0 mat-subtitle-1">User Profile</h6>
-
-        <div class="d-flex align-items-center p-b-24 b-b-1 m-t-16">
-          <img src="/assets/images/profile/user5.jpg" class="rounded-circle" width="95" />
-          <div class="m-l-16">
-            <h6 class="f-s-16 f-w-600 m-0 mat-subtitle-1">Mike Nielsen</h6>
-            <span class="f-s-14 mat-body-1 d-block m-b-4">Admin</span>
-            <span class="d-flex align-items-center">
-              <i-tabler name="mail" class="icon-15 m-r-4"></i-tabler>
-              info&#64;ResidentCare.co.ke
-            </span>
-          </div>
-        </div>
-      </div>
-      <div class="p-x-32 p-y-16">
+        <span class="f-s-14 mat-body-1">Selected Resident:</span>
+        <h5 class="f-s-16">{{ residentService.residentFullName() }}</h5>
         <button mat-menu-item class="p-x-0 p-y-12 d-flex align-items-center">
           <i-tabler name="settings" class="icon-18 m-r-16"></i-tabler> Event Log
         </button>
