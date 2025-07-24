@@ -1,0 +1,145 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="card-title">Enhanced Card Form Examples with Custom Validators</h4>
+          <p class="card-subtitle">
+            Demonstrating reactive forms with SSN masking, custom validation patterns, business rules, and professional error handling
+          </p>
+        </div>
+        <div class="card-body">
+          
+          <!-- Resident Information Card -->
+          <div class="row mb-4">
+            <div class="col-lg-6">
+              <card-form
+                title="Resident Information"
+                [dataSet]="residentData"
+                [editMode]="false"
+                [showEditButton]="true"
+                [showCancelButton]="true"
+                saveButtonText="Save Resident"
+                cancelButtonText="Cancel Changes"
+                editButtonText="Edit Resident"
+                (save)="onResidentSave($event)"
+                (cancel)="onResidentCancel()">
+              </card-form>
+            </div>
+            
+            <!-- Insurance Information Card -->
+            <div class="col-lg-6">
+              <card-form
+                title="Insurance Information"
+                [dataSet]="insuranceData"
+                [editMode]="false"
+                [showEditButton]="true"
+                [showCancelButton]="true"
+                saveButtonText="Save Insurance"
+                cancelButtonText="Cancel Changes"
+                editButtonText="Edit Insurance"
+                (save)="onInsuranceSave($event)"
+                (cancel)="onInsuranceCancel()">
+              </card-form>
+            </div>
+          </div>
+
+          <!-- Medical History Card -->
+          <div class="row mb-4">
+            <div class="col-lg-8">
+              <card-form
+                title="Medical History"
+                [dataSet]="medicalData"
+                [editMode]="false"
+                [showEditButton]="true"
+                [showCancelButton]="true"
+                saveButtonText="Save Medical Info"
+                cancelButtonText="Cancel Changes"
+                editButtonText="Edit Medical Info"
+                (save)="onMedicalSave($event)"
+                (cancel)="onMedicalCancel()">
+              </card-form>
+            </div>
+            
+            <!-- Feature Information Panel -->
+            <div class="col-lg-4">
+              <div class="card bg-light">
+                <div class="card-header">
+                  <h5 class="card-title mb-0">Enhanced Features</h5>
+                </div>
+                <div class="card-body">
+                  <ul class="list-unstyled mb-0">
+                    <li class="mb-2">
+                      <i class="ti ti-check text-success me-2"></i>
+                      <strong>Reactive Forms:</strong> Professional validation with real-time feedback
+                    </li>
+                    <li class="mb-2">
+                      <i class="ti ti-check text-success me-2"></i>
+                      <strong>Multiple Input Types:</strong> Text, email, phone, SSN, date, number, select, radio
+                    </li>
+                    <li class="mb-2">
+                      <i class="ti ti-check text-success me-2"></i>
+                      <strong>Custom Validators:</strong> SSN format (XXX-XX-XXXX), policy numbers, MRN patterns
+                    </li>
+                    <li class="mb-2">
+                      <i class="ti ti-check text-success me-2"></i>
+                      <strong>Smart Validation:</strong> Min/max length, numeric ranges, email patterns
+                    </li>
+                    <li class="mb-2">
+                      <i class="ti ti-check text-success me-2"></i>
+                      <strong>Error Handling:</strong> Consistent error display across all input types
+                    </li>
+                    <li class="mb-2">
+                      <i class="ti ti-check text-success me-2"></i>
+                      <strong>SSN Masking:</strong> Automatic formatting with NgxMask integration
+                    </li>
+                    <li class="mb-2">
+                      <i class="ti ti-check text-success me-2"></i>
+                      <strong>Dynamic Options:</strong> Select dropdowns and radio button groups
+                    </li>
+                    <li class="mb-2">
+                      <i class="ti ti-check text-success me-2"></i>
+                      <strong>Business Logic:</strong> Medical record numbers, insurance policy validation
+                    </li>
+                    <li class="mb-0">
+                      <i class="ti ti-check text-success me-2"></i>
+                      <strong>Event Handling:</strong> Save and cancel actions with comprehensive data validation
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Usage Examples -->
+          <div class="row">
+            <div class="col-12">
+              <div class="card bg-info text-white">
+                <div class="card-header">
+                  <h5 class="card-title mb-0 text-white">How to Use Enhanced Card Forms</h5>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <h6 class="text-white">1. Click Edit Button</h6>
+                      <p class="mb-0">Click the "Edit" button on any card to switch to edit mode with reactive forms and comprehensive validation.</p>
+                    </div>
+                    <div class="col-md-4">
+                      <h6 class="text-white">2. Test Validation Features</h6>
+                      <p class="mb-0">Try entering invalid data (wrong SSN format, invalid email, out-of-range numbers) to see real-time validation.</p>
+                    </div>
+                    <div class="col-md-4">
+                      <h6 class="text-white">3. Experience Smart Forms</h6>
+                      <p class="mb-0">Save button automatically disables until all validation requirements are met. Custom patterns ensure data integrity.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
