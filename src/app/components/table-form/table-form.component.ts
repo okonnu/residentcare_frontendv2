@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild, OnInit, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, OnInit, AfterViewInit, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../material.module';
@@ -7,6 +7,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 // Interface to define column configuration
 export interface TableColumn {
@@ -59,7 +60,6 @@ export class TableFormComponent implements OnInit, AfterViewInit {
     @Input() showEditButton: boolean = true;
     @Input() showDeleteButton: boolean = true;
     @Input() showViewButton: boolean = true;
-    @Input() allowInlineEdit: boolean = true;
 
     @Output() add = new EventEmitter<void>();
     @Output() edit = new EventEmitter<any>();
@@ -73,9 +73,11 @@ export class TableFormComponent implements OnInit, AfterViewInit {
 
     dataSource = new MatTableDataSource<any>([]);
     displayedColumns: string[] = [];
-    editingRow: any = null;
-    originalEditData: any = null;
+    currentMode: 'view' | 'edit' | 'add' = 'view';
+    selectedRecord: any = null;
+    originalRecordData: any = null;
     private _dataSet: any[] = [];
+    private _snackbar = inject(MatSnackBar);
 
     constructor() {
         // Initialize with empty array
@@ -112,36 +114,49 @@ export class TableFormComponent implements OnInit, AfterViewInit {
         this.dataSource.sort = this.sort;
     }
 
+    // Switch to view mode (table display)
+    switchToViewMode() {
+        this.currentMode = 'view';
+        this.selectedRecord = null;
+        this.originalRecordData = null;
+    }
+
+    // Start editing a specific record
     startEdit(row: any) {
-        // Store original data for cancellation
-        this.originalEditData = { ...row };
-        this.editingRow = row;
+        this.selectedRecord = { ...row }; // Clone the record
+        this.originalRecordData = { ...row }; // Store original for cancellation
+        this.currentMode = 'edit';
     }
 
-    saveEdit() {
-        if (!this.editingRow) return;
-
-        // Clone to avoid reference issues
-        const editedData = { ...this.editingRow };
-        this.save.emit(editedData);
-        this.cancelEdit();
+    // Start adding a new record
+    startAdd() {
+        this.selectedRecord = this.createBlankRecord();
+        this.originalRecordData = null; // No original data for new records
+        this.currentMode = 'add';
     }
 
-    cancelEdit() {
-        if (this.editingRow && this.originalEditData) {
-            // Restore original values
-            Object.keys(this.originalEditData).forEach(key => {
-                this.editingRow[key] = this.originalEditData[key];
-            });
+    // Save the record (either edited or new)
+    saveRecord() {
+        if (!this.selectedRecord) {
+            this._snackbar.open('No record selected', 'Close', { duration: 4000 });
+            return;
         }
+        // Emit the record
+        this.save.emit(this.selectedRecord);
+        this.switchToViewMode();
+    }
 
-        this.editingRow = null;
-        this.originalEditData = null;
+    // Cancel editing/adding and restore original data
+    cancelOperation() {
+        if (this.originalRecordData && this.currentMode === 'edit') {
+            this.selectedRecord = { ...this.originalRecordData };
+        }
+        this.switchToViewMode();
         this.cancel.emit();
     }
 
     addNew() {
-        this.add.emit();
+        this.startAdd();
     }
 
     viewRecord(row: any) {
@@ -149,7 +164,7 @@ export class TableFormComponent implements OnInit, AfterViewInit {
     }
 
     editRecord(row: any) {
-        this.edit.emit(row);
+        this.startEdit(row);
     }
 
     deleteRecord(row: any) {
@@ -158,12 +173,87 @@ export class TableFormComponent implements OnInit, AfterViewInit {
         }
     }
 
-    isEditing(row: any): boolean {
-        return this.editingRow === row;
+    // Helper method to create a blank record based on column configuration
+    private createBlankRecord(): any {
+        const blankRecord: any = {};
+
+        this.columns.forEach(column => {
+            if (!column.hidden && !column.hide) {
+                // Set default values based on data type
+                switch (column.dataType) {
+                    case 'text':
+                    case 'email':
+                    case 'tel':
+                    case 'ssn':
+                        blankRecord[column.key] = '';
+                        break;
+                    case 'number':
+                        blankRecord[column.key] = null;
+                        break;
+                    case 'date':
+                        blankRecord[column.key] = '';
+                        break;
+                    case 'select':
+                    case 'radio':
+                        blankRecord[column.key] = '';
+                        break;
+                    case 'custom':
+                        // Handle custom fields
+                        if (column.key === 'bloodPressure') {
+                            blankRecord['systolicBP'] = null;
+                            blankRecord['diastolicBP'] = null;
+                        } else {
+                            blankRecord[column.key] = '';
+                        }
+                        break;
+                    default:
+                        blankRecord[column.key] = '';
+                }
+            }
+        });
+
+        return blankRecord;
     }
 
     // Utility method to get value from nested property path (e.g., 'user.name')
     getPropertyValue(obj: any, path: string): any {
         return path.split('.').reduce((o, key) => (o && o[key] !== undefined ? o[key] : null), obj);
+    }
+
+    // Helper methods for template
+    get isViewMode(): boolean {
+        return this.currentMode === 'view';
+    }
+
+    get isEditMode(): boolean {
+        return this.currentMode === 'edit';
+    }
+
+    get isAddMode(): boolean {
+        return this.currentMode === 'add';
+    }
+
+    get isFormMode(): boolean {
+        return this.currentMode === 'edit' || this.currentMode === 'add';
+    }
+
+    get formTitle(): string {
+        switch (this.currentMode) {
+            case 'add': return `Add New ${this.title}`;
+            case 'edit': return `Edit ${this.title}`;
+            default: return this.title;
+        }
+    }
+
+    get formSubtitle(): string {
+        switch (this.currentMode) {
+            case 'add': return 'Adding new record';
+            case 'edit': return 'Editing selected record';
+            default: return this.subtitle;
+        }
+    }
+
+    get saveButtonText(): string {
+        return this.currentMode === 'add' ? 'Add Record' : 'Save Changes';
     }
 }

@@ -20,28 +20,17 @@ import { Vital } from '../../models/vital.interface';
     ],
     template: `
     <div class="container-fluid">
-      <h2>Resident Vitals Records</h2>
-      <p>This example demonstrates how to use the table-form component with vital signs data.</p>
-      
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>Vitals Management</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <table-form
+      <table-form
             [title]="'Vital Signs'"
             [subtitle]="'Click on a record to edit'"
             [dataSet]="vitals"
             [columns]="columns"
             [idField]="'id'"
-            [allowInlineEdit]="true"
             (add)="handleAdd()"
             (edit)="handleEdit($event)"
             (delete)="handleDelete($event)"
             (save)="handleSave($event)">
           </table-form>
-        </mat-card-content>
-      </mat-card>
     </div>
   `
 })

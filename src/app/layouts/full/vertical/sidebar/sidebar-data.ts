@@ -109,16 +109,5 @@ export const navItems: NavItem[] = [
     bgcolor: 'accent',
     route: '/pages/vitals-table-example',
   },
-  {
-    displayName: 'Simple Table Example',
-    iconName: 'list',
-    bgcolor: 'accent',
-    route: '/pages/simple-table-example',
-  },
-  {
-    displayName: 'CDK Table Example',
-    iconName: 'table',
-    bgcolor: 'accent',
-    route: '/pages/cdk-table-example',
-  }
+  
 ];

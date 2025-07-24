@@ -8,23 +8,12 @@ import { TableFormComponent, TableColumn } from '../../components/table-form/tab
     imports: [CommonModule, TableFormComponent],
     template: `
     <div class="container-fluid">
-      <h2>Table Form Example</h2>
-      <p>This example demonstrates how to use the table-form component.</p>
-      
-      <div class="mb-3">
-        <pre>Number of records: {{ records.length }}</pre>
-        <button mat-raised-button color="primary" (click)="refreshData()">
-          Refresh Data
-        </button>
-      </div>
-      
       <table-form
         [title]="'Employee Records'"
         [subtitle]="'Click on the edit button to modify a record'"
         [dataSet]="employeeData"
         [columns]="columns"
         [idField]="'id'"
-        [allowInlineEdit]="true"
         (add)="handleAdd()"
         (edit)="handleEdit($event)"
         (delete)="handleDelete($event)"
@@ -88,13 +77,15 @@ export class TableFormExampleComponent implements OnInit, AfterViewInit {
         setTimeout(() => {
             console.log('After view init - Records:', this.employeeData.length);
         });
-    }    // Column definitions
+    }
+
+    // Column definitions
     columns: TableColumn[] = [
-        { key: 'id', title: 'ID', dataType: 'number', sortable: true, width: '70px' },
-        { key: 'name', title: 'Name', dataType: 'text', sortable: true },
-        { key: 'position', title: 'Position', dataType: 'text', sortable: true },
+        { key: 'id', title: 'ID', dataType: 'number', sortable: true, width: '70px', hidden: false },
+        { key: 'name', title: 'Name', dataType: 'text', sortable: true, hidden: false },
+        { key: 'position', title: 'Position', dataType: 'text', sortable: true, hidden: false },
         {
-            key: 'department', title: 'Department', dataType: 'select', sortable: true,
+            key: 'department', title: 'Department', dataType: 'select', sortable: true, hidden: false,
             options: [
                 { value: 'IT', label: 'IT' },
                 { value: 'HR', label: 'Human Resources' },
@@ -102,10 +93,10 @@ export class TableFormExampleComponent implements OnInit, AfterViewInit {
                 { value: 'Design', label: 'Design' }
             ]
         },
-        { key: 'salary', title: 'Salary', dataType: 'number', sortable: true },
-        { key: 'hireDate', title: 'Hire Date', dataType: 'date', sortable: true },
+        { key: 'salary', title: 'Salary', dataType: 'number', sortable: true, hidden: false },
+        { key: 'hireDate', title: 'Hire Date', dataType: 'date', sortable: true, hidden: false },
         {
-            key: 'status', title: 'Status', dataType: 'select', sortable: true,
+            key: 'status', title: 'Status', dataType: 'select', sortable: true, hidden: false,
             options: [
                 { value: 'active', label: 'Active' },
                 { value: 'inactive', label: 'Inactive' },
@@ -144,6 +135,7 @@ export class TableFormExampleComponent implements OnInit, AfterViewInit {
 
     handleSave(record: any) {
         console.log('Save record', record);
+        alert('Save/Add record action triggered' + JSON.stringify(record));
         // In a real app, you would call your service to update the record
         const index = this.records.findIndex(r => r.id === record.id);
         if (index !== -1) {
