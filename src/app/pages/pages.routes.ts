@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
-import { StarterComponent } from './starter/starter.component';
 import { VitalsComponent } from './vitals/vitals.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { FaceSheetComponent } from './face-sheet/face-sheet.component';
-
+import { TableFormExampleComponent } from './table-form-example/table-form-example.component';
+import { VitalsTableExampleComponent } from './vitals-table-example/vitals-table-example.component';
 export const PagesRoutes: Routes = [
   {
     path: '',
@@ -31,6 +31,20 @@ export const PagesRoutes: Routes = [
     component: FaceSheetComponent,
     data: {
       title: 'Resident Face Sheet',
+    },
+  },
+  {
+    path: 'table-form-example',
+    component: TableFormExampleComponent,
+    data: {
+      title: 'Table Form Example',
+    },
+  },
+  {
+    path: 'vitals-table-example',
+    component: VitalsTableExampleComponent,
+    data: {
+      title: 'Vitals Table Example',
     },
   },
 ];

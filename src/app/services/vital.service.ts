@@ -64,4 +64,50 @@ export class VitalService {
             .subscribe();
     }
 
+    updateResidentVital(vital: Vital): void {
+        this.isLoading.set(true);
+
+        this.http.put<any>(`${environment.apiUrl}/vital/${vital.id}`, vital)
+            .pipe(
+                tap(response => {
+                    this._snackBar.open('Vital record updated successfully', '', {
+                        duration: 3000,
+                        panelClass: ['success-snackbar']
+                    });
+                    this.getResidentVitals(); // Refresh the list after update
+                }),
+                catchError(error => {
+                    this._snackBar.open(`Error updating vital: ${error.message}`, '', {
+                        duration: 4000,
+                        panelClass: ['error-snackbar']
+                    });
+                    return of(null);
+                })
+            )
+            .subscribe();
+    }
+
+    deleteResidentVital(vitalId: string): void {
+        this.isLoading.set(true);
+
+        this.http.delete<any>(`${environment.apiUrl}/vital/${vitalId}`)
+            .pipe(
+                tap(response => {
+                    this._snackBar.open('Vital record deleted successfully', '', {
+                        duration: 3000,
+                        panelClass: ['success-snackbar']
+                    });
+                    this.getResidentVitals(); // Refresh the list after deletion
+                }),
+                catchError(error => {
+                    this._snackBar.open(`Error deleting vital: ${error.message}`, '', {
+                        duration: 4000,
+                        panelClass: ['error-snackbar']
+                    });
+                    return of(null);
+                })
+            )
+            .subscribe();
+    }
+
 }

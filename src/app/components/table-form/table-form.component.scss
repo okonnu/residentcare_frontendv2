@@ -1,0 +1,82 @@
+.table-form-container {
+  width: 100%;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+/* Force the table to display properly */
+table {
+  width: 100%;
+  display: table !important;
+}
+
+/* Ensure header and rows display correctly */
+.mat-mdc-header-row, .mat-mdc-row {
+  display: table-row !important;
+}
+
+/* Ensure header and data cells display correctly */
+.mat-mdc-header-cell, .mat-mdc-cell {
+  display: table-cell !important;
+  vertical-align: middle;
+}
+
+.hidden-column {
+  display: none !important;
+}
+
+.editing-row {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.actions-container {
+  white-space: nowrap;
+}
+
+.compact-form-field {
+  margin-bottom: -1.25em; /* Reduce extra spacing in table cells */
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.radio-button {
+  margin: 5px 0;
+}
+
+.no-data-message {
+  padding: 20px;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.6);
+  font-style: italic;
+}
+
+mat-card-title {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+mat-card-subtitle {
+  margin-bottom: 0;
+}
+
+/* Make cell content vertically centered */
+.mat-mdc-row .mat-mdc-cell {
+  vertical-align: middle;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .mat-column-actions {
+    width: 120px;
+  }
+
+  .compact-form-field {
+    width: 100%;
+    min-width: 100px;
+  }
+}
