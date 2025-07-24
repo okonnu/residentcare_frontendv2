@@ -182,9 +182,7 @@ export class FullComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('FullComponent logged in user: on init ', this.loggedinUser);
-    console.log('FullComponent userService: on init ', this.authService.getUserFromSessionStorage());
-  }
+   }
 
   ngOnDestroy() {
     this.layoutChangesSubscription.unsubscribe();

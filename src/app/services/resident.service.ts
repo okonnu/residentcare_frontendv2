@@ -1,41 +1,39 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, of, tap } from 'rxjs';
 import { environment } from 'src/environments/environment.production';
 import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root'
 })
-export class SearchResidentServicesService {
-  // Signal to hold search results
-  searchResults! : any[]
-  // Signal to track loading state
+export class ResidentService {
+  private http = inject(HttpClient);
+  private router = inject(Router);
+  private _snackBar = inject(MatSnackBar);
+  searchResults!: any[]
   isLoading = signal<boolean>(false);
-  private CONTEXT = {};
   resident = signal<any>({});
 
-  constructor(private http: HttpClient, private router: Router) {}
-
   searchResident(query: string): void {
-    console.log("searching ........")
-    this.isLoading.set(true); // Set loading to true
-    
-    // Create request body with the search query
+    this.isLoading.set(true);
+
     const requestBody = {
       searchString: query
     };
-    
+
     this.http.post<any[]>(`${environment.apiUrl}/resident/search`, requestBody)
       .pipe(
         tap(response => {
-          console.log("search complete .....")
-          console.log(response)
           this.searchResults = response || []; // Extract data from RestResponse
           this.isLoading.set(false); // Set loading to false on success
         }),
         catchError(error => {
-          console.error('Error during search:', error);
+          this._snackBar.open(error.message, '', {
+            duration: 4000,
+            panelClass: ['error-snackbar']
+          });
           this.searchResults = [] // Clear results on error
           this.isLoading.set(false); // Set loading to false on error
           return of([]); // Return an empty observable to prevent the error from propagating
@@ -86,5 +84,5 @@ export class SearchResidentServicesService {
       )
       .subscribe(); // Subscribe to initiate the HTTP request
   }
-  
+
 }
