@@ -1,27 +1,229 @@
-<div class="row">
-  <div class="col-12 col-md-6">
-    <card-form [image]="image" [dataSet]="personalInfo" [title]="'Personal Information'"></card-form>
+<div class="container-fluid">
+  <!-- Personal Information and Demographics Row -->
+  <div class="row">
+    <!-- Personal Information Card -->
+    <div class="col-12 col-lg-6">
+      <card-form
+        title="Personal Information"
+        [dataSet]="personalInfo()"
+        [editMode]="false"
+        [showEditButton]="true"
+        [showCancelButton]="true"
+        saveButtonText="Save Personal Info"
+        cancelButtonText="Cancel Changes"
+        editButtonText="Edit Personal Info"
+        (save)="onPersonalInfoSave($event)"
+        (cancel)="onCancel()">
+      </card-form>
+    </div>
+
+    <!-- Demographics Card -->
+    <div class="col-12 col-lg-6">
+      <card-form
+        title="Demographics & Admission"
+        [dataSet]="demographicsInfo()"
+        [editMode]="false"
+        [showEditButton]="true"
+        [showCancelButton]="true"
+        saveButtonText="Save Demographics"
+        cancelButtonText="Cancel Changes"
+        editButtonText="Edit Demographics"
+        (save)="onDemographicsSave($event)"
+        (cancel)="onCancel()">
+      </card-form>
+    </div>
   </div>
-  <div class="col-12 col-md-6">
-    <card-form [dataSet]="contactInfo" [title]="'Contact Information'"></card-form>
-    <card-form [dataSet]="insuranceFinancialInfo" [title]="'Insurance & Financial Information'"></card-form>
+
+  <!-- Medical & Legal Status and Facility Information Row -->
+  <div class="row">
+    <!-- Medical & Legal Status Card -->
+    <div class="col-12 col-lg-6">
+      <card-form
+        title="Medical & Legal Status"
+        [dataSet]="medicalLegalStatus()"
+        [editMode]="false"
+        [showEditButton]="true"
+        [showCancelButton]="true"
+        saveButtonText="Save Medical Status"
+        cancelButtonText="Cancel Changes"
+        editButtonText="Edit Medical Status"
+        (save)="onMedicalLegalSave($event)"
+        (cancel)="onCancel()">
+      </card-form>
+    </div>
+
+    <!-- Facility Information Card -->
+    <div class="col-12 col-lg-6">
+      <card-form
+        title="Facility Information"
+        [dataSet]="facilityInfo()"
+        [editMode]="false"
+        [showEditButton]="true"
+        [showCancelButton]="true"
+        saveButtonText="Save Facility Info"
+        cancelButtonText="Cancel Changes"
+        editButtonText="Edit Facility Info"
+        (save)="onFacilitySave($event)"
+        (cancel)="onCancel()">
+      </card-form>
+    </div>
   </div>
-  <div class="col-12 col-md-6">
-    <card-form [dataSet]="medicalLegalStatus" [title]="'Medical & Legal Status'"></card-form>
+
+  <!-- Primary Care Physicians Table -->
+  <div class="row">
+          <table-form
+            [title]="'Primary Care Physicians'"
+            [subtitle]="'Manage primary care physician information'"
+            [dataSet]="primaryCarePhysicians()"
+            [columns]="physicianColumns"
+            [idField]="'id'"
+            [showAddButton]="true"
+            [showEditButton]="true"
+            [showDeleteButton]="true"
+            [showViewButton]="true"
+            (save)="handlePhysicianSave($event)"
+            (delete)="handlePhysicianDelete($event)"
+            (view)="handlePhysicianView($event)"
+            (cancel)="handleCancel()">
+          </table-form>
   </div>
-  <div class="col-12 col-md-6">
-    <card-form [dataSet]="responsiblePartyContacts" [title]="'Responsible Party & Emergency Contacts'"></card-form>
+
+  <!-- Allergies Table -->
+  <div class="row">
+          <table-form
+            [title]="'Allergies'"
+            [subtitle]="'Manage resident allergy information'"
+            [dataSet]="allergies()"
+            [columns]="allergyColumns"
+            [idField]="'id'"
+            [showAddButton]="true"
+            [showEditButton]="true"
+            [showDeleteButton]="true"
+            [showViewButton]="true"
+            (save)="handleAllergySave($event)"
+            (delete)="handleAllergyDelete($event)"
+            (view)="handleAllergyView($event)"
+            (cancel)="handleCancel()">
+          </table-form>
   </div>
-  <div class="col-12 col-md-6">
-    <card-form [dataSet]="legalDocumentsDecisionMakers" [title]="'Legal Documents & Decision Makers'"></card-form>
+
+  <!-- Service Providers and Pharmacy Row -->
+  <div class="row">
+          <table-form
+            [title]="'Service Providers'"
+            [subtitle]="'Manage healthcare service providers'"
+            [dataSet]="serviceProviders()"
+            [columns]="serviceProviderColumns"
+            [idField]="'id'"
+            [showAddButton]="true"
+            [showEditButton]="true"
+            [showDeleteButton]="true"
+            [showViewButton]="true"
+            (save)="handleServiceProviderSave($event)"
+            (delete)="handleServiceProviderDelete($event)"
+            (view)="handleServiceProviderView($event)"
+            (cancel)="handleCancel()">
+          </table-form>
+    </div>
+
+    <!-- Pharmacy Information Card -->
+  <div class="row">
+    <div class="col-12 col-lg-4">
+      <card-form
+        title="Pharmacy Information"
+        [dataSet]="pharmacyInfo()"
+        [editMode]="false"
+        [showEditButton]="true"
+        [showCancelButton]="true"
+        saveButtonText="Save Pharmacy"
+        cancelButtonText="Cancel Changes"
+        editButtonText="Edit Pharmacy"
+        (save)="onPharmacySave($event)"
+        (cancel)="onCancel()">
+      </card-form>
+    </div>
   </div>
-  <div class="col-12 col-md-6">
-    <card-form [dataSet]="physicianCareTeamInfo" [title]="'Physician & Care Team Information'"></card-form>
+
+  <!-- Documents and Insurance Section -->
+  <div class="row">
+    <div class="col-12 col-lg-6">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Documents</h5>
+        </div>
+        <div class="card-body">
+          <div *ngIf="resident().documents && resident().documents.length > 0; else noDocuments">
+            <div class="list-group">
+              <div class="list-group-item" *ngFor="let document of resident().documents">
+                <div class="d-flex w-100 justify-content-between">
+                  <h6 class="mb-1">{{document.name}}</h6>
+                  <small>{{document.type}}</small>
+                </div>
+                <small>Uploaded: {{document.uploadDate | date}}</small>
+              </div>
+            </div>
+          </div>
+          <ng-template #noDocuments>
+            <p class="text-muted mb-0">No documents currently uploaded.</p>
+          </ng-template>
+          <button mat-raised-button color="primary" class="mt-3">
+            <mat-icon>upload_file</mat-icon>
+            Upload Document
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Insurance Information</h5>
+        </div>
+        <div class="card-body">
+          <div *ngIf="resident().insurances && resident().insurances.length > 0; else noInsurance">
+            <div class="list-group">
+              <div class="list-group-item" *ngFor="let insurance of resident().insurances">
+                <div class="d-flex w-100 justify-content-between">
+                  <h6 class="mb-1">{{insurance.provider}}</h6>
+                  <small>Policy: {{insurance.policyNumber}}</small>
+                </div>
+                <p class="mb-1">Group: {{insurance.groupNumber}}</p>
+                <small>Effective: {{insurance.effectiveDate | date}} - {{insurance.expirationDate | date}}</small>
+              </div>
+            </div>
+          </div>
+          <ng-template #noInsurance>
+            <p class="text-muted mb-0">No insurance information available.</p>
+          </ng-template>
+          <button mat-raised-button color="primary" class="mt-3">
+            <mat-icon>add</mat-icon>
+            Add Insurance
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="col-12 col-md-6">
-    <card-form [dataSet]="facilityInfo" [title]="'Facility Information'"></card-form>
+
+  <!-- Action Buttons -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body text-center">
+          <button mat-raised-button color="primary" class="me-2">
+            <mat-icon>print</mat-icon>
+            Print Face Sheet
+          </button>
+          <button mat-raised-button color="accent" class="me-2">
+            <mat-icon>download</mat-icon>
+            Export PDF
+          </button>
+          <button mat-raised-button color="warn">
+            <mat-icon>email</mat-icon>
+            Email Face Sheet
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="col-12 col-md-6">
-    <card-form [dataSet]="additionalNotesDocuments" [title]="'Additional Notes & Documents'"></card-form>
-  </div>
+
 </div>

@@ -4,7 +4,7 @@ import { Validators } from '@angular/forms';
 import { TableFormComponent, TableColumn } from '../../components/table-form/table-form.component';
 
 @Component({
-    selector: 'app-table-form-example',
+    selector: 'table-form-example',
     standalone: true,
     imports: [CommonModule, TableFormComponent],
     template: `

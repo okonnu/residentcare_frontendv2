@@ -109,5 +109,22 @@ export const navItems: NavItem[] = [
     bgcolor: 'accent',
     route: '/pages/vitals-table-example',
   },
-  
+  {
+    displayName: 'Card Form Example',
+    iconName: 'Card Form',
+    bgcolor: 'accent',
+    route: '/pages/card-form-example',
+  },
+  {
+    displayName: 'Enhanced Table Form Example',
+    iconName: 'table',
+    bgcolor: 'accent',
+    route: '/pages/enhanced-table-form-example',
+  },
+  {
+    displayName: 'Enhanced Form Input Examples',
+    iconName: 'input',
+    bgcolor: 'accent',
+    route: '/pages/enhanced-form-input-examples',
+  }
 ];

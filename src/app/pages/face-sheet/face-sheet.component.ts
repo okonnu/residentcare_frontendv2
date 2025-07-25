@@ -1,520 +1,436 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, computed, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Validators } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
 import { CardFormComponent, Structure } from '../../components/card-form/card-form.component';
+import { TableColumn, TableFormComponent } from '../../components/table-form/table-form.component';
+import { ResidentService } from 'src/app/services/resident.service';
+import { Resident } from '../../models/resident.interface';
 
 @Component({
   selector: 'face-sheet',
   templateUrl: './face-sheet.component.html',
   standalone: true,
-  imports: [MaterialModule, CardFormComponent],
+  imports: [CommonModule, MaterialModule, CardFormComponent, TableFormComponent],
   styleUrls: ['./face-sheet.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
 export class FaceSheetComponent {
-  image = 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2';
- 
-     personalInfo: Structure[] = [
-    {
-      color: 'primary',
-      title: 'Full Name',
-      icon: 'assets/images/svgs/icon-user.svg',
-      value: 'John Doe',
-      dataType: 'text'
-    },
-    {
-      color: 'primary',
-      title: 'Date of Birth (DOB)',
-      icon: 'assets/images/svgs/icon-calendar.svg',
-      value: 'January 1, 1980',
-      dataType: 'date'
-    },
-    {
-      color: 'primary',
-      title: 'Gender',
-      icon: 'assets/images/svgs/icon-gender.svg',
-      value: 'Male',
-      dataType: 'select',
-      options: [
-        {value: 'Male', label: 'Male'},
-        {value: 'Female', label: 'Female'},
-        {value: 'Other', label: 'Other'},
-        {value: 'Prefer not to say', label: 'Prefer not to say'}
-      ]
-    },
-    {
-      color: 'primary',
-      title: 'Social Security Number (SSN)',
-      icon: 'assets/images/svgs/icon-ssn.svg',
-      value: '123-45-6789',
-      dataType: 'ssn'
-    },
-    {
-      color: 'primary',
-      title: 'Marital Status',
-      icon: 'assets/images/svgs/icon-marital-status.svg',
-      value: 'Single',
-      dataType: 'select',
-      options: [
-        {value: 'Single', label: 'Single'},
-        {value: 'Married', label: 'Married'},
-        {value: 'Divorced', label: 'Divorced'},
-        {value: 'Widowed', label: 'Widowed'},
-        {value: 'Separated', label: 'Separated'}
-      ]
-    },
-    {
-      color: 'primary',
-      title: 'Primary Language',
-      icon: 'assets/images/svgs/icon-language.svg',
-      value: 'English',
-      dataType: 'select',
-      options: [
-        {value: 'English', label: 'English'},
-        {value: 'Spanish', label: 'Spanish'},
-        {value: 'French', label: 'French'},
-        {value: 'Other', label: 'Other'}
-      ]
-    },
-    {
-      color: 'primary',
-      title: 'Religion',
-      icon: 'assets/images/svgs/icon-religion.svg',
-      value: 'Christianity',
-      dataType: 'select',
-      options: [
-        {value: 'Christianity', label: 'Christianity'},
-        {value: 'Judaism', label: 'Judaism'},
-        {value: 'Islam', label: 'Islam'},
-        {value: 'Hinduism', label: 'Hinduism'},
-        {value: 'Buddhism', label: 'Buddhism'},
-        {value: 'None', label: 'None'},
-        {value: 'Other', label: 'Other'}
-      ]
-    },
-    {
-      color: 'primary',
-      title: 'Veteran Status',
-      icon: 'assets/images/svgs/icon-veteran.svg',
-      value: 'Not a Veteran',
-      dataType: 'radio',
-      options: [
-        {value: 'Veteran', label: 'Veteran'},
-        {value: 'Not a Veteran', label: 'Not a Veteran'}
-      ]
-    },
-    {
-      color: 'primary',
-      title: 'Ethnicity/Race',
-      icon: 'assets/images/svgs/icon-ethnicity.svg',
-      value: 'Caucasian',
-      dataType: 'select',
-      options: [
-        {value: 'Caucasian', label: 'Caucasian'},
-        {value: 'African American', label: 'African American'},
-        {value: 'Hispanic', label: 'Hispanic'},
-        {value: 'Asian', label: 'Asian'},
-        {value: 'Native American', label: 'Native American'},
-        {value: 'Pacific Islander', label: 'Pacific Islander'},
-        {value: 'Other', label: 'Other'}
-      ]
-    },
-    {
-      color: 'primary',
-      title: 'Photo of Resident',
-      icon: 'assets/images/svgs/icon-photo.svg',
-      value: 'path/to/photo.jpg',
-      dataType: 'image'
-    },
+  private residentService = inject(ResidentService);
+
+  // Get resident data from the service signal
+  resident = computed(() => this.residentService.resident() as Resident);
+
+  // Personal Information Card
+  personalInfo = computed(() => {
+    const residentData = this.resident();
+    if (!residentData) return [];
+
+    return [
+      {
+        title: 'First Name',
+        value: residentData.firstName || '',
+        dataType: 'text',
+        required: true,
+        validators: [Validators.required, Validators.minLength(2)]
+      },
+      {
+        title: 'Last Name',
+        value: residentData.lastName || '',
+        dataType: 'text',
+        required: true,
+        validators: [Validators.required, Validators.minLength(2)]
+      },
+      {
+        title: 'Email',
+        value: residentData.email || '',
+        dataType: 'email',
+        required: false,
+        validators: [Validators.email]
+      },
+      {
+        title: 'Date of Birth',
+        value: residentData.dateOfBirth ? new Date(residentData.dateOfBirth).toISOString().split('T')[0] : '',
+        dataType: 'date',
+        required: true,
+        validators: [Validators.required]
+      },
+      {
+        title: 'Sex at Birth',
+        value: residentData.sexAtBirth || '',
+        dataType: 'select',
+        required: true,
+        validators: [Validators.required],
+        options: [
+          { value: 'Male', label: 'Male' },
+          { value: 'Female', label: 'Female' },
+          { value: 'Other', label: 'Other' }
+        ]
+      },
+      {
+        title: 'Social Security Number',
+        value: residentData.socialSecurityNumber || '',
+        dataType: 'ssn',
+        required: true,
+        validators: [Validators.required, Validators.pattern(/^\d{3}-\d{2}-\d{4}$/)]
+      }
+    ] as Structure[];
+  });
+
+  // Demographics & Admission Information
+  demographicsInfo = computed(() => {
+    const residentData = this.resident();
+    if (!residentData) return [];
+
+    return [
+      {
+        title: 'Marital Status',
+        value: residentData.maritalStatus || '',
+        dataType: 'select',
+        required: false,
+        options: [
+          { value: 'Single', label: 'Single' },
+          { value: 'Married', label: 'Married' },
+          { value: 'Divorced', label: 'Divorced' },
+          { value: 'Widowed', label: 'Widowed' },
+          { value: 'Separated', label: 'Separated' }
+        ]
+      },
+      {
+        title: 'Religion',
+        value: residentData.religion || '',
+        dataType: 'text',
+        required: false
+      },
+      {
+        title: 'Primary Language',
+        value: residentData.primaryLanguage || '',
+        dataType: 'text',
+        required: false
+      },
+      {
+        title: 'Ethnicity',
+        value: residentData.ethnicity || '',
+        dataType: 'text',
+        required: false
+      },
+      {
+        title: 'Date of Admission',
+        value: residentData.dateOfAdmission ? new Date(residentData.dateOfAdmission).toISOString().split('T')[0] : '',
+        dataType: 'date',
+        required: true,
+        validators: [Validators.required]
+      },
+      {
+        title: 'Medical Power of Attorney',
+        value: residentData.medicalPowerOfAttorney || '',
+        dataType: 'text',
+        required: false
+      }
+    ] as Structure[];
+  });
+
+  // Medical & Legal Status
+  medicalLegalStatus = computed(() => {
+    const residentData = this.resident();
+    if (!residentData?.medicalAndLegalStatus) return [];
+
+    const status = residentData.medicalAndLegalStatus;
+    return [
+      {
+        title: 'Full Code',
+        value: status.fullCode ? 'Yes' : 'No',
+        dataType: 'radio',
+        required: true,
+        options: [
+          { value: 'Yes', label: 'Yes' },
+          { value: 'No', label: 'No' }
+        ]
+      },
+      {
+        title: 'DNR (Do Not Resuscitate)',
+        value: status.dnr ? 'Yes' : 'No',
+        dataType: 'radio',
+        required: true,
+        options: [
+          { value: 'Yes', label: 'Yes' },
+          { value: 'No', label: 'No' }
+        ]
+      },
+      {
+        title: 'DNI (Do Not Intubate)',
+        value: status.dni ? 'Yes' : 'No',
+        dataType: 'radio',
+        required: true,
+        options: [
+          { value: 'Yes', label: 'Yes' },
+          { value: 'No', label: 'No' }
+        ]
+      },
+      {
+        title: 'Comfort Measures',
+        value: status.comfortMeasures ? 'Yes' : 'No',
+        dataType: 'radio',
+        required: true,
+        options: [
+          { value: 'Yes', label: 'Yes' },
+          { value: 'No', label: 'No' }
+        ]
+      }
+    ] as Structure[];
+  });
+
+  // Facility Information
+  facilityInfo = computed(() => {
+    const residentData = this.resident();
+    if (!residentData?.facility) return [];
+
+    const facility = residentData.facility;
+    return [
+      {
+        title: 'Facility Name',
+        value: facility.name || '',
+        dataType: 'text',
+        required: true,
+        validators: [Validators.required]
+      },
+      {
+        title: 'Facility Phone',
+        value: facility.contactInfo?.phoneNumber || '',
+        dataType: 'tel',
+        required: true,
+        validators: [Validators.required]
+      },
+      {
+        title: 'Facility Address',
+        value: facility.contactInfo ?
+          `${facility.contactInfo.street}, ${facility.contactInfo.city}, ${facility.contactInfo.state} ${facility.contactInfo.zipCode}` : '',
+        dataType: 'text',
+        required: true,
+        validators: [Validators.required]
+      },
+      {
+        title: 'Room Number',
+        value: facility.roomNumber || '',
+        dataType: 'text',
+        required: false
+      },
+      {
+        title: 'Level of Care',
+        value: facility.levelOfCare || '',
+        dataType: 'select',
+        required: false,
+        options: [
+          { value: 'Skilled Nursing', label: 'Skilled Nursing' },
+          { value: 'Assisted Living', label: 'Assisted Living' },
+          { value: 'Memory Care', label: 'Memory Care' },
+          { value: 'Rehabilitation', label: 'Rehabilitation' }
+        ]
+      }
+    ] as Structure[];
+  });
+
+  // Pharmacy Information
+  pharmacyInfo = computed(() => {
+    const residentData = this.resident();
+    if (!residentData) return [];
+
+    return [
+      {
+        title: 'Preferred Pharmacy',
+        value: residentData.preferredPharmacy || '',
+        dataType: 'text',
+        required: false
+      }
+    ] as Structure[];
+  });
+
+  // Primary Care Physicians data
+  primaryCarePhysicians = computed(() => {
+    const residentData = this.resident();
+    if (!residentData?.primaryCarePhysician) return [];
+
+    return residentData.primaryCarePhysician.map(physician => ({
+      id: physician.id,
+      physicianName: `Dr. ${physician.firstName} ${physician.lastName}`,
+      email: physician.email,
+      phone: physician.contactInfo?.phoneNumber || '',
+      specialization: physician.specialization,
+      hospital: physician.hospital,
+      address: physician.contactInfo ?
+        `${physician.contactInfo.street}, ${physician.contactInfo.city}, ${physician.contactInfo.state} ${physician.contactInfo.zipCode}` : ''
+    }));
+  });
+
+  // Column definitions for physicians table
+  physicianColumns: TableColumn[] = [
+    { key: 'physicianName', title: 'Physician Name', dataType: 'text', required: true, validators: [Validators.required] },
+    { key: 'email', title: 'Email', dataType: 'email', required: true, validators: [Validators.required, Validators.email] },
+    { key: 'phone', title: 'Phone', dataType: 'tel', required: true, validators: [Validators.required] },
+    { key: 'specialization', title: 'Specialization', dataType: 'text', required: false },
+    { key: 'hospital', title: 'Hospital', dataType: 'text', required: false },
+    { key: 'address', title: 'Address', dataType: 'text', required: false }
   ];
-  
-  contactInfo: Structure[] = [
+
+  // Allergies data
+  allergies = computed(() => {
+    const residentData = this.resident();
+    if (!residentData?.allergy) return [];
+
+    return residentData.allergy.map(allergy => ({
+      id: allergy.id,
+      allergyName: allergy.name,
+      description: allergy.description || '',
+      reaction: allergy.reaction || '',
+      severity: allergy.severity || ''
+    }));
+  });
+
+  // Column definitions for allergies table
+  allergyColumns: TableColumn[] = [
+    { key: 'allergyName', title: 'Allergy Name', dataType: 'text', required: true, validators: [Validators.required] },
+    { key: 'description', title: 'Description', dataType: 'text', required: false },
+    { key: 'reaction', title: 'Reaction', dataType: 'text', required: false },
     {
-      color: 'primary',
-      title: 'Primary Address (Facility/Home)',
-      icon: 'assets/images/svgs/icon-address.svg',
-      value: '123 Main St, Anytown, USA',
-      dataType: 'text'
-    },
-    {
-      color: 'primary',
-      title: 'Phone Number',
-      icon: 'assets/images/svgs/icon-phone.svg',
-      value: '(123) 456-7890',
-      dataType: 'tel'
-    },
-    {
-      color: 'primary',
-      title: 'Email Address (if applicable)',
-      icon: 'assets/images/svgs/icon-email.svg',
-      value: 'john.doe@example.com',
-      dataType: 'email'
-    },
+      key: 'severity', title: 'Severity', dataType: 'select', required: false,
+      options: [
+        { value: 'Mild', label: 'Mild' },
+        { value: 'Moderate', label: 'Moderate' },
+        { value: 'Severe', label: 'Severe' },
+        { value: 'Life-threatening', label: 'Life-threatening' }
+      ]
+    }
   ];
-  
-  medicalLegalStatus: Structure[] = [
+
+  // Service providers data
+  serviceProviders = computed(() => {
+    const residentData = this.resident();
+    const providers = [];
+
+    // Add social worker if exists
+    if (residentData?.socialWorker) {
+      providers.push({
+        id: residentData.socialWorker.id,
+        providerType: 'Social Worker',
+        name: residentData.socialWorker.name,
+        phone: residentData.socialWorker.contactInfo?.phoneNumber || '',
+        address: residentData.socialWorker.contactInfo ?
+          `${residentData.socialWorker.contactInfo.street}, ${residentData.socialWorker.contactInfo.city}, ${residentData.socialWorker.contactInfo.state} ${residentData.socialWorker.contactInfo.zipCode}` : ''
+      });
+    }
+
+    // Add hospice if exists
+    if (residentData?.hospice) {
+      providers.push({
+        id: residentData.hospice.id,
+        providerType: 'Hospice Care',
+        name: residentData.hospice.name,
+        phone: residentData.hospice.contactInfo?.phoneNumber || '',
+        address: residentData.hospice.contactInfo ?
+          `${residentData.hospice.contactInfo.street}, ${residentData.hospice.contactInfo.city}, ${residentData.hospice.contactInfo.state} ${residentData.hospice.contactInfo.zipCode}` : ''
+      });
+    }
+
+    return providers;
+  });
+
+  // Column definitions for service providers table
+  serviceProviderColumns: TableColumn[] = [
     {
-      color: 'primary',
-      title: 'Primary Diagnosis',
-      icon: 'assets/images/svgs/icon-diagnosis.svg',
-      value: 'Hypertension',
-      dataType: 'text'
-    },
-    {
-      color: 'primary',
-      title: 'Secondary Diagnoses (if applicable)',
-      icon: 'assets/images/svgs/icon-diagnosis.svg',
-      value: 'Diabetes',
-      dataType: 'text'
-    },
-    {
-      color: 'primary',
-      title: 'Allergies (Food, Medications, Environmental)',
-      icon: 'assets/images/svgs/icon-allergy.svg',
-      value: 'Peanuts, Penicillin',
-      dataType: 'text'
-    },
-    {
-      color: 'primary',
-      title: 'DNR Status (Do Not Resuscitate)',
-      icon: 'assets/images/svgs/icon-dnr.svg',
-      value: 'Yes',
-      dataType: 'radio',
+      key: 'providerType', title: 'Provider Type', dataType: 'select', required: true,
+      validators: [Validators.required],
       options: [
-        {value: 'Yes', label: 'Yes'},
-        {value: 'No', label: 'No'}
+        { value: 'Social Worker', label: 'Social Worker' },
+        { value: 'Hospice Care', label: 'Hospice Care' },
+        { value: 'Physical Therapist', label: 'Physical Therapist' },
+        { value: 'Occupational Therapist', label: 'Occupational Therapist' },
+        { value: 'Speech Therapist', label: 'Speech Therapist' },
+        { value: 'Dietitian', label: 'Dietitian' }
       ]
     },
-    {
-      color: 'primary',
-      title: 'POLST (Physician Orders for Life-Sustaining Treatment)',
-      icon: 'assets/images/svgs/icon-polst.svg',
-      value: 'Yes',
-      dataType: 'radio',
-      options: [
-        {value: 'Yes', label: 'Yes'},
-        {value: 'No', label: 'No'}
-      ]
-    },
-    {
-      color: 'primary',
-      title: 'Code Status (Full Code, DNR, DNI, Comfort Measures Only)',
-      icon: 'assets/images/svgs/icon-code-status.svg',
-      value: 'DNR',
-      dataType: 'select',
-      options: [
-        {value: 'Full Code', label: 'Full Code'},
-        {value: 'DNR', label: 'DNR'},
-        {value: 'DNI', label: 'DNI'},
-        {value: 'Comfort Measures Only', label: 'Comfort Measures Only'}
-      ]
-    },
+    { key: 'name', title: 'Name', dataType: 'text', required: true, validators: [Validators.required] },
+    { key: 'phone', title: 'Phone', dataType: 'tel', required: true, validators: [Validators.required] },
+    { key: 'address', title: 'Address', dataType: 'text', required: false }
   ];
-  
-  insuranceFinancialInfo: Structure[] = [
-    {
-      color: 'primary',
-      title: 'Primary Insurance Provider (Medicare, Medicaid, Private)',
-      icon: 'assets/images/svgs/icon-insurance.svg',
-      value: 'Medicare',
-      dataType: 'select',
-      options: [
-        {value: 'Medicare', label: 'Medicare'},
-        {value: 'Medicaid', label: 'Medicaid'},
-        {value: 'Private', label: 'Private'},
-        {value: 'None', label: 'None'},
-        {value: 'Other', label: 'Other'}
-      ]
-    },
-    {
-      color: 'primary',
-      title: 'Policy Number & Group Number',
-      icon: 'assets/images/svgs/icon-policy.svg',
-      value: '123456789, Group 98765',
-      dataType: 'text'
-    },
-    {
-      color: 'primary',
-      title: 'Secondary Insurance (if applicable)',
-      icon: 'assets/images/svgs/icon-insurance.svg',
-      value: 'None',
-      dataType: 'select',
-      options: [
-        {value: 'Medicare', label: 'Medicare'},
-        {value: 'Medicaid', label: 'Medicaid'},
-        {value: 'Private', label: 'Private'},
-        {value: 'None', label: 'None'},
-        {value: 'Other', label: 'Other'}
-      ]
-    },
-    {
-      color: 'primary',
-      title: 'Medicaid ID (if applicable)',
-      icon: 'assets/images/svgs/icon-medicaid.svg',
-      value: 'None',
-      dataType: 'text'
-    },
-  ];
-  
-  responsiblePartyContacts: Structure[] = [
-    {
-      color: 'primary',
-      title: 'Primary Responsible Party (Spouse, Family Member, Guardian)',
-      icon: 'assets/images/svgs/icon-responsible-party.svg',
-      value: 'Jane Doe',
-      dataType: 'text'
-    },
-    {
-      color: 'primary',
-      title: 'Name',
-      icon: 'assets/images/svgs/icon-name.svg',
-      value: 'Jane Doe',
-      dataType: 'text'
-    },
-    {
-      color: 'primary',
-      title: 'Relationship',
-      icon: 'assets/images/svgs/icon-relationship.svg',
-      value: 'Spouse',
-      dataType: 'select',
-      options: [
-        {value: 'Spouse', label: 'Spouse'},
-        {value: 'Child', label: 'Child'},
-        {value: 'Sibling', label: 'Sibling'},
-        {value: 'Parent', label: 'Parent'},
-        {value: 'Guardian', label: 'Guardian'},
-        {value: 'Friend', label: 'Friend'},
-        {value: 'Other', label: 'Other'}
-      ]
-    },
-    {
-      color: 'primary',
-      title: 'Phone Number',
-      icon: 'assets/images/svgs/icon-phone.svg',
-      value: '(123) 456-7890',
-      dataType: 'tel'
-    },
-    {
-      color: 'primary',
-      title: 'Email Address',
-      icon: 'assets/images/svgs/icon-email.svg',
-      value: 'jane.doe@example.com',
-      dataType: 'email'
-    },
-    {
-      color: 'primary',
-      title: 'Address',
-      icon: 'assets/images/svgs/icon-address.svg',
-      value: '123 Main St, Anytown, USA',
-      dataType: 'text'
-    },
-    {
-      color: 'primary',
-      title: 'Secondary Emergency Contact',
-      icon: 'assets/images/svgs/icon-emergency-contact.svg',
-      value: 'John Smith',
-      dataType: 'text'
-    },
-    {
-      color: 'primary',
-      title: 'Tertiary Emergency Contact (if applicable)',
-      icon: 'assets/images/svgs/icon-emergency-contact.svg',
-      value: 'None',
-      dataType: 'text'
-    },
-  ];
-  
-  legalDocumentsDecisionMakers: Structure[] = [
-    {
-      color: 'primary',
-      title: 'Power of Attorney (POA)',
-      icon: 'assets/images/svgs/icon-poa.svg',
-      value: 'Jane Doe',
-      dataType: 'text'
-    },
-    {
-      color: 'primary',
-      title: 'Name',
-      icon: 'assets/images/svgs/icon-name.svg',
-      value: 'Jane Doe',
-      dataType: 'text'
-    },
-    {
-      color: 'primary',
-      title: 'Relationship',
-      icon: 'assets/images/svgs/icon-relationship.svg',
-      value: 'Spouse',
-      dataType: 'select',
-      options: [
-        {value: 'Spouse', label: 'Spouse'},
-        {value: 'Child', label: 'Child'},
-        {value: 'Sibling', label: 'Sibling'},
-        {value: 'Parent', label: 'Parent'},
-        {value: 'Guardian', label: 'Guardian'},
-        {value: 'Friend', label: 'Friend'},
-        {value: 'Other', label: 'Other'}
-      ]
-    },
-    {
-      color: 'primary',
-      title: 'Contact Information',
-      icon: 'assets/images/svgs/icon-contact.svg',
-      value: '(123) 456-7890, jane.doe@example.com',
-      dataType: 'text'
-    },
-    {
-      color: 'primary',
-      title: 'Type of POA (Medical, Financial, Both)',
-      icon: 'assets/images/svgs/icon-poa-type.svg',
-      value: 'Both',
-      dataType: 'select',
-      options: [
-        {value: 'Medical', label: 'Medical'},
-        {value: 'Financial', label: 'Financial'},
-        {value: 'Both', label: 'Both'}
-      ]
-    },
-    {
-      color: 'primary',
-      title: 'Medical Proxy (if different from POA)',
-      icon: 'assets/images/svgs/icon-medical-proxy.svg',
-      value: 'None',
-      dataType: 'text'
-    },
-    {
-      color: 'primary',
-      title: 'Legal Guardian (if applicable)',
-      icon: 'assets/images/svgs/icon-legal-guardian.svg',
-      value: 'None',
-      dataType: 'text'
-    },
-    {
-      color: 'primary',
-      title: 'PMA (Pre-Need Medical Authorization, if applicable)',
-      icon: 'assets/images/svgs/icon-pma.svg',
-      value: 'None',
-      dataType: 'text'
-    },
-    {
-      color: 'primary',
-      title: 'Advance Directives (uploaded or documented)',
-      icon: 'assets/images/svgs/icon-advance-directives.svg',
-      value: 'Uploaded',
-      dataType: 'radio',
-      options: [
-        {value: 'Uploaded', label: 'Uploaded'},
-        {value: 'Not Uploaded', label: 'Not Uploaded'}
-      ]
-    },
-  ];
-  
-  physicianCareTeamInfo: Structure[] = [
-    {
-      color: 'primary',
-      title: 'Primary Care Physician (PCP) Name',
-      icon: 'assets/images/svgs/icon-pcp.svg',
-      value: 'Dr. John Smith',
-      dataType: 'text'
-    },
-    {
-      color: 'primary',
-      title: 'PCP Contact Information',
-      icon: 'assets/images/svgs/icon-contact.svg',
-      value: '(123) 456-7890, dr.smith@example.com',
-      dataType: 'text'
-    },
-    {
-      color: 'primary',
-      title: 'Specialists (Cardiologist, Oncologist, etc.)',
-      icon: 'assets/images/svgs/icon-specialist.svg',
-      value: 'Dr. Jane Doe (Cardiologist)',
-      dataType: 'text'
-    },
-    {
-      color: 'primary',
-      title: 'Preferred Pharmacy & Contact',
-      icon: 'assets/images/svgs/icon-pharmacy.svg',
-      value: 'ABC Pharmacy, (123) 456-7890',
-      dataType: 'text'
-    },
-    {
-      color: 'primary',
-      title: 'Home Health/Hospice Agency Name & Contact',
-      icon: 'assets/images/svgs/icon-hospice.svg',
-      value: 'XYZ Hospice, (123) 456-7890',
-      dataType: 'text'
-    },
-    {
-      color: 'primary',
-      title: 'Case Manager or Social Worker Contact',
-      icon: 'assets/images/svgs/icon-case-manager.svg',
-      value: 'John Doe, (123) 456-7890',
-      dataType: 'text'
-    },
-  ];
-  
-  facilityInfo: Structure[] = [
-    {
-      color: 'primary',
-      title: 'Facility Name',
-      icon: 'assets/images/svgs/icon-facility.svg',
-      value: 'Sunrise Assisted Living',
-      dataType: 'text'
-    },
-    {
-      color: 'primary',
-      title: 'Room Number',
-      icon: 'assets/images/svgs/icon-room.svg',
-      value: '101',
-      dataType: 'number'
-    },
-    {
-      color: 'primary',
-      title: 'Admission Date',
-      icon: 'assets/images/svgs/icon-admission-date.svg',
-      value: 'January 1, 2020',
-      dataType: 'date'
-    },
-    {
-      color: 'primary',
-      title: 'Level of Care (Skilled Nursing, Memory Care, Hospice, etc.)',
-      icon: 'assets/images/svgs/icon-level-of-care.svg',
-      value: 'Skilled Nursing',
-      dataType: 'select',
-      options: [
-        {value: 'Skilled Nursing', label: 'Skilled Nursing'},
-        {value: 'Memory Care', label: 'Memory Care'},
-        {value: 'Hospice', label: 'Hospice'},
-        {value: 'Independent Living', label: 'Independent Living'},
-        {value: 'Assisted Living', label: 'Assisted Living'}
-      ]
-    },
-  ];
-  
-  additionalNotesDocuments: Structure[] = [
-    {
-      color: 'primary',
-      title: 'Uploaded Legal Documents (DNR, POA, Advance Directives, POLST, etc.)',
-      icon: 'assets/images/svgs/icon-documents.svg',
-      value: 'Uploaded',
-      dataType: 'radio',
-      options: [
-        {value: 'Uploaded', label: 'Uploaded'},
-        {value: 'Not Uploaded', label: 'Not Uploaded'}
-      ]
-    },
-    {
-      color: 'primary',
-      title: 'Behavioral Notes (if applicable)',
-      icon: 'assets/images/svgs/icon-behavioral-notes.svg',
-      value: 'None',
-      dataType: 'text'
-    },
-    {
-      color: 'primary',
-      title: 'Special Needs (e.g., Oxygen, Mobility Aid, Dietary Restrictions)',
-      icon: 'assets/images/svgs/icon-special-needs.svg',
-      value: 'Oxygen, Wheelchair',
-      dataType: 'text'
-    },
-  ];
+
+  // Event handlers for card-form saves
+  onPersonalInfoSave(data: any) {
+    console.log('Personal info saved:', data);
+    // Handle save logic - update resident data through service
+  }
+
+  onDemographicsSave(data: any) {
+    console.log('Demographics saved:', data);
+    // Handle save logic
+  }
+
+  onMedicalLegalSave(data: any) {
+    console.log('Medical/Legal status saved:', data);
+    // Handle save logic
+  }
+
+  onFacilitySave(data: any) {
+    console.log('Facility info saved:', data);
+    // Handle save logic
+  }
+
+  onPharmacySave(data: any) {
+    console.log('Pharmacy info saved:', data);
+    // Handle save logic
+  }
+
+  onCancel() {
+    console.log('Edit cancelled');
+  }
+
+  // Table form handlers
+  handlePhysicianSave(data: any) {
+    console.log('Physician saved:', data);
+    // Handle save logic
+  }
+
+  handlePhysicianDelete(id: any) {
+    console.log('Physician deleted:', id);
+    // Handle delete logic
+  }
+
+  handlePhysicianView(data: any) {
+    console.log('Physician viewed:', data);
+    // Handle view logic
+  }
+
+  handleAllergySave(data: any) {
+    console.log('Allergy saved:', data);
+    // Handle save logic
+  }
+
+  handleAllergyDelete(id: any) {
+    console.log('Allergy deleted:', id);
+    // Handle delete logic
+  }
+
+  handleAllergyView(data: any) {
+    console.log('Allergy viewed:', data);
+    // Handle view logic
+  }
+
+  handleServiceProviderSave(data: any) {
+    console.log('Service provider saved:', data);
+    // Handle save logic
+  }
+
+  handleServiceProviderDelete(id: any) {
+    console.log('Service provider deleted:', id);
+    // Handle delete logic
+  }
+
+  handleServiceProviderView(data: any) {
+    console.log('Service provider viewed:', data);
+    // Handle view logic
+  }
+
+  handleCancel() {
+    console.log('Table form action cancelled');
+  }
+
 }
