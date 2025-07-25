@@ -6,6 +6,8 @@ import { TableColumn, TableFormComponent } from '../../components/table-form/tab
 import { Vitals, VitalsChartOptions } from '../../models/vital.interface';
 import { VitalService } from '../../services/vital.service';
 import { NgApexchartsModule } from 'ng-apexcharts';
+import { MatDialog } from '@angular/material/dialog';
+import { AppSearchDialogComponent } from '../../layouts/full/vertical/header/header.component';
 
 @Component({
   selector: 'app-vitals',
@@ -17,10 +19,26 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 })
 export class VitalsComponent implements OnInit {
   private vitalService = inject(VitalService);
+  private dialog = inject(MatDialog);
 
   // Use the service signal directly - no need for computed copies
   vitalsData = this.vitalService.residentVitals;
   isLoading = this.vitalService.isLoading;
+
+  // Check if we have valid vitals data
+  hasVitalsData = computed(() => {
+    const vitals = this.vitalsData();
+    return vitals && vitals.length > 0;
+  });
+
+  // Method to open search dialog
+  openSearchDialog() {
+    const dialogRef = this.dialog.open(AppSearchDialogComponent);
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log(`Dialog result: ${result}`);
+    });
+  }
 
   // Minimal computed property that only adds date/time for table display
   vitalsTableData = computed(() => {

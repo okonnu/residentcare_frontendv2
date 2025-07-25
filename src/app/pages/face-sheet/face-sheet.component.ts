@@ -6,6 +6,8 @@ import { CardFormComponent, Structure } from '../../components/card-form/card-fo
 import { TableColumn, TableFormComponent } from '../../components/table-form/table-form.component';
 import { ResidentService } from 'src/app/services/resident.service';
 import { Resident } from '../../models/resident.interface';
+import { MatDialog } from '@angular/material/dialog';
+import { AppSearchDialogComponent } from '../../layouts/full/vertical/header/header.component';
 
 @Component({
   selector: 'face-sheet',
@@ -17,9 +19,28 @@ import { Resident } from '../../models/resident.interface';
 })
 export class FaceSheetComponent {
   private residentService = inject(ResidentService);
+  private dialog = inject(MatDialog);
 
   // Get resident data from the service signal
   resident = computed(() => this.residentService.resident() as Resident);
+
+  // Get loading state from the service
+  isLoading = computed(() => this.residentService.isLoading());
+
+  // Check if we have valid resident data
+  hasResidentData = computed(() => {
+    const residentData = this.resident();
+    return residentData && residentData.id && residentData.id.trim() !== '';
+  });
+
+  // Method to open search dialog
+  openSearchDialog() {
+    const dialogRef = this.dialog.open(AppSearchDialogComponent);
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log(`Dialog result: ${result}`);
+    });
+  }
 
   // Personal Information Card
   personalInfo = computed(() => {

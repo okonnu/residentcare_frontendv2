@@ -1,4 +1,33 @@
 <div class="container-fluid">
+  
+  <!-- Loading State - Full Page -->
+  @if (isLoading()) {
+    <div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+      <div class="text-center">
+        <mat-spinner diameter="64" class="mx-auto mb-4"></mat-spinner>
+        <h4 class="text-muted mb-2">Loading resident information...</h4>
+        <p class="text-muted">Please wait while we fetch the data.</p>
+      </div>
+    </div>
+  }
+  
+  <!-- No Data State - Full Page -->
+  @else if (!hasResidentData()) {
+    <div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+      <div class="text-center">
+        <mat-icon class="text-muted mb-4" style="font-size: 80px; height: 80px; width: 80px;">person_search</mat-icon>
+        <h3 class="text-muted mb-3">No data available</h3>
+        <p class="text-muted mb-4">Please search for a resident to view their information.</p>
+        <button mat-raised-button color="primary" (click)="openSearchDialog()">
+          <mat-icon class="me-2">search</mat-icon>
+          Search for Resident
+        </button>
+      </div>
+    </div>
+  }
+  
+  <!-- Content State - Show when we have resident data -->
+  @else {
   <!-- Personal Information and Demographics Row -->
   <div class="row">
     <!-- Personal Information Card -->
@@ -226,5 +255,7 @@
       </div>
     </div>
   </div>
+
+  } <!-- End of @else block for content state -->
 
 </div>

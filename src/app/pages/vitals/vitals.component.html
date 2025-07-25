@@ -1,4 +1,33 @@
 <div class="container-fluid">
+  
+  <!-- Loading State - Full Page -->
+  @if (isLoading()) {
+    <div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+      <div class="text-center">
+        <mat-spinner diameter="64" class="mx-auto mb-4"></mat-spinner>
+        <h4 class="text-muted mb-2">Loading vital signs...</h4>
+        <p class="text-muted">Please wait while we fetch the data.</p>
+      </div>
+    </div>
+  }
+  
+  <!-- No Data State - Full Page -->
+  @else if (!hasVitalsData()) {
+    <div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+      <div class="text-center">
+        <mat-icon class="text-muted mb-4" style="font-size: 80px; height: 80px; width: 80px;">monitor_heart</mat-icon>
+        <h3 class="text-muted mb-3">No data available</h3>
+        <p class="text-muted mb-4">Please search for a resident first.</p>
+        <button mat-raised-button color="primary" (click)="openSearchDialog()">
+          <mat-icon class="me-2">search</mat-icon>
+          Search for Resident
+        </button>
+      </div>
+    </div>
+  }
+  
+  <!-- Content State - Show when we have vitals data -->
+  @else {
    <!-- Quick Stats Cards -->
   <div class="row">
     <div class="col-12 col-md-6 col-lg-3">
@@ -216,35 +245,27 @@
           <h5 class="card-title mb-0">Vital Signs Records</h5>
         </div>
         <div class="card-body">
-          <!-- Loading state -->
-          @if (isLoading()) {
-            <div class="text-center p-4">
-              <mat-spinner diameter="50"></mat-spinner>
-              <p class="mt-2 text-muted">Loading vital signs data...</p>
-            </div>
-          } @else {
-            <table-form
-              [title]="'Vital Signs'"
-              [subtitle]="'Manage resident vital signs data'"
-              [dataSet]="vitalsTableData()"
-              [columns]="vitalsColumns"
-              [idField]="'id'"
-              [showAddButton]="true"
-              [showEditButton]="true"
-              [showDeleteButton]="true"
-              [showViewButton]="true"
-              (save)="handleVitalsSave($event)"
-              (delete)="handleVitalsDelete($event)"
+          <table-form
+            [title]="'Vital Signs'"
+            [subtitle]="'Manage resident vital signs data'"
+            [dataSet]="vitalsTableData()"
+            [columns]="vitalsColumns"
+            [idField]="'id'"
+            [showAddButton]="true"
+            [showEditButton]="true"
+            [showDeleteButton]="true"
+            [showViewButton]="true"
+            (save)="handleVitalsSave($event)"
+            (delete)="handleVitalsDelete($event)"
             (view)="handleVitalsView($event)"
             (cancel)="handleCancel()"
             style="overflow-x: auto; max-width: 100%;">
           </table-form>
-          }
         </div>
       </div>
     </div>
   </div>
 
- 
+  } <!-- End of @else block for content state -->
 
 </div>
