@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment.production';
 import { catchError, of, tap } from 'rxjs';
 import { ResidentService } from './resident.service';
-import { Vitals } from '../models/vital.interface';
+import { Vital } from '../models/vital.interface';
 import { RestResponse } from '../models/app.interface';
 import { SnackBarService } from './snackBar.service';
 
@@ -47,7 +47,7 @@ export class VitalService {
             .subscribe();
     }
 
-    createResidentVital(vital: Vitals): void {
+    createResidentVital(vital: Vital): void {
         this.isLoading.set(true);
         vital.residentId = this.residentId; // Ensure the resident ID is set
 
@@ -84,7 +84,7 @@ export class VitalService {
             .subscribe();
     }
 
-    updateResidentVital(vital: Vitals): void {
+    updateResidentVital(vital: Vital): void {
         this.isLoading.set(true);
 
         // Remove audit fields as they are read-only

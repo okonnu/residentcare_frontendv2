@@ -46,7 +46,6 @@ export class FaceSheetComponent {
   personalInfo = computed(() => {
     const residentData = this.resident();
     if (!residentData) return [];
-
     return [
       {
         title: 'First Name',

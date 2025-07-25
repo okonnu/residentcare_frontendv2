@@ -69,6 +69,8 @@ export class InputComponent implements ControlValueAccessor {
     email: 'Invalid email format',
     minlength: 'Minimum length not met',
     maxlength: 'Maximum length exceeded',
+    min: 'Value is below the minimum',
+    max: 'Value exceeds the maximum',
     pattern: 'Invalid format'
   };
 
@@ -111,7 +113,7 @@ export class InputComponent implements ControlValueAccessor {
 
   // Helper methods for template
   get isTextInput(): boolean {
-    return ['text', 'number', 'date', 'email', 'tel', 'password', 'url'].includes(this.type);
+    return ['text', 'number', 'date', 'email', 'tel', 'time', 'password', 'url'].includes(this.type);
   }
 
   get isSelectInput(): boolean {

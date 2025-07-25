@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Validators } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
 import { TableColumn, TableFormComponent } from '../../components/table-form/table-form.component';
-import { Vitals, VitalsChartOptions } from '../../models/vital.interface';
+import { Vital, VitalsChartOptions } from '../../models/vital.interface';
 import { VitalService } from '../../services/vital.service';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { MatDialog } from '@angular/material/dialog';
@@ -45,7 +45,7 @@ export class VitalsComponent implements OnInit {
     const vitals = this.vitalsData();
     if (!vitals || vitals.length === 0) return [];
 
-    return vitals.map((vital: Vitals) => ({
+    return vitals.map((vital: Vital) => ({
       ...vital, // Spread all existing properties
       date: vital.audit?.createdDate ? new Date(vital.audit.createdDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
       time: vital.audit?.createdDate ? new Date(vital.audit.createdDate).toLocaleTimeString() : new Date().toLocaleTimeString(),
@@ -55,7 +55,7 @@ export class VitalsComponent implements OnInit {
   // Column definitions for vitals table
   vitalsColumns: TableColumn[] = [
     { key: 'date', title: 'Date', dataType: 'date', required: true, validators: [Validators.required] },
-    { key: 'time', title: 'Time', dataType: 'text', required: true, validators: [Validators.required] },
+    { key: 'time', title: 'Time', dataType: 'time', required: true, validators: [Validators.required] },
     {
       key: 'temperature',
       title: 'Temperature (°F)',
@@ -345,7 +345,7 @@ export class VitalsComponent implements OnInit {
     }
 
     // Extract form data and create Vitals object
-    const vital: Vitals = {
+    const vital: Vital = {
       id: data.id || '', // Empty string for new records
       residentId: this.vitalService.residentId,
       temperature: parseFloat(data.temperature) || 0,
@@ -359,6 +359,7 @@ export class VitalsComponent implements OnInit {
       bmi: parseFloat(data.bmi) || 0,
       painScore: parseInt(data.painScore) || 0,
       bloodGlucoseLevel: parseFloat(data.bloodGlucoseLevel) || 0,
+      recordedAt: data.date ? new Date(`${data.date}T${data.time}`) : new Date(),
       audit: null, // Will be set by the backend
     };
 
