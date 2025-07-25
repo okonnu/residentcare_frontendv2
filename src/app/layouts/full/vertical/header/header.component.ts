@@ -4,6 +4,7 @@ import {
   EventEmitter,
   Input,
   ViewEncapsulation,
+  inject,
 } from '@angular/core';
 import { CoreService } from 'src/app/services/core.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -19,6 +20,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { ResidentService } from 'src/app/services/resident.service';
+import { Router } from '@angular/router';
 
 
 interface notifications {
@@ -55,6 +57,7 @@ export class HeaderComponent {
   @Output() toggleMobileNav = new EventEmitter<void>();
   @Output() toggleMobileFilterNav = new EventEmitter<void>();
   @Output() toggleCollapsed = new EventEmitter<void>();
+  private router = inject(Router);
 
   showFiller = false;
 
@@ -72,7 +75,7 @@ export class HeaderComponent {
     , public residentService: ResidentService
   ) {
     translate.setDefaultLang('en');
-  } 
+  }
 
   openDialog() {
     const dialogRef = this.dialog.open(AppSearchDialogComponent);
@@ -122,13 +125,17 @@ export class HeaderComponent {
 export class AppSearchDialogComponent {
   searchText: string = '';
   searchResults!: any[];
-
-  constructor(public searchService: ResidentService) { }
+  residentService = inject(ResidentService);
+  private router = inject(Router);
 
   searchResident(): void {
-    this.searchService.searchResident(this.searchText.trim());
-    this.searchResults = this.searchService.searchResults
+    this.residentService.searchResident(this.searchText.trim());
+    this.searchResults = this.residentService.searchResults
     console.log(this.searchResults)
+  }
+  selectResident(residentId: string): void {
+    this.residentService.getResidentDetails(residentId);
+    this.router.navigate(['pages/face-sheet']);
   }
 
 }
