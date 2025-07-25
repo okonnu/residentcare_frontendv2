@@ -3,7 +3,6 @@ import { VitalsComponent } from './vitals/vitals.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { FaceSheetComponent } from './face-sheet/face-sheet.component';
 import { TableFormExampleComponent } from './table-form-example/table-form-example.component';
-import { VitalsTableExampleComponent } from './vitals-table-example/vitals-table-example.component';
 import { CardFormExampleComponent } from './card-form-example/card-form-example.component';
 export const PagesRoutes: Routes = [
   {
@@ -39,13 +38,6 @@ export const PagesRoutes: Routes = [
     component: TableFormExampleComponent,
     data: {
       title: 'Table Form Example',
-    },
-  },
-  {
-    path: 'vitals-table-example',
-    component: VitalsTableExampleComponent,
-    data: {
-      title: 'Vitals Table Example',
     },
   },
   {

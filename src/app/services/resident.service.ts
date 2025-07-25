@@ -3,7 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { catchError, of, tap } from 'rxjs';
 import { environment } from 'src/environments/environment.production';
 import { Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackBarService } from './snackBar.service';
+import { RestResponse } from '../models/app.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class ResidentService {
   private http = inject(HttpClient);
   private router = inject(Router);
-  private _snackBar = inject(MatSnackBar);
+  private _snackBar = inject(SnackBarService);
   searchResults!: any[]
   isLoading = signal<boolean>(false);
   resident = signal<any>({});
@@ -30,10 +31,7 @@ export class ResidentService {
           this.isLoading.set(false); // Set loading to false on success
         }),
         catchError(error => {
-          this._snackBar.open(error.message, '', {
-            duration: 4000,
-            panelClass: ['error-snackbar']
-          });
+        this._snackBar.showError(`Error searching resident: ${error.message}`);
           this.searchResults = [] // Clear results on error
           this.isLoading.set(false); // Set loading to false on error
           return of([]); // Return an empty observable to prevent the error from propagating
@@ -49,16 +47,15 @@ export class ResidentService {
       id: residentId
     };
 
-    this.http.post<any>(`${environment.apiUrl}/resident/getResidentById`, requestBody)
+    this.http.post<RestResponse>(`${environment.apiUrl}/resident/getResidentById`, requestBody)
       .pipe(
         tap(response => {
-          console.log("Resident details fetched successfully");
-          console.log(response);
+          this._snackBar.showSuccess(response.message || 'Resident fetched successfully');
           this.resident.set(response.data); // Update resident signal with the fetched data
           this.isLoading.set(false); // Set loading to false on success
         }),
         catchError(error => {
-          console.error('Error fetching resident details:', error);
+          this._snackBar.showError(`Error fetching resident details: ${error.message}`);
           this.isLoading.set(false); // Set loading to false on error
           return of(null); // Return null on error
         })
@@ -69,15 +66,15 @@ export class ResidentService {
   saveResidentDetails(residentData: any): void {
     this.isLoading.set(true); // Set loading to true
 
-    this.http.post<any>(`${environment.apiUrl}/resident`, residentData)
+    this.http.post<RestResponse>(`${environment.apiUrl}/resident`, residentData)
       .pipe(
         tap(response => {
-          console.log("Resident details saved successfully");
+          this._snackBar.showSuccess(response.message || 'Resident details saved successfully');
           this.isLoading.set(false); // Set loading to false on success
           this.resident.set(response); // Update resident signal with the saved data
         }),
         catchError(error => {
-          console.error('Error saving resident details:', error);
+          this._snackBar.showError(`Error saving resident details: ${error.message}`);
           this.isLoading.set(false); // Set loading to false on error
           return of(null); // Return null on error
         })

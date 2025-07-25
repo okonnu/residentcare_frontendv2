@@ -35,12 +35,7 @@ export interface LoginSuccess {
 // // login-response.type.ts
 export type LoginResponse = LoginSuccess | LoginError;
 
-export interface RestResponse {
-    statusCode: number;
-    message: string;
-    data: any;
-    success: boolean;
-}
+
 
 // // core/auth/login/interfaces/index.ts
 // export * from './login.interface';

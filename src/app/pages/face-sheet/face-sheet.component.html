@@ -70,8 +70,8 @@
   </div>
 
   <!-- Primary Care Physicians Table -->
-  <div class="row">
-          <table-form
+  <div class="row ">
+          <table-form 
             [title]="'Primary Care Physicians'"
             [subtitle]="'Manage primary care physician information'"
             [dataSet]="primaryCarePhysicians()"
@@ -84,7 +84,8 @@
             (save)="handlePhysicianSave($event)"
             (delete)="handlePhysicianDelete($event)"
             (view)="handlePhysicianView($event)"
-            (cancel)="handleCancel()">
+            (cancel)="handleCancel()"
+            style="overflow-x: auto; max-width: 100%;">
           </table-form>
   </div>
 

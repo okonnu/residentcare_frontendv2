@@ -2,9 +2,10 @@ import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment.production';
 import { catchError, of, tap } from 'rxjs';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { ResidentService } from './resident.service';
-import { Vital } from '../models/vital.interface';
+import { Vitals } from '../models/vital.interface';
+import { RestResponse } from '../models/app.interface';
+import { SnackBarService } from './snackBar.service';
 
 @Injectable({ providedIn: "root" })
 
@@ -16,23 +17,29 @@ export class VitalService {
     residentVitals = signal<any[]>([]);
     isLoading = signal<boolean>(false);
     private http = inject(HttpClient);
-    private _snackBar = inject(MatSnackBar);
+    private _snackBar = inject(SnackBarService);
     private residentService = inject(ResidentService);
-    private residentId = this.residentService.resident().id // Replace with actual resident ID
+
+    get residentId(): string {
+        return this.residentService.resident().id;
+    }
 
     getResidentVitals(): void {
+        if (!this.residentId) {
+            this._snackBar.showError('Resident ID is not available');
+            return;
+        }
         this.isLoading.set(true);
-        this.http.get<any[]>(`${environment.apiUrl}/vital/resident/${this.residentId}`)
+        this.http.get<RestResponse>(`${environment.apiUrl}/vital/resident/${this.residentId}`)
             .pipe(
                 tap(response => {
-                    this.residentVitals.set(response);
+                    console.log('Fetched vitals:', response);
+                    this.residentVitals.set(response?.data);
                     this.isLoading.set(false);
+                    this._snackBar.showSuccess(response.message || 'Vitals fetched successfully');
                 }),
                 catchError(error => {
-                    this._snackBar.open(error.message, '', {
-                        duration: 4000,
-                        panelClass: ['error-snackbar']
-                    });
+                    this._snackBar.showError(error.message);
                     this.isLoading.set(false);
                     return of([]);
                 })
@@ -40,47 +47,59 @@ export class VitalService {
             .subscribe();
     }
 
-    createResidentVital(vital: Vital): void {
+    createResidentVital(vital: Vitals): void {
         this.isLoading.set(true);
         vital.residentId = this.residentId; // Ensure the resident ID is set
 
-        this.http.post<any>(`${environment.apiUrl}/vital/resident/${this.residentId}`, vital)
+        // Determine if this is an update (has ID) or create (no ID)
+        const isUpdate = vital.id && vital.id.trim() !== '';
+        const url = isUpdate
+            ? `${environment.apiUrl}/vital/${vital.id}`
+            : `${environment.apiUrl}/vital/resident/${this.residentId}`;
+
+        // Remove audit fields as they are read-only
+        const { audit, ...vitalData } = vital;
+
+        const httpRequest = isUpdate
+            ? this.http.put<RestResponse>(url, vitalData)
+            : this.http.post<RestResponse>(url, vitalData);
+
+        httpRequest
             .pipe(
                 tap(response => {
-                    this._snackBar.open('Vital record created successfully', '', {
-                        duration: 3000,
-                        panelClass: ['success-snackbar']
-                    });
-                    this.getResidentVitals(); // Refresh the list after creation
+                    const message = isUpdate
+                        ? (response.message || 'Vital record updated successfully')
+                        : (response.message || 'Vital record created successfully');
+                    this._snackBar.showSuccess(message);
+                    this.getResidentVitals(); // Refresh the list after operation
+                    this.isLoading.set(false);
                 }),
                 catchError(error => {
-                    this._snackBar.open(`Error creating vital: ${error.message}`, '', {
-                        duration: 4000,
-                        panelClass: ['error-snackbar']
-                    });
+                    const action = isUpdate ? 'updating' : 'creating';
+                    this._snackBar.showError(`Error ${action} vital: ${error.message}`);
+                    this.isLoading.set(false);
                     return of(null);
                 })
             )
             .subscribe();
     }
 
-    updateResidentVital(vital: Vital): void {
+    updateResidentVital(vital: Vitals): void {
         this.isLoading.set(true);
 
-        this.http.put<any>(`${environment.apiUrl}/vital/${vital.id}`, vital)
+        // Remove audit fields as they are read-only
+        const { audit, ...vitalData } = vital;
+
+        this.http.put<RestResponse>(`${environment.apiUrl}/vital/${vital.id}`, vitalData)
             .pipe(
                 tap(response => {
-                    this._snackBar.open('Vital record updated successfully', '', {
-                        duration: 3000,
-                        panelClass: ['success-snackbar']
-                    });
+                    this._snackBar.showSuccess(response.message || 'Vital record updated successfully');
                     this.getResidentVitals(); // Refresh the list after update
+                    this.isLoading.set(false);
                 }),
                 catchError(error => {
-                    this._snackBar.open(`Error updating vital: ${error.message}`, '', {
-                        duration: 4000,
-                        panelClass: ['error-snackbar']
-                    });
+                    this._snackBar.showError(`Error updating vital: ${error.message}`);
+                    this.isLoading.set(false);
                     return of(null);
                 })
             )
@@ -90,24 +109,21 @@ export class VitalService {
     deleteResidentVital(vitalId: string): void {
         this.isLoading.set(true);
 
-        this.http.delete<any>(`${environment.apiUrl}/vital/${vitalId}`)
+        this.http.delete<RestResponse>(`${environment.apiUrl}/vital/${vitalId}`)
             .pipe(
                 tap(response => {
-                    this._snackBar.open('Vital record deleted successfully', '', {
-                        duration: 3000,
-                        panelClass: ['success-snackbar']
-                    });
+                    this._snackBar.showSuccess(response.message || 'Vital record deleted successfully');
                     this.getResidentVitals(); // Refresh the list after deletion
+                    this.isLoading.set(false);
                 }),
                 catchError(error => {
-                    this._snackBar.open(`Error deleting vital: ${error.message}`, '', {
-                        duration: 4000,
-                        panelClass: ['error-snackbar']
-                    });
+                    this._snackBar.showError(`Error deleting vital: ${error.message}`);
+                    this.isLoading.set(false);
                     return of(null);
                 })
             )
             .subscribe();
     }
+
 
 }

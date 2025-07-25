@@ -1,5 +1,5 @@
-<div class="table-form-container">
-  <mat-card class="cardWithShadow">
+<div class="table-form-container"  >
+  <mat-card class="cardWithShadow" >
     <mat-card-content>
       
       <!-- View Mode (Table Display) -->
@@ -21,8 +21,8 @@
         </div>
         
         <!-- Table view -->
-        <div class="table-responsive">
-          <table mat-table [dataSource]="dataSource" matSort class="w-100">
+        <div class="table-responsive" >
+          <table mat-table [dataSource]="dataSource" matSort class="w-100" >
             
             <!-- Dynamic columns based on input configuration -->
             @for (column of columns; track column.key) {
@@ -31,13 +31,14 @@
                 <!-- Header cell -->
                 <th mat-header-cell *matHeaderCellDef 
                     [style.width]="column.width || 'auto'"
+                    [style.min-width]="'120px'"
                     [mat-sort-header]="column.sortable ? column.key : ''"
                     [disabled]="!column.sortable">
                   {{ column.title }}
                 </th>
                 
                 <!-- Data cell (Display only) -->
-                <td mat-cell *matCellDef="let row">
+                <td mat-cell *matCellDef="let row" [style.min-width]="'120px'">
                   @if (column.displayFn) {
                     {{ column.displayFn(row) }}
                   } @else {
@@ -49,8 +50,8 @@
             
             <!-- Actions Column -->
             <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef> Actions </th>
-              <td mat-cell *matCellDef="let row">
+              <th mat-header-cell *matHeaderCellDef style="min-width: 150px;"> Actions </th>
+              <td mat-cell *matCellDef="let row" style="min-width: 150px;">
                 <div class="actions-container">
                   @if (showViewButton) {
                     <button mat-icon-button color="primary" 
