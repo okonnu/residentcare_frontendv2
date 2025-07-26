@@ -11,7 +11,6 @@
       [placeholder]="placeholder"
       [formControl]="formControl"
       [required]="required"
-      [disabled]="disabled"
       (input)="onInputChange(inputElement.value)"
       (blur)="onTouched()">
 
@@ -36,11 +35,61 @@
       [placeholder]="effectivePlaceholder"
       [formControl]="formControl"
       [required]="required"
-      [disabled]="disabled"
       [mask]="effectiveMask"
       [showMaskTyped]="showMaskTyped"
       (input)="onInputChange(maskedInput.value)"
       (blur)="onTouched()">
+
+    <!-- Dynamic Error Messages -->
+    @if (formControl.invalid && (formControl.dirty || formControl.touched)) {
+      <mat-error class="m-b-16 error-msg">
+        @for (error of getErrorKeys(formControl.errors); track error) {
+          <div class="text-error">{{ getDefaultMessage(error) }}</div>
+        }
+      </mat-error>
+    }
+  </mat-form-field>
+}
+
+<!-- Date Picker -->
+@if (isDateInput) {
+  <mat-form-field [appearance]="appearance" [color]="color" class="w-100">
+    <mat-label>{{ placeholder || label }}</mat-label>
+    <input 
+      matInput 
+      [matDatepicker]="datePicker"
+      [formControl]="formControl"
+      [required]="required"
+      (dateInput)="onInputChange($event.value)"
+      (blur)="onTouched()">
+    <mat-datepicker-toggle matIconSuffix [for]="datePicker"></mat-datepicker-toggle>
+    <mat-datepicker #datePicker></mat-datepicker>
+
+    <!-- Dynamic Error Messages -->
+    @if (formControl.invalid && (formControl.dirty || formControl.touched)) {
+      <mat-error class="m-b-16 error-msg">
+        @for (error of getErrorKeys(formControl.errors); track error) {
+          <div class="text-error">{{ getDefaultMessage(error) }}</div>
+        }
+      </mat-error>
+    }
+  </mat-form-field>
+}
+
+<!-- Time Picker -->
+@if (isTimeInput) {
+  <mat-form-field [appearance]="appearance" [color]="color" class="w-100">
+    <mat-label>{{ placeholder || label || 'Pick a time' }}</mat-label>
+    <input 
+      matInput 
+      #timeInput
+      type="time"
+      [formControl]="formControl"
+      [required]="required"
+      [step]="600"
+      (input)="onInputChange(timeInput.value)"
+      (blur)="onTouched()">
+    <mat-icon matIconSuffix>schedule</mat-icon>
 
     <!-- Dynamic Error Messages -->
     @if (formControl.invalid && (formControl.dirty || formControl.touched)) {
@@ -59,7 +108,6 @@
     <mat-select 
       [formControl]="formControl"
       [required]="required"
-      [disabled]="disabled"
       [multiple]="multiple"
       [placeholder]="placeholder"
       (selectionChange)="onInputChange($event.value)"
@@ -89,7 +137,6 @@
     <mat-radio-group 
       [formControl]="formControl"
       [required]="required"
-      [disabled]="disabled"
       (change)="onInputChange($event.value)">
       
       @for (option of options; track option.value) {

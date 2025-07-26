@@ -212,6 +212,9 @@ export class TableFormComponent implements OnInit, AfterViewInit {
                     case 'date':
                         blankRecord[column.key] = '';
                         break;
+                    case 'time':
+                        blankRecord[column.key] = '';
+                        break;
                     case 'select':
                     case 'radio':
                         blankRecord[column.key] = '';

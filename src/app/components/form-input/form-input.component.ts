@@ -8,6 +8,7 @@ import { MaterialModule } from '../../material.module';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { ThemePalette } from '@angular/material/core';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
+import { provideNativeDateAdapter } from '@angular/material/core';
 
 // Interface for select and radio options
 export interface FormInputOption {
@@ -36,7 +37,8 @@ export interface FormInputOption {
       useExisting: forwardRef(() => InputComponent),
       multi: true
     },
-    provideNgxMask()
+    provideNgxMask(),
+    provideNativeDateAdapter()
   ]
 })
 export class InputComponent implements ControlValueAccessor {
@@ -56,7 +58,6 @@ export class InputComponent implements ControlValueAccessor {
   @Input() radioButtonClass: string = 'radio-button'; // CSS class for radio buttons
   @Input() radioGroupClass: string = 'radio-group'; // CSS class for radio group
   @Input() multiple: boolean = false; // For multiple select
-  @Input() disabled: boolean = false; // To disable the input
 
   // ControlValueAccessor implementation
   private _value: any;
@@ -89,7 +90,6 @@ export class InputComponent implements ControlValueAccessor {
   }
 
   setDisabledState(isDisabled: boolean): void {
-    this.disabled = isDisabled;
     isDisabled ? this.formControl.disable() : this.formControl.enable();
   }
 
@@ -113,7 +113,15 @@ export class InputComponent implements ControlValueAccessor {
 
   // Helper methods for template
   get isTextInput(): boolean {
-    return ['text', 'number', 'date', 'email', 'tel', 'time', 'password', 'url'].includes(this.type);
+    return ['text', 'number', 'email', 'tel', 'password', 'url'].includes(this.type);
+  }
+
+  get isDateInput(): boolean {
+    return this.type === 'date';
+  }
+
+  get isTimeInput(): boolean {
+    return this.type === 'time';
   }
 
   get isSelectInput(): boolean {

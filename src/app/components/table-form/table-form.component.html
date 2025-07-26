@@ -116,8 +116,8 @@
                   <mat-label class="mat-subtitle-2 f-w-600 d-block">{{ column.title }}</mat-label>
                 </div>
                 <div class="col-sm-8">
-                  <!-- Text, Number, Date, Email inputs using enhanced form-input component -->
-                  @if (['text', 'number', 'date', 'email', 'tel'].includes(column.dataType)) {
+                  <!-- Text, Number, Date, Email, Time inputs using enhanced form-input component -->
+                  @if (['text', 'number', 'date', 'time', 'email', 'tel'].includes(column.dataType)) {
                     <form-input
                       [type]="column.dataType"
                       [label]="''"
