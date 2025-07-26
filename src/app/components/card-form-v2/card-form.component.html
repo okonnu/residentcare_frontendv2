@@ -8,13 +8,13 @@
       <mat-card-content class="p-y-24">
         <mat-card-title>{{ title }}</mat-card-title>
         <hr /><br />
-        @for(data of dataSet; track data.title) {
+        @for(data of formControls; track data.title) {
           <div class="row">
             <div class="col">
               <span class="mat-body-1">{{ data.title }}</span>
             </div>
             <div class="col">
-              <span class="mat-body-1"><strong>: {{ data.value }}</strong></span>
+              <span class="mat-body-1"><strong>: {{ data.formControl?.value }}</strong></span>
             </div>
           </div>
         }
@@ -33,7 +33,7 @@
         <mat-card-title>Edit {{ title }}</mat-card-title>
         <hr /><br />
         <form [formGroup]="cardForm">
-          @for(data of dataSet; track data.title) {
+          @for(data of formControls; track data.title) {
             <div class="row mb-3">
               <div class="col-sm-4 d-flex align-items-center">
                 <mat-label class="mat-subtitle-2 f-w-600 d-block">{{ data.title }}</mat-label>
@@ -45,8 +45,6 @@
                     [type]="data.dataType"
                     [label]="''"
                     [formControl]="getFormControl(data.title)"
-                    [required]="data.required || false"
-                    [disabled]="data.disabled || false"
                     [placeholder]="'Enter ' + data.title">
                   </form-input>
                 }
@@ -57,8 +55,6 @@
                     type="ssn"
                     [label]="''"
                     [formControl]="getFormControl(data.title)"
-                    [required]="data.required || false"
-                    [disabled]="data.disabled || false"
                     [showMaskTyped]="true">
                   </form-input>
                 }
@@ -69,9 +65,7 @@
                     type="select"
                     [label]="''"
                     [formControl]="getFormControl(data.title)"
-                    [required]="data.required || false"
-                    [disabled]="data.disabled || false"
-                    [options]="data.options || []"
+                    [options]="data.dropDownOptions || []"
                     [placeholder]="'Select ' + data.title">
                   </form-input>
                 }
@@ -82,9 +76,7 @@
                     type="radio"
                     [label]="''"
                     [formControl]="getFormControl(data.title)"
-                    [required]="data.required || false"
-                    [disabled]="data.disabled || false"
-                    [options]="data.options || []">
+                    [options]="data.dropDownOptions || []">
                   </form-input>
                 }
               </div>

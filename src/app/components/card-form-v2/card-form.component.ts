@@ -114,9 +114,12 @@ export class CardFormComponent implements OnInit {
   }
 
   // Get form control for template - directly access from formControls array
-  getFormControl(fieldTitle: string): FormControl | undefined {
+  getFormControl(fieldTitle: string): FormControl {
     const field = this.formControls.find(f => f.title === fieldTitle);
-    return field?.formControl;
+    if (!field?.formControl) {
+      throw new Error(`FormControl not found for field: ${fieldTitle}`);
+    }
+    return field.formControl;
   }
 
   // Helper method to mark all form controls as touched
