@@ -1,7 +1,14 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Validators } from '@angular/forms';
-import { TableFormComponent, TableColumn } from '../../components/table-form/table-form.component';
+import { FormControl, Validators } from '@angular/forms';
+import { TableFormComponent } from '../../components/table-form-v2/table-form.component';
+import { FormField } from '../../models/FormField';
+import { Builder } from 'builder-pattern';
+
+/**
+ * Example component demonstrating the simplified table-form-v2 component
+ * This has been refactored from the original table-form to use the new FormField-based approach
+ */
 
 @Component({
     selector: 'table-form-example',
@@ -9,11 +16,12 @@ import { TableFormComponent, TableColumn } from '../../components/table-form/tab
     imports: [CommonModule, TableFormComponent],
     template: `
     <div class="container-fluid">
+      <!-- Using the simplified table-form-v2 component -->
       <table-form
         [title]="'Employee Management'"
-        [subtitle]="'Enhanced table with validation and three modes: View, Edit, and Add'"
+        [subtitle]="'Enhanced table with validation using FormField configuration'"
         [dataSet]="employeeData"
-        [columns]="columns"
+        [formControls]="formControls"
         [idField]="'id'"
         [showAddButton]="true"
         [showEditButton]="true"
@@ -32,52 +40,110 @@ export class TableFormExampleComponent implements OnInit, AfterViewInit {
     records = [
         {
             id: 1,
-            name: 'John Doe',
-            email: 'john.doe@company.com',
-            position: 'Senior Developer',
+            full_name: 'John Doe',
+            email_address: 'john.doe@company.com',
+            job_position: 'Senior Developer',
             department: 'IT',
-            salary: 75000,
-            hireDate: '2020-01-15',
-            phone: '555-0123',
-            status: 'active'
+            annual_salary: 75000,
+            hire_date: '2020-01-15',
+            phone_number: '555-0123',
+            employment_status: 'active'
         },
         {
             id: 2,
-            name: 'Jane Smith',
-            email: 'jane.smith@company.com',
-            position: 'UX Designer',
+            full_name: 'Jane Smith',
+            email_address: 'jane.smith@company.com',
+            job_position: 'UX Designer',
             department: 'Design',
-            salary: 70000,
-            hireDate: '2019-05-10',
-            phone: '555-0456',
-            status: 'active'
+            annual_salary: 70000,
+            hire_date: '2019-05-10',
+            phone_number: '555-0456',
+            employment_status: 'active'
         },
         {
             id: 3,
-            name: 'Robert Johnson',
-            email: 'robert.johnson@company.com',
-            position: 'HR Manager',
+            full_name: 'Robert Johnson',
+            email_address: 'robert.johnson@company.com',
+            job_position: 'HR Manager',
             department: 'HR',
-            salary: 85000,
-            hireDate: '2018-11-20',
-            phone: '555-0789',
-            status: 'inactive'
+            annual_salary: 85000,
+            hire_date: '2018-11-20',
+            phone_number: '555-0789',
+            employment_status: 'inactive'
         },
         {
             id: 4,
-            name: 'Emily Davis',
-            email: 'emily.davis@company.com',
-            position: 'Financial Analyst',
+            full_name: 'Emily Davis',
+            email_address: 'emily.davis@company.com',
+            job_position: 'Financial Analyst',
             department: 'Finance',
-            salary: 68000,
-            hireDate: '2021-03-08',
-            phone: '555-0321',
-            status: 'active'
+            annual_salary: 68000,
+            hire_date: '2021-03-08',
+            phone_number: '555-0321',
+            employment_status: 'active'
         }
     ];
 
     // This property will be bound to the table component
     employeeData: any[] = [];
+
+    // Form controls configuration for table-form-v2
+    formControls: FormField[] = [
+        Builder(FormField)
+            .dataType('text')
+            .title('Full Name')
+            .formControl(new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]))
+            .build(),
+        Builder(FormField)
+            .dataType('email')
+            .title('Email Address')
+            .formControl(new FormControl('', [Validators.required, Validators.email]))
+            .build(),
+        Builder(FormField)
+            .dataType('text')
+            .title('Job Position')
+            .formControl(new FormControl('', [Validators.required, Validators.minLength(3)]))
+            .build(),
+        Builder(FormField)
+            .dataType('select')
+            .title('Department')
+            .dropDownOptions([
+                { value: 'IT', label: 'Information Technology' },
+                { value: 'HR', label: 'Human Resources' },
+                { value: 'Finance', label: 'Finance & Accounting' },
+                { value: 'Design', label: 'Design & Creative' },
+                { value: 'Marketing', label: 'Marketing & Sales' },
+                { value: 'Operations', label: 'Operations' }
+            ])
+            .formControl(new FormControl('', [Validators.required]))
+            .build(),
+        Builder(FormField)
+            .dataType('number')
+            .title('Annual Salary')
+            .formControl(new FormControl('', [Validators.required, Validators.min(30000), Validators.max(200000)]))
+            .build(),
+        Builder(FormField)
+            .dataType('date')
+            .title('Hire Date')
+            .formControl(new FormControl('', [Validators.required]))
+            .build(),
+        Builder(FormField)
+            .dataType('tel')
+            .title('Phone Number')
+            .formControl(new FormControl('', [Validators.pattern(/^[\d\s\-\(\)]+$/)]))
+            .build(),
+        Builder(FormField)
+            .dataType('select')
+            .title('Employment Status')
+            .dropDownOptions([
+                { value: 'active', label: 'Active' },
+                { value: 'inactive', label: 'Inactive' },
+                { value: 'onLeave', label: 'On Leave' },
+                { value: 'terminated', label: 'Terminated' }
+            ])
+            .formControl(new FormControl('', [Validators.required]))
+            .build()
+    ];
 
     refreshData() {
         // Force Angular change detection by creating a new array reference
@@ -98,101 +164,6 @@ export class TableFormExampleComponent implements OnInit, AfterViewInit {
         });
     }
 
-    // Enhanced column definitions with validation
-    columns: TableColumn[] = [
-        {
-            key: 'id',
-            title: 'Employee ID',
-            dataType: 'number',
-            sortable: true,
-            width: '100px',
-            hidden: false,
-            required: false // ID is auto-generated, not required for new records
-        },
-        {
-            key: 'name',
-            title: 'Full Name',
-            dataType: 'text',
-            sortable: true,
-            hidden: false,
-            required: true, // Required field
-            validators: [Validators.minLength(2), Validators.maxLength(50)] // Name length validation
-        },
-        {
-            key: 'email',
-            title: 'Email Address',
-            dataType: 'email',
-            sortable: true,
-            hidden: false,
-            required: true // Required + automatic email validation
-        },
-        {
-            key: 'position',
-            title: 'Job Position',
-            dataType: 'text',
-            sortable: true,
-            hidden: false,
-            required: true,
-            validators: [Validators.minLength(3)] // Minimum position title length
-        },
-        {
-            key: 'department',
-            title: 'Department',
-            dataType: 'select',
-            sortable: true,
-            hidden: false,
-            required: true, // Required selection
-            options: [
-                { value: 'IT', label: 'Information Technology' },
-                { value: 'HR', label: 'Human Resources' },
-                { value: 'Finance', label: 'Finance & Accounting' },
-                { value: 'Design', label: 'Design & Creative' },
-                { value: 'Marketing', label: 'Marketing & Sales' },
-                { value: 'Operations', label: 'Operations' }
-            ]
-        },
-        {
-            key: 'salary',
-            title: 'Annual Salary',
-            dataType: 'number',
-            sortable: true,
-            hidden: false,
-            required: true,
-            validators: [Validators.min(30000), Validators.max(200000)] // Salary range validation
-        },
-        {
-            key: 'hireDate',
-            title: 'Hire Date',
-            dataType: 'date',
-            sortable: true,
-            hidden: false,
-            required: true
-        },
-        {
-            key: 'phone',
-            title: 'Phone Number',
-            dataType: 'tel',
-            sortable: false,
-            hidden: false,
-            required: false, // Optional field
-            validators: [Validators.pattern(/^[\d\s\-\(\)]+$/)] // Basic phone pattern
-        },
-        {
-            key: 'status',
-            title: 'Employment Status',
-            dataType: 'select',
-            sortable: true,
-            hidden: false,
-            required: true, // Required selection
-            options: [
-                { value: 'active', label: 'Active' },
-                { value: 'inactive', label: 'Inactive' },
-                { value: 'onLeave', label: 'On Leave' },
-                { value: 'terminated', label: 'Terminated' }
-            ]
-        }
-    ];
-
     /**
      * Handle save event - works for both Add and Edit modes
      * The component automatically validates all form fields before calling this method
@@ -206,16 +177,16 @@ export class TableFormExampleComponent implements OnInit, AfterViewInit {
                 const index = this.records.findIndex(r => r.id === record.id);
                 if (index !== -1) {
                     this.records[index] = { ...record };
-                    console.log('Successfully updated employee:', record.name);
-                    this.showSuccessMessage(`Employee ${record.name} updated successfully!`);
+                    console.log('Successfully updated employee:', record.full_name);
+                    this.showSuccessMessage(`Employee ${record.full_name} updated successfully!`);
                 }
             } else {
                 // Add Mode: Add new record with auto-generated ID
                 const newId = Math.max(...this.records.map(r => r.id), 0) + 1;
                 const newRecord = { ...record, id: newId };
                 this.records.push(newRecord);
-                console.log('Successfully added new employee:', newRecord.name);
-                this.showSuccessMessage(`Employee ${newRecord.name} added successfully!`);
+                console.log('Successfully added new employee:', newRecord.full_name);
+                this.showSuccessMessage(`Employee ${newRecord.full_name} added successfully!`);
             }
 
             // Trigger change detection by creating new array reference
@@ -231,17 +202,17 @@ export class TableFormExampleComponent implements OnInit, AfterViewInit {
      * Handle delete event with confirmation
      */
     handleDelete(record: any) {
-        console.log('Delete request for employee:', record.name);
+        console.log('Delete request for employee:', record.full_name);
 
         // Additional confirmation for delete
-        if (confirm(`Are you sure you want to delete employee ${record.name}? This action cannot be undone.`)) {
+        if (confirm(`Are you sure you want to delete employee ${record.full_name}? This action cannot be undone.`)) {
             try {
                 const index = this.records.findIndex(r => r.id === record.id);
                 if (index !== -1) {
                     this.records.splice(index, 1);
                     this.refreshData();
-                    console.log('Successfully deleted employee:', record.name);
-                    this.showSuccessMessage(`Employee ${record.name} deleted successfully.`);
+                    console.log('Successfully deleted employee:', record.full_name);
+                    this.showSuccessMessage(`Employee ${record.full_name} deleted successfully.`);
                 }
             } catch (error) {
                 console.error('Error deleting employee:', error);
@@ -254,7 +225,7 @@ export class TableFormExampleComponent implements OnInit, AfterViewInit {
      * Handle view event - currently just logs (view mode is handled internally by component)
      */
     handleView(record: any) {
-        console.log('View mode activated for employee:', record.name);
+        console.log('View mode activated for employee:', record.full_name);
         // Note: View mode is now handled internally by the table-form component
         // This event is mainly for logging or additional custom logic
     }

@@ -5,8 +5,8 @@ import { TablerIconsModule } from 'angular-tabler-icons';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { InputComponent } from '../form-input/form-input.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormField } from 'src/app/models/FormField';
+import { SnackBarService } from 'src/app/services/snackBar.service';
 
 @Component({
   selector: 'card-form',
@@ -44,7 +44,7 @@ export class CardFormComponent implements OnInit {
   originalData: any = {};
 
   private formBuilder = inject(FormBuilder);
-  private snackBar = inject(MatSnackBar);
+  private snackBar = inject(SnackBarService);
 
   ngOnInit() {
     // Store original data for cancel functionality
@@ -74,12 +74,12 @@ export class CardFormComponent implements OnInit {
 
   saveChanges() {
     if (!this.cardForm) {
-      this.showError('Form not initialized');
+      this.snackBar.showError('Form not initialized');
       return;
     }
 
     if (this.cardForm.invalid) {
-      this.showError('Please fix form errors before saving');
+      this.snackBar.showError('Please fix form errors before saving');
       this.markFormGroupTouched(this.cardForm);
       return;
     }
@@ -90,7 +90,7 @@ export class CardFormComponent implements OnInit {
 
     // Exit edit mode
     this.editMode = false;
-    this.showSuccess('Changes saved successfully');
+    this.snackBar.showSuccess('Changes saved successfully');
   }
 
   cancelEdit() {
@@ -156,18 +156,5 @@ export class CardFormComponent implements OnInit {
     return result;
   }
 
-  // Utility methods for notifications
-  private showSuccess(message: string): void {
-    this.snackBar.open(message, 'Close', {
-      duration: 3000,
-      panelClass: ['success-snackbar']
-    });
-  }
 
-  private showError(message: string): void {
-    this.snackBar.open(message, 'Close', {
-      duration: 5000,
-      panelClass: ['error-snackbar']
-    });
-  }
 }
