@@ -1,6 +1,6 @@
 import { Audit } from './resident.interface';
 
-export interface Vital {
+export class Vital {
     id: string;
     temperature: number;
     heartRate: number;
@@ -14,7 +14,8 @@ export interface Vital {
     painScore: number;
     bloodGlucoseLevel: number;
     residentId: string;
-    recordedAt: Date; // Added to track when the vital was recorded
+    vitalDate: Date; // Added to track when the vital was recorded
+    vitalTime: string; // Added to track the time of the vital measurement
     audit: Audit | null;
 }
 

@@ -92,23 +92,25 @@ export class VitalsComponent implements OnInit {
     if (!vitals || vitals.length === 0) return [];
 
     // Add only the additional fields needed for the form (date/time)
-    return vitals.map((vital: Vital) => ({
-      ...vital, // Spread all Vital properties directly
-      date: vital.recordedAt ? new Date(vital.recordedAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-      time: vital.recordedAt ? new Date(vital.recordedAt).toLocaleTimeString('en-US', { hour12: false }) : new Date().toLocaleTimeString('en-US', { hour12: false })
-    }));
+    return vitals
   });
 
   // Form controls configuration for vitals using Builder pattern with FormField
   vitalsFormControls: FormField[] = [
     Builder(FormField)
-      .key('date')
+      .key('id')
+      .dataType('string')
+      .title('ID')
+      .formControl(new FormControl('')) // Default to empty
+      .build(),
+    Builder(FormField)
+      .key('vitalDate')
       .dataType('date')
       .title('Date')
       .formControl(new FormControl(new Date().toISOString().split('T')[0], [Validators.required])) // Default to today
       .build(),
     Builder(FormField)
-      .key('time')
+      .key('vitalTime')
       .dataType('time')
       .title('Time')
       .formControl(new FormControl(new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' }), [Validators.required])) // Default to current time
@@ -384,62 +386,23 @@ export class VitalsComponent implements OnInit {
 
   // Event handlers for table-form
   handleVitalsSave(data: any) {
-    console.log('Vitals save data received:', data);
-
-    if (!data) {
-      console.error('No data provided to save');
-      return;
-    }
-
-    // Create Vitals object - use data directly with minimal processing
+    // Extract date and time, then spread the rest
     const { date, time, ...vitalData } = data;
-    
-    console.log('Date and time values:', { date, time });
-    
-    // Handle date/time properly - if missing, use current timestamp
-    let recordedAt: Date;
-    if (date && time) {
-      try {
-        recordedAt = new Date(`${date}T${time}:00`);
-        // Check if the date is valid
-        if (isNaN(recordedAt.getTime())) {
-          console.warn('Invalid date created, using current time');
-          recordedAt = new Date();
-        }
-      } catch (error) {
-        console.warn('Error creating date, using current time:', error);
-        recordedAt = new Date();
-      }
-    } else {
-      console.warn('Date or time missing, using current time. Date:', date, 'Time:', time);
-      recordedAt = new Date();
-    }
-
-    const vital: Vital = {
-      ...vitalData, // Spread all matching properties directly
-      id: data.id || '', // Handle new records
+    // Ensure ID is preserved if this is an edit operation
+    const vital = {
+      ...vitalData,
+      id: data.id || null, // Use existing ID or null for new records
       residentId: this.vitalService.residentId,
-      recordedAt: recordedAt,
-      audit: null, // Will be set by the backend
+      audit: null
     };
 
-    console.log('Saving vital:', vital);
+    console.log('Vitals save requested with data:', vital);
     this.vitalService.saveResidentVital(vital);
   }
 
   handleVitalsDelete(id: any) {
-    console.log('Vitals delete requested for ID:', id);
-
-    if (!id) {
-      console.error('No ID provided for deletion');
-      return;
-    }
-
-    // Convert id to string if it's not already
-    const vitalId = typeof id === 'string' ? id : String(id);
-
     // Call the delete method from the service
-    this.vitalService.deleteResidentVital(vitalId);
+    this.vitalService.deleteResidentVital(id);
   }
 
   handleVitalsView(data: any) {
