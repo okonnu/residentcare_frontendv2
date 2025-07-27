@@ -46,8 +46,8 @@
             <mat-label class="mat-subtitle-2 f-w-600 d-block">{{ data.title }}</mat-label>
           </div>
           <div class="col-sm-8">
-            <!-- Text, Number, Date, Email, Tel inputs using enhanced form-input -->
-            @if (['text', 'number', 'date', 'email', 'tel'].includes(data.dataType)) {
+            <!-- Text, Number, Date, Email, Tel, Time inputs using enhanced form-input -->
+            @if (['text', 'number', 'date', 'email', 'tel', 'time'].includes(data.dataType)) {
             <form-input [type]="data.dataType" [label]="''" [formControl]="getFormControl(data.title)"
               [placeholder]="'Enter ' + data.title">
             </form-input>

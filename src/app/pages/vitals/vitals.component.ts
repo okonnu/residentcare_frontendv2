@@ -42,6 +42,50 @@ export class VitalsComponent implements OnInit {
     });
   }
 
+  // FormControls for height, weight, and BMI with automatic calculation
+  weightControl = new FormControl('', [Validators.min(50), Validators.max(500)]);
+  heightControl = new FormControl('', [Validators.min(100), Validators.max(250)]);
+  bmiControl = new FormControl({ value: '', disabled: true });
+
+  constructor() {
+    // Set up BMI calculation when height or weight changes
+    this.setupBMICalculation();
+  }
+
+  private setupBMICalculation() {
+    // Subscribe to height and weight changes to calculate BMI
+    this.weightControl.valueChanges.subscribe(() => this.calculateBMI());
+    this.heightControl.valueChanges.subscribe(() => this.calculateBMI());
+  }
+
+  private calculateBMI() {
+    const weight = parseFloat(this.weightControl.value || '0');
+    const height = parseFloat(this.heightControl.value || '0');
+
+    if (weight > 0 && height > 0) {
+      // BMI = weight (lbs) / (height (cm) / 100)^2 * 703
+      // Convert cm to meters and use standard BMI formula
+      const heightInMeters = height / 100;
+      const weightInKg = weight * 0.453592; // Convert lbs to kg
+      const bmi = weightInKg / (heightInMeters * heightInMeters);
+
+      this.bmiControl.setValue(bmi.toFixed(1));
+    } else {
+      this.bmiControl.setValue('');
+    }
+  }
+
+  // Method to update form controls when editing existing vital records
+  updateFormControlsForEdit(vital: any) {
+    if (vital.weight) {
+      this.weightControl.setValue(vital.weight.toString());
+    }
+    if (vital.height) {
+      this.heightControl.setValue(vital.height.toString());
+    }
+    // BMI will be calculated automatically when height and weight are set
+  }
+
   // Minimal computed property that formats data for table-form-v2 with proper field mapping
   vitalsTableData = computed(() => {
     const vitals = this.vitalsData();
@@ -109,18 +153,18 @@ export class VitalsComponent implements OnInit {
       .build(),
     Builder(FormField)
       .dataType('number')
-      .title('Weight')
-      .formControl(new FormControl('', [Validators.min(50), Validators.max(500)]))
+      .title('Weight (LBS)')
+      .formControl(this.weightControl)
       .build(),
     Builder(FormField)
       .dataType('number')
-      .title('Height')
-      .formControl(new FormControl('', [Validators.min(100), Validators.max(250)]))
+      .title('Height (CM)')
+      .formControl(this.heightControl)
       .build(),
     Builder(FormField)
       .dataType('number')
       .title('BMI')
-      .formControl(new FormControl('', [Validators.min(10), Validators.max(50)]))
+      .formControl(this.bmiControl)
       .build(),
     Builder(FormField)
       .dataType('select')
@@ -356,7 +400,7 @@ export class VitalsComponent implements OnInit {
       oxygenSaturation: parseFloat(data.o2_sat) || 0,
       weight: parseFloat(data.weight) || 0,
       height: parseFloat(data.height) || 0,
-      bmi: parseFloat(data.bmi) || 0,
+      bmi: parseFloat(this.bmiControl.value || '0') || 0, // Use the calculated BMI from the form control
       painScore: parseInt(data.pain_score) || 0,
       bloodGlucoseLevel: parseFloat(data.blood_glucose_level) || 0,
       recordedAt: data.date ? new Date(`${data.date}T${data.time}`) : new Date(),
