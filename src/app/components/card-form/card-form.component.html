@@ -1,121 +1,97 @@
 <div class="row">
   <mat-card class="cardWithShadow m-8 w-100">
     @if (image) {
-      <img class="w-100" mat-card-image src="{{ image }}" alt="Resident Photo" />
+    <img class="w-100" mat-card-image src="{{ image }}" alt="Resident Photo" />
     }
     <!-- Display Mode -->
     @if (!editMode) {
-      <mat-card-content class="p-y-24">
-        <mat-card-title>{{ title }}</mat-card-title>
-        <hr /><br />
-        @for(data of dataSet; track data.title) {
-          <div class="row">
-            <div class="col">
-              <span class="mat-body-1">{{ data.title }}</span>
-            </div>
-            <div class="col">
-              <span class="mat-body-1"><strong>: {{ data.value }}</strong></span>
-            </div>
-          </div>
-        }
-        <br>
+    <mat-card-content class="p-y-24">
+      <mat-card-title>{{ title }}</mat-card-title>
+      <hr /><br />
+      @for(data of formControls; track data.title) {
+      <div class="row">
+        <div class="col">
+          <span class="mat-body-1">{{ data.title }}</span>
+        </div>
+        <div class="col">
+          <span class="mat-body-1"><strong>: {{ data.formControl?.value }}</strong></span>
+        </div>
+      </div>
+      }
+      <br>
+      <div class="d-flex gap-2">
         @if (showEditButton) {
-          <button mat-flat-button color="primary" (click)="toggleEditMode()" class="w-100 m-t-8">
-            {{ editButtonText }}
-          </button>
+        <button mat-flat-button color="primary" (click)="toggleEditMode()" class="flex-fill">
+          {{ editButtonText }}
+        </button>
         }
-      </mat-card-content>
+        @if (showCancelButton) {
+        <button mat-flat-button color="warn" (click)="cancelEdit()" class="flex-fill">
+          {{ cancelButtonText }}
+        </button>
+        }
+      </div>
+    </mat-card-content>
     }
 
     <!-- Edit Mode with Enhanced Form-Input Components -->
     @if (editMode) {
-      <mat-card-content class="p-y-24">
-        <mat-card-title>Edit {{ title }}</mat-card-title>
-        <hr /><br />
-        <form [formGroup]="cardForm">
-          @for(data of dataSet; track data.title) {
-            <div class="row mb-3">
-              <div class="col-sm-4 d-flex align-items-center">
-                <mat-label class="mat-subtitle-2 f-w-600 d-block">{{ data.title }}</mat-label>
-              </div>
-              <div class="col-sm-8">
-                <!-- Text, Number, Date, Email, Tel inputs using enhanced form-input -->
-                @if (['text', 'number', 'date', 'email', 'tel'].includes(data.dataType)) {
-                  <form-input
-                    [type]="data.dataType"
-                    [label]="''"
-                    [formControl]="getFormControl(data.title)"
-                    [required]="data.required || false"
-                    [disabled]="data.disabled || false"
-                    [placeholder]="'Enter ' + data.title">
-                  </form-input>
-                }
-                
-                <!-- SSN input using enhanced form-input -->
-                @if (data.dataType === 'ssn') {
-                  <form-input
-                    type="ssn"
-                    [label]="''"
-                    [formControl]="getFormControl(data.title)"
-                    [required]="data.required || false"
-                    [disabled]="data.disabled || false"
-                    [showMaskTyped]="true">
-                  </form-input>
-                }
-                
-                <!-- Select dropdown using enhanced form-input -->
-                @if (data.dataType === 'select') {
-                  <form-input
-                    type="select"
-                    [label]="''"
-                    [formControl]="getFormControl(data.title)"
-                    [required]="data.required || false"
-                    [disabled]="data.disabled || false"
-                    [options]="data.options || []"
-                    [placeholder]="'Select ' + data.title">
-                  </form-input>
-                }
-                
-                <!-- Radio buttons using enhanced form-input -->
-                @if (data.dataType === 'radio') {
-                  <form-input
-                    type="radio"
-                    [label]="''"
-                    [formControl]="getFormControl(data.title)"
-                    [required]="data.required || false"
-                    [disabled]="data.disabled || false"
-                    [options]="data.options || []">
-                  </form-input>
-                }
-              </div>
-            </div>
-          }
-          
-          <!-- Action Buttons -->
-          <div class="row justify-content-end mt-4">
-            <div class="col-sm-8">
-              <button 
-                type="button" 
-                mat-flat-button 
-                color="primary" 
-                (click)="saveChanges()"
-                [disabled]="!cardForm || cardForm.invalid"
-                class="me-2">
-                {{ saveButtonText }}
-              </button>
-              @if (showCancelButton) {
-                <button 
-                  type="button" 
-                  mat-flat-button 
-                  color="warn" 
-                  (click)="cancelEdit()">
-                  {{ cancelButtonText }}
-                </button>
-              }
-            </div>
+    <mat-card-content class="p-y-24">
+      <mat-card-title>{{ title }}</mat-card-title>
+      <hr /><br />
+      <form [formGroup]="cardForm">
+        @for(data of formControls; track data.title) {
+        <div class="row mb-3">
+          <div class="col-sm-4 d-flex align-items-center">
+            <mat-label class="mat-subtitle-2 f-w-600 d-block">{{ data.title }}</mat-label>
           </div>
-        </form>
-      </mat-card-content>
+          <div class="col-sm-8">
+            <!-- Text, Number, Date, Email, Tel inputs using enhanced form-input -->
+            @if (['text', 'number', 'date', 'email', 'tel'].includes(data.dataType)) {
+            <form-input [type]="data.dataType" [label]="''" [formControl]="getFormControl(data.title)"
+              [placeholder]="'Enter ' + data.title">
+            </form-input>
+            }
+
+            <!-- SSN input using enhanced form-input -->
+            @if (data.dataType === 'ssn') {
+            <form-input type="ssn" [label]="''" [formControl]="getFormControl(data.title)" [showMaskTyped]="true">
+            </form-input>
+            }
+
+            <!-- Select dropdown using enhanced form-input -->
+            @if (data.dataType === 'select') {
+            <form-input type="select" [label]="''" [formControl]="getFormControl(data.title)"
+              [options]="data.dropDownOptions || []" [placeholder]="'Select ' + data.title">
+            </form-input>
+            }
+
+            <!-- Radio buttons using enhanced form-input -->
+            @if (data.dataType === 'radio') {
+            <form-input type="radio" [label]="''" [formControl]="getFormControl(data.title)"
+              [options]="data.dropDownOptions || []">
+            </form-input>
+            }
+          </div>
+        </div>
+        }
+
+        <!-- Action Buttons -->
+        <div class="row justify-content-end mt-4">
+          <div class="col-sm-8">
+            <button type="button" mat-flat-button color="primary" (click)="saveChanges()"
+              [disabled]="!cardForm || cardForm.invalid" class="me-2">
+              {{ saveButtonText }}
+            </button>
+            @if (showCancelButton) {
+            <button type="button" mat-flat-button color="warn" (click)="cancelEdit()">
+              {{ cancelButtonText }}
+            </button>
+            }
+          </div>
+        </div>
+      </form>
+    </mat-card-content>
     }
   </mat-card>
 </div>

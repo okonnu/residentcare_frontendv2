@@ -1,125 +1,99 @@
-# Table Form Component
+# Table Form V2 Component
 
-The `TableFormComponent` is a reusable Angular component that displays data in a table format with inline editing capabilities. It combines the display functionality of a table with the editing capabilities of a form.
+A simplified table component that reuses the card-form-v2 component for editing and viewing records.
 
-## Features
+## Key Improvements
 
-- Display tabular data with customizable columns
-- Inline editing for individual rows
-- Support for various data types (text, number, date, select, etc.)
-- Sortable columns
-- Pagination
-- CRUD operations (Create, Read, Update, Delete)
-- Customizable display of values through display functions
-- Support for nested properties
+- **Simplified Configuration**: Uses `FormField[]` instead of complex column configurations
+- **Code Reuse**: Leverages the existing card-form-v2 component for form operations
+- **Reduced Complexity**: Removed unnecessary properties and simplified the interface
+- **Automatic Column Generation**: Table columns are automatically derived from FormField array
 
-## How to Use
-
-### 1. Import the Component
+## Usage
 
 ```typescript
-import { TableFormComponent, TableColumn } from '../../components/table-form/table-form.component';
+import { TableFormComponent } from "./table-form-v2/table-form.component";
+import { FormField } from "../models/FormField";
 
 @Component({
   // ...
-  imports: [CommonModule, TableFormComponent],
-  // ...
+  imports: [TableFormComponent],
 })
+export class MyComponent {
+  // Define your form fields
+  formControls: FormField[] = [
+    // These will be used for both table columns and form inputs
+  ];
+
+  // Your data array
+  dataSet = [
+    { id: 1, name: "John", email: "john@example.com" },
+    // ...
+  ];
+}
 ```
-
-### 2. Define Your Columns
-
-```typescript
-columns: TableColumn[] = [
-  { key: 'id', title: 'ID', dataType: 'text', sortable: true, hide: true },
-  { key: 'name', title: 'Name', dataType: 'text', sortable: true },
-  { key: 'age', title: 'Age', dataType: 'number', sortable: true },
-  {
-    key: 'status',
-    title: 'Status',
-    dataType: 'select',
-    options: [
-      { value: 'active', label: 'Active' },
-      { value: 'inactive', label: 'Inactive' }
-    ]
-  },
-  {
-    key: 'customField',
-    title: 'Custom Display',
-    dataType: 'custom',
-    displayFn: (item) => `${item.firstName} ${item.lastName}`
-  }
-];
-```
-
-### 3. Add the Component to Your Template
 
 ```html
-<table-form [title]="'Employee Records'" [subtitle]="'Click on a record to edit'" [dataSet]="records" [columns]="columns" [idField]="'id'" [allowInlineEdit]="true" (add)="handleAdd()" (edit)="handleEdit($event)" (delete)="handleDelete($event)" (save)="handleSave($event)"> </table-form>
+<table-form [title]="'My Records'" [subtitle]="'Manage your records'" [dataSet]="dataSet" [formControls]="formControls" [idField]="'id'" [showAddButton]="true" [showEditButton]="true" [showDeleteButton]="true" [showViewButton]="true" (save)="handleSave($event)" (delete)="handleDelete($event)" (view)="handleView($event)" (cancel)="handleCancel()"> </table-form>
 ```
 
-### 4. Implement Event Handlers
+## Properties
+
+### Inputs
+
+| Property           | Type        | Default   | Description                                |
+| ------------------ | ----------- | --------- | ------------------------------------------ |
+| `title`            | string      | 'Records' | Table title                                |
+| `subtitle`         | string      | ''        | Table subtitle                             |
+| `formControls`     | FormField[] | []        | Field configurations for columns and forms |
+| `dataSet`          | any[]       | []        | Data array to display                      |
+| `idField`          | string      | 'id'      | Field name used as unique identifier       |
+| `showAddButton`    | boolean     | true      | Show add new record button                 |
+| `showEditButton`   | boolean     | true      | Show edit button in actions                |
+| `showDeleteButton` | boolean     | true      | Show delete button in actions              |
+| `showViewButton`   | boolean     | true      | Show view button in actions                |
+
+### Outputs
+
+| Event    | Type | Description                               |
+| -------- | ---- | ----------------------------------------- |
+| `save`   | any  | Emitted when a record is saved (add/edit) |
+| `delete` | any  | Emitted when a record is deleted          |
+| `view`   | any  | Emitted when view button is clicked       |
+| `cancel` | void | Emitted when operation is cancelled       |
+
+## FormField Configuration
+
+The `FormField` model supports:
 
 ```typescript
-handleAdd() {
-  // Create a new record
-}
-
-handleEdit(record: any) {
-  // External edit if needed
-}
-
-handleDelete(record: any) {
-  // Delete the record
-}
-
-handleSave(record: any) {
-  // Save edited record
+class FormField {
+  dataType: string; // 'text', 'email', 'number', 'date', 'select', 'radio', etc.
+  title: string; // Display name (used for both column header and form label)
+  dropDownOptions?: Array<{ value: string; label: string }>; // For select/radio types
+  formControl: FormControl; // Angular FormControl
 }
 ```
 
-## Column Configuration Options
+## Key Features
 
-| Property    | Type                  | Description                                          |
-| ----------- | --------------------- | ---------------------------------------------------- |
-| key         | string                | Property name in data object                         |
-| title       | string                | Display name for column header                       |
-| dataType    | string                | Data type (text, number, date, select, custom, etc.) |
-| sortable    | boolean               | Whether column is sortable                           |
-| hidden/hide | boolean               | Whether to hide column from display                  |
-| options     | Array<{value, label}> | For dropdowns and radio buttons                      |
-| width       | string                | Optional width (e.g., '100px', '10%')                |
-| displayFn   | function              | Function to format display value                     |
+1. **Automatic Column Generation**: Table columns are automatically created from the `formControls` array
+2. **Integrated Card Form**: Uses card-form-v2 for view, edit, and add operations
+3. **Simplified Interface**: Removed complex column configuration options
+4. **Built-in Modes**:
+   - View mode: Shows table with action buttons
+   - Detail mode: Shows card-form in read-only mode
+   - Edit mode: Shows card-form in edit mode
+   - Add mode: Shows card-form for adding new records
 
-## Component Inputs
+## Data Mapping
 
-| Input            | Type          | Description                     |
-| ---------------- | ------------- | ------------------------------- |
-| title            | string        | Table title                     |
-| subtitle         | string        | Table subtitle                  |
-| dataSet          | any[]         | Data to display                 |
-| columns          | TableColumn[] | Column definitions              |
-| idField          | string        | Primary key field name          |
-| showAddButton    | boolean       | Whether to show add button      |
-| showEditButton   | boolean       | Whether to show edit button     |
-| showDeleteButton | boolean       | Whether to show delete button   |
-| showViewButton   | boolean       | Whether to show view button     |
-| allowInlineEdit  | boolean       | Whether to allow inline editing |
+The component automatically maps between your data object keys and FormField titles:
 
-## Component Outputs
+- FormField title "Full Name" becomes table column key "full_name"
+- Spaces are replaced with underscores and converted to lowercase
+- This ensures consistent mapping between table display and form editing
 
-| Output | Type               | Description           |
-| ------ | ------------------ | --------------------- |
-| add    | EventEmitter<void> | Add button clicked    |
-| edit   | EventEmitter<any>  | Edit button clicked   |
-| delete | EventEmitter<any>  | Delete button clicked |
-| view   | EventEmitter<any>  | View button clicked   |
-| save   | EventEmitter<any>  | Save button clicked   |
-| cancel | EventEmitter<void> | Cancel button clicked |
+## Example
 
-## Examples
-
-Check out these examples to see the component in action:
-
-1. Basic Example: `/pages/table-form-example`
-2. Vitals Data Example: `/pages/vitals-table-example`
+See `table-form-v2-usage-example.ts` for a complete working example.

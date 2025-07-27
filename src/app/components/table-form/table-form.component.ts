@@ -1,28 +1,23 @@
-import { Component, Input, Output, EventEmitter, ViewChild, OnInit, AfterViewInit, OnChanges, SimpleChanges, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, OnInit, AfterViewInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { MaterialModule } from '../../material.module';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { InputComponent } from '../form-input/form-input.component';
+import { FormControl } from '@angular/forms';
+import { FormField } from 'src/app/models/FormField';
+import { CardFormComponent } from '../card-form/card-form.component';
+import { SnackBarService } from 'src/app/services/snackBar.service';
 
-// Interface to define column configuration
+// Simplified interface for table columns
 export interface TableColumn {
     key: string;       // Property name in data object
     title: string;     // Display name for column header
-    dataType: string;  // Data type (text, number, date, select, etc.)
     sortable?: boolean; // Whether column is sortable
     hidden?: boolean;   // Whether to hide column from display
-    hide?: boolean;     // Alternative to hidden, for backward compatibility
-    options?: Array<{ value: string, label: string }>; // For dropdowns and radio buttons
     width?: string;     // Optional width (e.g., '100px', '10%')
     displayFn?: (item: any) => string; // Function to format display value
-    required?: boolean; // Whether field is required
-    validators?: any[]; // Custom validators for the field
 }
 
 @Component({
@@ -30,40 +25,33 @@ export interface TableColumn {
     standalone: true,
     imports: [
         CommonModule,
-        FormsModule,
-        ReactiveFormsModule,
         MaterialModule,
         TablerIconsModule,
-        NgxMaskDirective,
-        InputComponent
+        CardFormComponent
     ],
     templateUrl: './table-form.component.html',
-    styleUrls: ['./table-form.component.scss'],
-    providers: [
-        provideNgxMask()
-    ]
+    styleUrls: ['./table-form.component.scss']
 })
 export class TableFormComponent implements OnInit, AfterViewInit {
     @Input() title: string = 'Records';
     @Input() subtitle: string = '';
-    @Input()
-    set dataSet(value: any[]) {
-        if (value) {
-            this._dataSet = value;
-            this.dataSource.data = value;
-            console.log('Data set updated:', value.length);
-        }
-    }
-    get dataSet(): any[] {
-        return this._dataSet;
-    }
-
-    @Input() columns: TableColumn[] = [];
+    @Input() formControls: FormField[] = [];
     @Input() idField: string = 'id';
     @Input() showAddButton: boolean = true;
     @Input() showEditButton: boolean = true;
     @Input() showDeleteButton: boolean = true;
     @Input() showViewButton: boolean = true;
+
+    @Input()
+    set dataSet(value: any[]) {
+        if (value) {
+            this._dataSet = value;
+            this.dataSource.data = value;
+        }
+    }
+    get dataSet(): any[] {
+        return this._dataSet;
+    }
 
     @Output() add = new EventEmitter<void>();
     @Output() edit = new EventEmitter<any>();
@@ -77,16 +65,22 @@ export class TableFormComponent implements OnInit, AfterViewInit {
 
     dataSource = new MatTableDataSource<any>([]);
     displayedColumns: string[] = [];
-    currentMode: 'view' | 'edit' | 'add' = 'view';
+    currentMode: 'view' | 'edit' | 'add' | 'detail' = 'view';
     selectedRecord: any = null;
-    originalRecordData: any = null;
-    recordForm!: FormGroup;
     private _dataSet: any[] = [];
-    private _snackbar = inject(MatSnackBar);
-    private formBuilder = inject(FormBuilder);
+    private _snackbar = inject(SnackBarService);
+
+    // Extract columns from formControls
+    get columns(): TableColumn[] {
+        return this.formControls.map(field => ({
+            key: field.title.toLowerCase().replace(/\s+/g, '_'), // Convert title to key
+            title: field.title,
+            sortable: true,
+            hidden: false
+        }));
+    }
 
     constructor() {
-        // Initialize with empty array
         this.dataSource = new MatTableDataSource<any>([]);
     }
 
@@ -94,25 +88,17 @@ export class TableFormComponent implements OnInit, AfterViewInit {
         // Initialize data
         if (this._dataSet && this._dataSet.length > 0) {
             this.dataSource.data = this._dataSet;
-            console.log('Data source initialized with', this._dataSet.length, 'records');
         }
 
         // Prepare displayed columns (excluding hidden ones)
         this.displayedColumns = this.columns
-            .filter(column => !column.hidden && !column.hide)
+            .filter(column => !column.hidden)
             .map(column => column.key);
 
         // Add actions column if any action button is visible
         if (this.showEditButton || this.showDeleteButton || this.showViewButton) {
             this.displayedColumns.push('actions');
         }
-
-        // Log for debugging
-        console.log('Initialized TableForm:', {
-            columns: this.columns,
-            displayedColumns: this.displayedColumns,
-            dataLength: this.dataSource.data.length,
-        });
     }
 
     ngAfterViewInit() {
@@ -124,185 +110,114 @@ export class TableFormComponent implements OnInit, AfterViewInit {
     switchToViewMode() {
         this.currentMode = 'view';
         this.selectedRecord = null;
-        this.originalRecordData = null;
     }
 
-    // Start editing a specific record
-    startEdit(row: any) {
-        this.selectedRecord = { ...row }; // Clone the record
-        this.originalRecordData = { ...row }; // Store original for cancellation
-        this.currentMode = 'edit';
-        this.createForm(); // Create form with record data
-    }
-
-    // Start adding a new record
-    startAdd() {
-        this.selectedRecord = this.createBlankRecord();
-        this.originalRecordData = null; // No original data for new records
-        this.currentMode = 'add';
-        this.createForm(); // Create form with blank data
-    }
-
-    // Save the record (either edited or new)
-    saveRecord() {
-        if (!this.recordForm) {
-            this._snackbar.open('Form not initialized', 'Close', { duration: 4000 });
-            return;
-        }
-
-        if (this.recordForm.invalid) {
-            this._snackbar.open('Please fix form errors before saving', 'Close', { duration: 4000 });
-            this.markFormGroupTouched(this.recordForm);
-            return;
-        }
-
-        // Get form values and merge with selected record
-        const formValues = this.recordForm.value;
-        const recordToSave = { ...this.selectedRecord, ...formValues };
-
-        // Emit the record
-        this.save.emit(recordToSave);
-        this.switchToViewMode();
-    }
-
-    // Cancel editing/adding and restore original data
-    cancelOperation() {
-        if (this.originalRecordData && this.currentMode === 'edit') {
-            this.selectedRecord = { ...this.originalRecordData };
-        }
-        this.switchToViewMode();
-        this.cancel.emit();
-    }
-
-    addNew() {
-        this.startAdd();
-    }
-
+    // Start viewing a record in detail
     viewRecord(row: any) {
+        this.loadDataIntoFormControls(row);
+        this.selectedRecord = this.formControls;
+        this.currentMode = 'detail';
         this.view.emit(row);
     }
 
+    // Start editing a record
     editRecord(row: any) {
-        this.startEdit(row);
+        this.loadDataIntoFormControls(row);
+        this.selectedRecord = this.formControls;
+        this.currentMode = 'edit';
     }
 
+    // Start adding a new record
+    addNew() {
+        this.clearFormControls();
+        this.selectedRecord = this.formControls;
+        this.currentMode = 'add';
+    }
+
+    // Delete a record
     deleteRecord(row: any) {
         if (confirm('Are you sure you want to delete this record?')) {
             this.delete.emit(row);
         }
     }
 
-    // Helper method to create a blank record based on column configuration
-    private createBlankRecord(): any {
-        const blankRecord: any = {};
+    // Handle save from card-form
+    onSave(data: any) {
+        const recordToSave = this.getFormControlValues();
 
-        this.columns.forEach(column => {
-            if (!column.hidden && !column.hide) {
-                // Set default values based on data type
-                switch (column.dataType) {
-                    case 'text':
-                    case 'email':
-                    case 'tel':
-                    case 'ssn':
-                        blankRecord[column.key] = '';
-                        break;
-                    case 'number':
-                        blankRecord[column.key] = null;
-                        break;
-                    case 'date':
-                        blankRecord[column.key] = '';
-                        break;
-                    case 'time':
-                        blankRecord[column.key] = '';
-                        break;
-                    case 'select':
-                    case 'radio':
-                        blankRecord[column.key] = '';
-                        break;
-                    case 'custom':
-                        // Handle custom fields
-                        if (column.key === 'bloodPressure') {
-                            blankRecord['systolicBP'] = null;
-                            blankRecord['diastolicBP'] = null;
-                        } else {
-                            blankRecord[column.key] = '';
-                        }
-                        break;
-                    default:
-                        blankRecord[column.key] = '';
-                }
-            }
-        });
+        if (this.currentMode === 'edit') {
+            // Merge with original record to preserve ID and other fields
+            const originalRecord = this._dataSet.find(item =>
+                item[this.idField] === this.getOriginalRecordId()
+            );
+            Object.assign(recordToSave, { [this.idField]: originalRecord?.[this.idField] });
+        }
 
-        return blankRecord;
+        this.save.emit(recordToSave);
+        this.switchToViewMode();
+        this._snackbar.showSuccess('Record saved successfully');
     }
 
-    // Utility method to get value from nested property path (e.g., 'user.name')
+    // Handle cancel from card-form
+    onCancel() {
+        this._snackbar.showError('Operation cancelled');
+        this.switchToViewMode();
+        this.cancel.emit();
+    }
+
+    // Handle edit button from card-form
+    onEdit() {
+        this.currentMode = 'edit';
+        this.edit.emit(this.selectedRecord);
+    }
+
+    // Load data from row into existing form controls
+    private loadDataIntoFormControls(row: any): void {
+        this.formControls.forEach(field => {
+            const key = field.title.toLowerCase().replace(/\s+/g, '_');
+            field.formControl.setValue(row[key] || '');
+        });
+    }
+
+    // Clear all form controls (for adding new records)
+    private clearFormControls(): void {
+        this.formControls.forEach(field => {
+            field.formControl.setValue('');
+        });
+    }
+
+    // Get current form control values as plain object
+    private getFormControlValues(): any {
+        const result: any = {};
+        this.formControls.forEach(field => {
+            const key = field.title.toLowerCase().replace(/\s+/g, '_');
+            result[key] = field.formControl.value;
+        });
+        return result;
+    }
+
+    // Get original record ID for editing
+    private getOriginalRecordId(): any {
+        if (this.currentMode !== 'edit') return null;
+
+        // Find the ID field in form controls
+        const idField = this.formControls.find(field =>
+            field.title.toLowerCase().replace(/\s+/g, '_') === this.idField
+        );
+
+        return idField?.formControl?.value;
+    }    // Utility method to get value from nested property path
     getPropertyValue(obj: any, path: string): any {
         return path.split('.').reduce((o, key) => (o && o[key] !== undefined ? o[key] : null), obj);
-    }
-
-    // Create reactive form based on columns and current record
-    private createForm(): void {
-        const formControls: { [key: string]: FormControl } = {};
-
-        this.columns.forEach(column => {
-            if (!column.hidden && !column.hide) {
-                const validators = [];
-
-                // Add required validator if specified
-                if (column.required) {
-                    validators.push(Validators.required);
-                }
-
-                // Add email validator for email fields
-                if (column.dataType === 'email') {
-                    validators.push(Validators.email);
-                }
-
-                // Add custom validators if specified
-                if (column.validators && column.validators.length > 0) {
-                    validators.push(...column.validators);
-                }
-
-                // Get initial value from selected record
-                const initialValue = this.selectedRecord ? this.selectedRecord[column.key] : '';
-
-                // Handle custom fields
-                if (column.dataType === 'custom' && column.key === 'bloodPressure') {
-                    formControls['systolicBP'] = new FormControl(
-                        this.selectedRecord ? this.selectedRecord['systolicBP'] : null,
-                        column.required ? [Validators.required] : []
-                    );
-                    formControls['diastolicBP'] = new FormControl(
-                        this.selectedRecord ? this.selectedRecord['diastolicBP'] : null,
-                        column.required ? [Validators.required] : []
-                    );
-                } else {
-                    formControls[column.key] = new FormControl(initialValue, validators);
-                }
-            }
-        });
-
-        this.recordForm = this.formBuilder.group(formControls);
-    }
-
-    // Helper method to mark all form controls as touched
-    private markFormGroupTouched(formGroup: FormGroup): void {
-        Object.keys(formGroup.controls).forEach(field => {
-            const control = formGroup.get(field);
-            control?.markAsTouched({ onlySelf: true });
-        });
-    }
-
-    // Get form control for template
-    getFormControl(field: string): FormControl {
-        return this.recordForm?.get(field) as FormControl;
     }
 
     // Helper methods for template
     get isViewMode(): boolean {
         return this.currentMode === 'view';
+    }
+
+    get isDetailMode(): boolean {
+        return this.currentMode === 'detail';
     }
 
     get isEditMode(): boolean {
@@ -314,26 +229,15 @@ export class TableFormComponent implements OnInit, AfterViewInit {
     }
 
     get isFormMode(): boolean {
-        return this.currentMode === 'edit' || this.currentMode === 'add';
+        return this.currentMode === 'edit' || this.currentMode === 'add' || this.currentMode === 'detail';
     }
 
-    get formTitle(): string {
+    get cardTitle(): string {
         switch (this.currentMode) {
             case 'add': return `Add New ${this.title}`;
             case 'edit': return `Edit ${this.title}`;
+            case 'detail': return `View ${this.title}`;
             default: return this.title;
         }
-    }
-
-    get formSubtitle(): string {
-        switch (this.currentMode) {
-            case 'add': return 'Adding new record';
-            case 'edit': return 'Editing selected record';
-            default: return this.subtitle;
-        }
-    }
-
-    get saveButtonText(): string {
-        return this.currentMode === 'add' ? 'Add Record' : 'Save Changes';
     }
 }

@@ -1,63 +1,48 @@
 <div class="container-fluid">
-  
+
   <!-- Loading State - Full Page -->
   @if (isLoading()) {
-    <div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-      <div class="text-center">
-        <mat-spinner diameter="64" class="mx-auto mb-4"></mat-spinner>
-        <h4 class="text-muted mb-2">Loading resident information...</h4>
-        <p class="text-muted">Please wait while we fetch the data.</p>
-      </div>
+  <div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="text-center">
+      <mat-spinner diameter="64" class="mx-auto mb-4"></mat-spinner>
+      <h4 class="text-muted mb-2">Loading resident information...</h4>
+      <p class="text-muted">Please wait while we fetch the data.</p>
     </div>
+  </div>
   }
-  
+
   <!-- No Data State - Full Page -->
   @else if (!hasResidentData()) {
-    <div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-      <div class="text-center">
-        <mat-icon class="text-muted mb-4" style="font-size: 80px; height: 80px; width: 80px;">person_search</mat-icon>
-        <h3 class="text-muted mb-3">No data available</h3>
-        <p class="text-muted mb-4">Please search for a resident to view their information.</p>
-        <button mat-raised-button color="primary" (click)="openSearchDialog()">
-          <mat-icon class="me-2">search</mat-icon>
-          Search for Resident
-        </button>
-      </div>
+  <div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="text-center">
+      <mat-icon class="text-muted mb-4" style="font-size: 80px; height: 80px; width: 80px;">person_search</mat-icon>
+      <h3 class="text-muted mb-3">No data available</h3>
+      <p class="text-muted mb-4">Please search for a resident to view their information.</p>
+      <button mat-raised-button color="primary" (click)="openSearchDialog()">
+        <mat-icon class="me-2">search</mat-icon>
+        Search for Resident
+      </button>
     </div>
+  </div>
   }
-  
+
   <!-- Content State - Show when we have resident data -->
   @else {
   <!-- Personal Information and Demographics Row -->
   <div class="row">
     <!-- Personal Information Card -->
     <div class="col-12 col-lg-6">
-      <card-form
-        title="Personal Information"
-        [dataSet]="personalInfo()"
-        [editMode]="false"
-        [showEditButton]="true"
-        [showCancelButton]="true"
-        saveButtonText="Save Personal Info"
-        cancelButtonText="Cancel Changes"
-        editButtonText="Edit Personal Info"
-        (save)="onPersonalInfoSave($event)"
-        (cancel)="onCancel()">
+      <card-form title="Personal Information" [formControls]="personalInfo()" [editMode]="false" [showEditButton]="true"
+        [showCancelButton]="true" saveButtonText="Save Personal Info" cancelButtonText="Cancel Changes"
+        editButtonText="Edit Personal Info" (save)="onPersonalInfoSave($event)" (cancel)="onCancel()">
       </card-form>
     </div>
 
     <!-- Demographics Card -->
     <div class="col-12 col-lg-6">
-      <card-form
-        title="Demographics & Admission"
-        [dataSet]="demographicsInfo()"
-        [editMode]="false"
-        [showEditButton]="true"
-        [showCancelButton]="true"
-        saveButtonText="Save Demographics"
-        cancelButtonText="Cancel Changes"
-        editButtonText="Edit Demographics"
-        (save)="onDemographicsSave($event)"
+      <card-form title="Demographics & Admission" [formControls]="demographicsInfo()" [editMode]="false"
+        [showEditButton]="true" [showCancelButton]="true" saveButtonText="Save Demographics"
+        cancelButtonText="Cancel Changes" editButtonText="Edit Demographics" (save)="onDemographicsSave($event)"
         (cancel)="onCancel()">
       </card-form>
     </div>
@@ -67,109 +52,57 @@
   <div class="row">
     <!-- Medical & Legal Status Card -->
     <div class="col-12 col-lg-6">
-      <card-form
-        title="Medical & Legal Status"
-        [dataSet]="medicalLegalStatus()"
-        [editMode]="false"
-        [showEditButton]="true"
-        [showCancelButton]="true"
-        saveButtonText="Save Medical Status"
-        cancelButtonText="Cancel Changes"
-        editButtonText="Edit Medical Status"
-        (save)="onMedicalLegalSave($event)"
+      <card-form title="Medical & Legal Status" [formControls]="medicalLegalStatus()" [editMode]="false"
+        [showEditButton]="true" [showCancelButton]="true" saveButtonText="Save Medical Status"
+        cancelButtonText="Cancel Changes" editButtonText="Edit Medical Status" (save)="onMedicalLegalSave($event)"
         (cancel)="onCancel()">
       </card-form>
     </div>
 
     <!-- Facility Information Card -->
     <div class="col-12 col-lg-6">
-      <card-form
-        title="Facility Information"
-        [dataSet]="facilityInfo()"
-        [editMode]="false"
-        [showEditButton]="true"
-        [showCancelButton]="true"
-        saveButtonText="Save Facility Info"
-        cancelButtonText="Cancel Changes"
-        editButtonText="Edit Facility Info"
-        (save)="onFacilitySave($event)"
-        (cancel)="onCancel()">
+      <card-form title="Facility Information" [formControls]="facilityInfo()" [editMode]="false" [showEditButton]="true"
+        [showCancelButton]="true" saveButtonText="Save Facility Info" cancelButtonText="Cancel Changes"
+        editButtonText="Edit Facility Info" (save)="onFacilitySave($event)" (cancel)="onCancel()">
       </card-form>
     </div>
   </div>
 
   <!-- Primary Care Physicians Table -->
   <div class="row ">
-          <table-form 
-            [title]="'Primary Care Physicians'"
-            [subtitle]="'Manage primary care physician information'"
-            [dataSet]="primaryCarePhysicians()"
-            [columns]="physicianColumns"
-            [idField]="'id'"
-            [showAddButton]="true"
-            [showEditButton]="true"
-            [showDeleteButton]="true"
-            [showViewButton]="true"
-            (save)="handlePhysicianSave($event)"
-            (delete)="handlePhysicianDelete($event)"
-            (view)="handlePhysicianView($event)"
-            (cancel)="handleCancel()"
-            style="overflow-x: auto; max-width: 100%;">
-          </table-form>
+    <table-form [title]="'Primary Care Physicians'" [subtitle]="'Manage primary care physician information'"
+      [dataSet]="primaryCarePhysicians()" [formControls]="physicianFormControls" [idField]="'id'" [showAddButton]="true"
+      [showEditButton]="true" [showDeleteButton]="true" [showViewButton]="true" (save)="handlePhysicianSave($event)"
+      (delete)="handlePhysicianDelete($event)" (view)="handlePhysicianView($event)" (cancel)="handleCancel()"
+      style="overflow-x: auto; max-width: 100%;">
+    </table-form>
   </div>
 
   <!-- Allergies Table -->
   <div class="row">
-          <table-form
-            [title]="'Allergies'"
-            [subtitle]="'Manage resident allergy information'"
-            [dataSet]="allergies()"
-            [columns]="allergyColumns"
-            [idField]="'id'"
-            [showAddButton]="true"
-            [showEditButton]="true"
-            [showDeleteButton]="true"
-            [showViewButton]="true"
-            (save)="handleAllergySave($event)"
-            (delete)="handleAllergyDelete($event)"
-            (view)="handleAllergyView($event)"
-            (cancel)="handleCancel()">
-          </table-form>
+    <table-form [title]="'Allergies'" [subtitle]="'Manage resident allergy information'" [dataSet]="allergies()"
+      [formControls]="allergyFormControls" [idField]="'id'" [showAddButton]="true" [showEditButton]="true"
+      [showDeleteButton]="true" [showViewButton]="true" (save)="handleAllergySave($event)"
+      (delete)="handleAllergyDelete($event)" (view)="handleAllergyView($event)" (cancel)="handleCancel()">
+    </table-form>
   </div>
 
   <!-- Service Providers and Pharmacy Row -->
   <div class="row">
-          <table-form
-            [title]="'Service Providers'"
-            [subtitle]="'Manage healthcare service providers'"
-            [dataSet]="serviceProviders()"
-            [columns]="serviceProviderColumns"
-            [idField]="'id'"
-            [showAddButton]="true"
-            [showEditButton]="true"
-            [showDeleteButton]="true"
-            [showViewButton]="true"
-            (save)="handleServiceProviderSave($event)"
-            (delete)="handleServiceProviderDelete($event)"
-            (view)="handleServiceProviderView($event)"
-            (cancel)="handleCancel()">
-          </table-form>
-    </div>
+    <table-form [title]="'Service Providers'" [subtitle]="'Manage healthcare service providers'"
+      [dataSet]="serviceProviders()" [formControls]="serviceProviderFormControls" [idField]="'id'"
+      [showAddButton]="true" [showEditButton]="true" [showDeleteButton]="true" [showViewButton]="true"
+      (save)="handleServiceProviderSave($event)" (delete)="handleServiceProviderDelete($event)"
+      (view)="handleServiceProviderView($event)" (cancel)="handleCancel()">
+    </table-form>
+  </div>
 
-    <!-- Pharmacy Information Card -->
+  <!-- Pharmacy Information Card -->
   <div class="row">
     <div class="col-12 col-lg-4">
-      <card-form
-        title="Pharmacy Information"
-        [dataSet]="pharmacyInfo()"
-        [editMode]="false"
-        [showEditButton]="true"
-        [showCancelButton]="true"
-        saveButtonText="Save Pharmacy"
-        cancelButtonText="Cancel Changes"
-        editButtonText="Edit Pharmacy"
-        (save)="onPharmacySave($event)"
-        (cancel)="onCancel()">
+      <card-form title="Pharmacy Information" [formControls]="pharmacyInfo()" [editMode]="false" [showEditButton]="true"
+        [showCancelButton]="true" saveButtonText="Save Pharmacy" cancelButtonText="Cancel Changes"
+        editButtonText="Edit Pharmacy" (save)="onPharmacySave($event)" (cancel)="onCancel()">
       </card-form>
     </div>
   </div>

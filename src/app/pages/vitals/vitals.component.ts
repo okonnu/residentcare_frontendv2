@@ -1,8 +1,10 @@
 import { Component, ViewEncapsulation, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Validators } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
-import { TableColumn, TableFormComponent } from '../../components/table-form/table-form.component';
+import { TableFormComponent } from '../../components/table-form/table-form.component';
+import { FormField } from 'src/app/models/FormField';
+import { Builder } from 'builder-pattern';
 import { Vital, VitalsChartOptions } from '../../models/vital.interface';
 import { VitalService } from '../../services/vital.service';
 import { NgApexchartsModule } from 'ng-apexcharts';
@@ -40,91 +42,91 @@ export class VitalsComponent implements OnInit {
     });
   }
 
-  // Minimal computed property that only adds date/time for table display
+  // Minimal computed property that formats data for table-form-v2 with proper field mapping
   vitalsTableData = computed(() => {
     const vitals = this.vitalsData();
     if (!vitals || vitals.length === 0) return [];
 
     return vitals.map((vital: Vital) => ({
-      ...vital, // Spread all existing properties
+      id: vital.id,
       date: vital.audit?.createdDate ? new Date(vital.audit.createdDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
       time: vital.audit?.createdDate ? new Date(vital.audit.createdDate).toLocaleTimeString() : new Date().toLocaleTimeString(),
+      temperature: vital.temperature,
+      heart_rate: vital.heartRate,
+      respiratory_rate: vital.respiratoryRate,
+      systolic_bp: vital.systolicBP,
+      diastolic_bp: vital.diastolicBP,
+      o2_sat: vital.oxygenSaturation,
+      weight: vital.weight,
+      height: vital.height,
+      bmi: vital.bmi,
+      pain_score: vital.painScore?.toString() || '',
+      blood_glucose_level: vital.bloodGlucoseLevel
     }));
   });
 
-  // Column definitions for vitals table
-  vitalsColumns: TableColumn[] = [
-    { key: 'date', title: 'Date', dataType: 'date', required: true, validators: [Validators.required] },
-    { key: 'time', title: 'Time', dataType: 'time', required: true, validators: [Validators.required] },
-    {
-      key: 'temperature',
-      title: 'Temperature (°F)',
-      dataType: 'number',
-      required: true,
-      validators: [Validators.required, Validators.min(95), Validators.max(110)]
-    },
-    {
-      key: 'heartRate',
-      title: 'Heart Rate (bpm)',
-      dataType: 'number',
-      required: true,
-      validators: [Validators.required, Validators.min(40), Validators.max(200)]
-    },
-    {
-      key: 'respiratoryRate',
-      title: 'Respiratory Rate',
-      dataType: 'number',
-      required: true,
-      validators: [Validators.required, Validators.min(8), Validators.max(40)]
-    },
-    {
-      key: 'systolicBP',
-      title: 'Systolic BP',
-      dataType: 'number',
-      required: true,
-      validators: [Validators.required, Validators.min(70), Validators.max(250)]
-    },
-    {
-      key: 'diastolicBP',
-      title: 'Diastolic BP',
-      dataType: 'number',
-      required: true,
-      validators: [Validators.required, Validators.min(40), Validators.max(150)]
-    },
-    {
-      key: 'oxygenSaturation',
-      title: 'O2 Sat (%)',
-      dataType: 'number',
-      required: true,
-      validators: [Validators.required, Validators.min(80), Validators.max(100)]
-    },
-    {
-      key: 'weight',
-      title: 'Weight (lbs)',
-      dataType: 'number',
-      required: false,
-      validators: [Validators.min(50), Validators.max(500)]
-    },
-    {
-      key: 'height',
-      title: 'Height (cm)',
-      dataType: 'number',
-      required: false,
-      validators: [Validators.min(100), Validators.max(250)]
-    },
-    {
-      key: 'bmi',
-      title: 'BMI',
-      dataType: 'number',
-      required: false,
-      validators: [Validators.min(10), Validators.max(50)]
-    },
-    {
-      key: 'painScore',
-      title: 'Pain Score (0-10)',
-      dataType: 'select',
-      required: false,
-      options: [
+  // Form controls configuration for vitals using Builder pattern with FormField
+  vitalsFormControls: FormField[] = [
+    Builder(FormField)
+      .dataType('date')
+      .title('Date')
+      .formControl(new FormControl('', [Validators.required]))
+      .build(),
+    Builder(FormField)
+      .dataType('time')
+      .title('Time')
+      .formControl(new FormControl('', [Validators.required]))
+      .build(),
+    Builder(FormField)
+      .dataType('number')
+      .title('Temperature')
+      .formControl(new FormControl('', [Validators.required, Validators.min(95), Validators.max(110)]))
+      .build(),
+    Builder(FormField)
+      .dataType('number')
+      .title('Heart Rate')
+      .formControl(new FormControl('', [Validators.required, Validators.min(40), Validators.max(200)]))
+      .build(),
+    Builder(FormField)
+      .dataType('number')
+      .title('Respiratory Rate')
+      .formControl(new FormControl('', [Validators.required, Validators.min(8), Validators.max(40)]))
+      .build(),
+    Builder(FormField)
+      .dataType('number')
+      .title('Systolic BP')
+      .formControl(new FormControl('', [Validators.required, Validators.min(70), Validators.max(250)]))
+      .build(),
+    Builder(FormField)
+      .dataType('number')
+      .title('Diastolic BP')
+      .formControl(new FormControl('', [Validators.required, Validators.min(40), Validators.max(150)]))
+      .build(),
+    Builder(FormField)
+      .dataType('number')
+      .title('O2 Sat')
+      .formControl(new FormControl('', [Validators.required, Validators.min(80), Validators.max(100)]))
+      .build(),
+    Builder(FormField)
+      .dataType('number')
+      .title('Weight')
+      .formControl(new FormControl('', [Validators.min(50), Validators.max(500)]))
+      .build(),
+    Builder(FormField)
+      .dataType('number')
+      .title('Height')
+      .formControl(new FormControl('', [Validators.min(100), Validators.max(250)]))
+      .build(),
+    Builder(FormField)
+      .dataType('number')
+      .title('BMI')
+      .formControl(new FormControl('', [Validators.min(10), Validators.max(50)]))
+      .build(),
+    Builder(FormField)
+      .dataType('select')
+      .title('Pain Score')
+      .formControl(new FormControl(''))
+      .dropDownOptions([
         { value: '0', label: '0 - No Pain' },
         { value: '1', label: '1 - Mild' },
         { value: '2', label: '2 - Mild' },
@@ -136,15 +138,13 @@ export class VitalsComponent implements OnInit {
         { value: '8', label: '8 - Very Severe' },
         { value: '9', label: '9 - Very Severe' },
         { value: '10', label: '10 - Worst Pain' }
-      ]
-    },
-    {
-      key: 'bloodGlucoseLevel',
-      title: 'Blood Glucose (mg/dL)',
-      dataType: 'number',
-      required: false,
-      validators: [Validators.min(50), Validators.max(500)]
-    }
+      ])
+      .build(),
+    Builder(FormField)
+      .dataType('number')
+      .title('Blood Glucose Level')
+      .formControl(new FormControl('', [Validators.min(50), Validators.max(500)]))
+      .build()
   ];
 
   // Chart configurations for vital signs trends - computed from real data
@@ -309,7 +309,7 @@ export class VitalsComponent implements OnInit {
     } as VitalsChartOptions;
   });
 
-  // Current values computed from latest data
+  // Current values computed from latest data for card display
   currentVitals = computed(() => {
     const vitals = this.vitalsData();
     if (!vitals || vitals.length === 0) {
@@ -344,21 +344,21 @@ export class VitalsComponent implements OnInit {
       return;
     }
 
-    // Extract form data and create Vitals object
+    // Extract form data and create Vitals object with proper field mapping
     const vital: Vital = {
       id: data.id || '', // Empty string for new records
       residentId: this.vitalService.residentId,
       temperature: parseFloat(data.temperature) || 0,
-      heartRate: parseInt(data.heartRate) || 0,
-      respiratoryRate: parseInt(data.respiratoryRate) || 0,
-      systolicBP: parseInt(data.systolicBP) || 0,
-      diastolicBP: parseInt(data.diastolicBP) || 0,
-      oxygenSaturation: parseFloat(data.oxygenSaturation) || 0,
+      heartRate: parseInt(data.heart_rate) || 0,
+      respiratoryRate: parseInt(data.respiratory_rate) || 0,
+      systolicBP: parseInt(data.systolic_bp) || 0,
+      diastolicBP: parseInt(data.diastolic_bp) || 0,
+      oxygenSaturation: parseFloat(data.o2_sat) || 0,
       weight: parseFloat(data.weight) || 0,
       height: parseFloat(data.height) || 0,
       bmi: parseFloat(data.bmi) || 0,
-      painScore: parseInt(data.painScore) || 0,
-      bloodGlucoseLevel: parseFloat(data.bloodGlucoseLevel) || 0,
+      painScore: parseInt(data.pain_score) || 0,
+      bloodGlucoseLevel: parseFloat(data.blood_glucose_level) || 0,
       recordedAt: data.date ? new Date(`${data.date}T${data.time}`) : new Date(),
       audit: null, // Will be set by the backend
     };

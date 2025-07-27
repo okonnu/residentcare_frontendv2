@@ -1,201 +1,139 @@
-<div class="table-form-container"  >
-  <mat-card class="cardWithShadow" >
+<div class="table-form-container">
+  <!-- View Mode (Table Display) -->
+  @if (isViewMode) {
+  <mat-card class="cardWithShadow">
     <mat-card-content>
-      
-      <!-- View Mode (Table Display) -->
-      @if (isViewMode) {
-        <!-- Header -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <div>
-            <mat-card-title>{{ title }}</mat-card-title>
-            @if (subtitle) {
-              <mat-card-subtitle>{{ subtitle }}</mat-card-subtitle>
-            }
-          </div>
-          
-          @if (showAddButton) {
-            <button mat-raised-button color="primary" (click)="addNew()">
-              <mat-icon>add</mat-icon> Add Record
-            </button>
+      <!-- Header -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <mat-card-title>{{ title }}</mat-card-title>
+          @if (subtitle) {
+          <mat-card-subtitle>{{ subtitle }}</mat-card-subtitle>
           }
         </div>
-        
-        <!-- Table view -->
-        <div class="table-responsive" >
-          <table mat-table [dataSource]="dataSource" matSort class="w-100" >
-            
-            <!-- Dynamic columns based on input configuration -->
-            @for (column of columns; track column.key) {
-              <ng-container [matColumnDef]="column.key">
-                
-                <!-- Header cell -->
-                <th mat-header-cell *matHeaderCellDef 
-                    [style.width]="column.width || 'auto'"
-                    [style.min-width]="'120px'"
-                    [mat-sort-header]="column.sortable ? column.key : ''"
-                    [disabled]="!column.sortable">
-                  {{ column.title }}
-                </th>
-                
-                <!-- Data cell (Display only) -->
-                <td mat-cell *matCellDef="let row" [style.min-width]="'120px'">
-                  @if (column.displayFn) {
-                    {{ column.displayFn(row) }}
-                  } @else {
-                    {{ getPropertyValue(row, column.key) }}
-                  }
-                </td>
-              </ng-container>
-            }
-            
-            <!-- Actions Column -->
-            <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef style="min-width: 150px;"> Actions </th>
-              <td mat-cell *matCellDef="let row" style="min-width: 150px;">
-                <div class="actions-container">
-                  @if (showViewButton) {
-                    <button mat-icon-button color="primary" 
-                            (click)="viewRecord(row)" matTooltip="View">
-                      <mat-icon>visibility</mat-icon>
-                    </button>
-                  }
-                  
-                  @if (showEditButton) {
-                    <button mat-icon-button color="accent" 
-                            (click)="startEdit(row)" matTooltip="Edit">
-                      <mat-icon>edit</mat-icon>
-                    </button>
-                  }
-                  
-                  @if (showDeleteButton) {
-                    <button mat-icon-button color="warn" 
-                            (click)="deleteRecord(row)" matTooltip="Delete">
-                      <mat-icon>delete</mat-icon>
-                    </button>
-                  }
-                </div>
-              </td>
-            </ng-container>
-            
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-          </table>
-          
-          <!-- No data message -->
-          @if (dataSource.data.length === 0) {
-            <div class="no-data-message">
-              <p>No records available</p>
-            </div>
-          }
-          
-          <!-- Pagination -->
-          <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
-        </div>
-      }
 
-      <!-- Form Mode (Add/Edit) -->
-      @if (isFormMode && selectedRecord) {
-        <!-- Header -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <div>
-            <mat-card-title>{{ formTitle }}</mat-card-title>
-            <mat-card-subtitle>{{ formSubtitle }}</mat-card-subtitle>
-          </div>
-          
-          <button mat-icon-button (click)="switchToViewMode()" matTooltip="Back to table">
-            <mat-icon>arrow_back</mat-icon>
-          </button>
-        </div>
-        
-        <!-- Form -->
-        <form [formGroup]="recordForm">
+        @if (showAddButton) {
+        <button mat-raised-button color="primary" (click)="addNew()">
+          <mat-icon>add</mat-icon> Add Record
+        </button>
+        }
+      </div>
+
+      <!-- Table view -->
+      <div class="table-responsive">
+        <table mat-table [dataSource]="dataSource" matSort class="w-100">
+          <!-- Dynamic columns based on formControls -->
           @for (column of columns; track column.key) {
-            @if (!column.hidden && !column.hide) {
-              <div class="row mb-3">
-                <div class="col-sm-4 d-flex align-items-center">
-                  <mat-label class="mat-subtitle-2 f-w-600 d-block">{{ column.title }}</mat-label>
-                </div>
-                <div class="col-sm-8">
-                  <!-- Text, Number, Date, Email, Time inputs using enhanced form-input component -->
-                  @if (['text', 'number', 'date', 'time', 'email', 'tel'].includes(column.dataType)) {
-                    <form-input
-                      [type]="column.dataType"
-                      [label]="''"
-                      [formControl]="getFormControl(column.key)"
-                      [required]="column.required || false"
-                      [placeholder]="column.title">
-                    </form-input>
-                  }
-                  
-                  <!-- SSN input using enhanced form-input component -->
-                  @if (column.dataType === 'ssn') {
-                    <form-input
-                      type="ssn"
-                      [label]="''"
-                      [formControl]="getFormControl(column.key)"
-                      [required]="column.required || false">
-                    </form-input>
-                  }
-                  
-                  <!-- Select dropdown using enhanced form-input component -->
-                  @if (column.dataType === 'select') {
-                    <form-input
-                      type="select"
-                      [label]="''"
-                      [formControl]="getFormControl(column.key)"
-                      [required]="column.required || false"
-                      [options]="column.options || []"
-                      [placeholder]="'Select ' + column.title">
-                    </form-input>
-                  }
-                  
-                  <!-- Radio buttons using enhanced form-input component -->
-                  @if (column.dataType === 'radio') {
-                    <form-input
-                      type="radio"
-                      [label]="''"
-                      [formControl]="getFormControl(column.key)"
-                      [required]="column.required || false"
-                      [options]="column.options || []">
-                    </form-input>
-                  }
+          <ng-container [matColumnDef]="column.key">
+            <!-- Header cell -->
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              [style.width]="column.width || 'auto'"
+              [style.min-width]="'120px'"
+              [mat-sort-header]="column.sortable ? column.key : ''"
+              [disabled]="!column.sortable"
+            >
+              {{ column.title }}
+            </th>
 
-                  <!-- Custom input (e.g., for blood pressure) -->
-                  @if (column.dataType === 'custom') {
-                    @if (column.key === 'bloodPressure') {
-                      <div class="d-flex gap-2">
-                        <form-input
-                          type="number"
-                          [formControl]="getFormControl('systolicBP')"
-                          [required]="column.required || false">
-                        </form-input>
-                        <span class="align-self-center">/</span>
-                        <form-input
-                          type="number"
-                          [formControl]="getFormControl('diastolicBP')"
-                          [required]="column.required || false">
-                        </form-input>
-                      </div>
-                    }
-                  }
-                </div>
-              </div>
-            }
+            <!-- Data cell (Display only) -->
+            <td mat-cell *matCellDef="let row" [style.min-width]="'120px'">
+              @if (column.displayFn) {
+              {{ column.displayFn(row) }}
+              } @else {
+              {{ getPropertyValue(row, column.key) }}
+              }
+            </td>
+          </ng-container>
           }
-          
-          <!-- Action buttons -->
-          <div class="row justify-content-end mt-4">
-            <div class="col-sm-8">
-              <button type="button" mat-flat-button color="primary" (click)="saveRecord()" class="me-2">
-                {{ saveButtonText }}
-              </button>
-              <button type="button" mat-flat-button color="warn" (click)="cancelOperation()">
-                Cancel
-              </button>
-            </div>
-          </div>
-        </form>
-      }
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef style="min-width: 150px">
+              Actions
+            </th>
+            <td mat-cell *matCellDef="let row" style="min-width: 150px">
+              <div class="actions-container">
+                @if (showViewButton) {
+                <button
+                  mat-icon-button
+                  color="primary"
+                  (click)="viewRecord(row)"
+                  matTooltip="View"
+                >
+                  <mat-icon>visibility</mat-icon>
+                </button>
+                } @if (showEditButton) {
+                <button
+                  mat-icon-button
+                  color="accent"
+                  (click)="editRecord(row)"
+                  matTooltip="Edit"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                } @if (showDeleteButton) {
+                <button
+                  mat-icon-button
+                  color="warn"
+                  (click)="deleteRecord(row)"
+                  matTooltip="Delete"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+                }
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+
+        <!-- No data message -->
+        @if (dataSource.data.length === 0) {
+        <div class="no-data-message">
+          <p>No records available</p>
+        </div>
+        }
+
+        <!-- Pagination -->
+        <mat-paginator
+          [pageSizeOptions]="[5, 10, 25, 100]"
+          showFirstLastButtons
+        ></mat-paginator>
+      </div>
     </mat-card-content>
   </mat-card>
+  }
+  <!-- Form Mode (View/Edit/Add using Card Form) -->
+  @if (isFormMode && selectedRecord) {
+  <!-- Header with back button -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <button
+      mat-icon-button
+      (click)="switchToViewMode()"
+      matTooltip="Back to table"
+    >
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  </div>
+
+  <!-- Card Form Component -->
+  <card-form
+    [formControls]="selectedRecord"
+    [title]="cardTitle"
+    [editMode]="isEditMode || isAddMode"
+    [showEditButton]="isDetailMode"
+    [showCancelButton]="true"
+    [editButtonText]="'Edit'"
+    [saveButtonText]="isAddMode ? 'Add Record' : 'Save Changes'"
+    [cancelButtonText]="'Cancel'"
+    (save)="onSave($event)"
+    (cancel)="onCancel()"
+    (edit)="onEdit()"
+  >
+  </card-form>
+  }
 </div>

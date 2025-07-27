@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, Validators } from '@angular/forms';
-import { TableFormComponent } from '../../components/table-form-v2/table-form.component';
+import { TableFormComponent } from '../../components/table-form/table-form.component';
 import { FormField } from '../../models/FormField';
 import { Builder } from 'builder-pattern';
 

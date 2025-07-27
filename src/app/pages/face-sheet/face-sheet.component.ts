@@ -1,9 +1,11 @@
 import { Component, ViewEncapsulation, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Validators } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
-import { CardFormComponent, Structure } from '../../components/card-form/card-form.component';
-import { TableColumn, TableFormComponent } from '../../components/table-form/table-form.component';
+import { CardFormComponent } from '../../components/card-form/card-form.component';
+import { TableFormComponent } from '../../components/table-form/table-form.component';
+import { FormField } from 'src/app/models/FormField';
+import { Builder } from 'builder-pattern';
 import { ResidentService } from 'src/app/services/resident.service';
 import { Resident } from '../../models/resident.interface';
 import { MatDialog } from '@angular/material/dialog';
@@ -42,237 +44,205 @@ export class FaceSheetComponent {
     });
   }
 
-  // Personal Information Card
+  // Personal Information Card using FormField with Builder pattern
   personalInfo = computed(() => {
     const residentData = this.resident();
     if (!residentData) return [];
     return [
-      {
-        title: 'First Name',
-        value: residentData.firstName || '',
-        dataType: 'text',
-        required: true,
-        validators: [Validators.required, Validators.minLength(2)]
-      },
-      {
-        title: 'Last Name',
-        value: residentData.lastName || '',
-        dataType: 'text',
-        required: true,
-        validators: [Validators.required, Validators.minLength(2)]
-      },
-      {
-        title: 'Email',
-        value: residentData.email || '',
-        dataType: 'email',
-        required: false,
-        validators: [Validators.email]
-      },
-      {
-        title: 'Date of Birth',
-        value: residentData.dateOfBirth ? new Date(residentData.dateOfBirth).toISOString().split('T')[0] : '',
-        dataType: 'date',
-        required: true,
-        validators: [Validators.required]
-      },
-      {
-        title: 'Sex at Birth',
-        value: residentData.sexAtBirth || '',
-        dataType: 'select',
-        required: true,
-        validators: [Validators.required],
-        options: [
+      Builder(FormField)
+        .dataType('text')
+        .title('First Name')
+        .formControl(new FormControl(residentData.firstName || '', [Validators.required, Validators.minLength(2)]))
+        .build(),
+      Builder(FormField)
+        .dataType('text')
+        .title('Last Name')
+        .formControl(new FormControl(residentData.lastName || '', [Validators.required, Validators.minLength(2)]))
+        .build(),
+      Builder(FormField)
+        .dataType('email')
+        .title('Email')
+        .formControl(new FormControl(residentData.email || '', [Validators.email]))
+        .build(),
+      Builder(FormField)
+        .dataType('date')
+        .title('Date Of Birth')
+        .formControl(new FormControl(residentData.dateOfBirth ? new Date(residentData.dateOfBirth).toISOString().split('T')[0] : '', [Validators.required]))
+        .build(),
+      Builder(FormField)
+        .dataType('select')
+        .title('Sex At Birth')
+        .formControl(new FormControl(residentData.sexAtBirth || '', [Validators.required]))
+        .dropDownOptions([
           { value: 'Male', label: 'Male' },
           { value: 'Female', label: 'Female' },
           { value: 'Other', label: 'Other' }
-        ]
-      },
-      {
-        title: 'Social Security Number',
-        value: residentData.socialSecurityNumber || '',
-        dataType: 'ssn',
-        required: true,
-        validators: [Validators.required, Validators.pattern(/^\d{3}-\d{2}-\d{4}$/)]
-      }
-    ] as Structure[];
+        ])
+        .build(),
+      Builder(FormField)
+        .dataType('ssn')
+        .title('Social Security Number')
+        .formControl(new FormControl(residentData.socialSecurityNumber || '', [Validators.required, Validators.pattern(/^\d{3}-\d{2}-\d{4}$/)]))
+        .build()
+    ];
   });
 
-  // Demographics & Admission Information
+  // Demographics & Admission Information using FormField with Builder pattern
   demographicsInfo = computed(() => {
     const residentData = this.resident();
     if (!residentData) return [];
 
     return [
-      {
-        title: 'Marital Status',
-        value: residentData.maritalStatus || '',
-        dataType: 'select',
-        required: false,
-        options: [
+      Builder(FormField)
+        .dataType('select')
+        .title('Marital Status')
+        .formControl(new FormControl(residentData.maritalStatus || ''))
+        .dropDownOptions([
           { value: 'Single', label: 'Single' },
           { value: 'Married', label: 'Married' },
           { value: 'Divorced', label: 'Divorced' },
           { value: 'Widowed', label: 'Widowed' },
           { value: 'Separated', label: 'Separated' }
-        ]
-      },
-      {
-        title: 'Religion',
-        value: residentData.religion || '',
-        dataType: 'text',
-        required: false
-      },
-      {
-        title: 'Primary Language',
-        value: residentData.primaryLanguage || '',
-        dataType: 'text',
-        required: false
-      },
-      {
-        title: 'Ethnicity',
-        value: residentData.ethnicity || '',
-        dataType: 'text',
-        required: false
-      },
-      {
-        title: 'Date of Admission',
-        value: residentData.dateOfAdmission ? new Date(residentData.dateOfAdmission).toISOString().split('T')[0] : '',
-        dataType: 'date',
-        required: true,
-        validators: [Validators.required]
-      },
-      {
-        title: 'Medical Power of Attorney',
-        value: residentData.medicalPowerOfAttorney || '',
-        dataType: 'text',
-        required: false
-      }
-    ] as Structure[];
+        ])
+        .build(),
+      Builder(FormField)
+        .dataType('text')
+        .title('Religion')
+        .formControl(new FormControl(residentData.religion || ''))
+        .build(),
+      Builder(FormField)
+        .dataType('text')
+        .title('Primary Language')
+        .formControl(new FormControl(residentData.primaryLanguage || ''))
+        .build(),
+      Builder(FormField)
+        .dataType('text')
+        .title('Ethnicity')
+        .formControl(new FormControl(residentData.ethnicity || ''))
+        .build(),
+      Builder(FormField)
+        .dataType('date')
+        .title('Date Of Admission')
+        .formControl(new FormControl(residentData.dateOfAdmission ? new Date(residentData.dateOfAdmission).toISOString().split('T')[0] : '', [Validators.required]))
+        .build(),
+      Builder(FormField)
+        .dataType('text')
+        .title('Medical Power Of Attorney')
+        .formControl(new FormControl(residentData.medicalPowerOfAttorney || ''))
+        .build()
+    ];
   });
 
-  // Medical & Legal Status
+  // Medical & Legal Status using FormField with Builder pattern
   medicalLegalStatus = computed(() => {
     const residentData = this.resident();
     if (!residentData?.medicalAndLegalStatus) return [];
 
     const status = residentData.medicalAndLegalStatus;
     return [
-      {
-        title: 'Full Code',
-        value: status.fullCode ? 'Yes' : 'No',
-        dataType: 'radio',
-        required: true,
-        options: [
+      Builder(FormField)
+        .dataType('radio')
+        .title('Full Code')
+        .formControl(new FormControl(status.fullCode ? 'Yes' : 'No', [Validators.required]))
+        .dropDownOptions([
           { value: 'Yes', label: 'Yes' },
           { value: 'No', label: 'No' }
-        ]
-      },
-      {
-        title: 'DNR (Do Not Resuscitate)',
-        value: status.dnr ? 'Yes' : 'No',
-        dataType: 'radio',
-        required: true,
-        options: [
+        ])
+        .build(),
+      Builder(FormField)
+        .dataType('radio')
+        .title('DNR Do Not Resuscitate')
+        .formControl(new FormControl(status.dnr ? 'Yes' : 'No', [Validators.required]))
+        .dropDownOptions([
           { value: 'Yes', label: 'Yes' },
           { value: 'No', label: 'No' }
-        ]
-      },
-      {
-        title: 'DNI (Do Not Intubate)',
-        value: status.dni ? 'Yes' : 'No',
-        dataType: 'radio',
-        required: true,
-        options: [
+        ])
+        .build(),
+      Builder(FormField)
+        .dataType('radio')
+        .title('DNI Do Not Intubate')
+        .formControl(new FormControl(status.dni ? 'Yes' : 'No', [Validators.required]))
+        .dropDownOptions([
           { value: 'Yes', label: 'Yes' },
           { value: 'No', label: 'No' }
-        ]
-      },
-      {
-        title: 'Comfort Measures',
-        value: status.comfortMeasures ? 'Yes' : 'No',
-        dataType: 'radio',
-        required: true,
-        options: [
+        ])
+        .build(),
+      Builder(FormField)
+        .dataType('radio')
+        .title('Comfort Measures')
+        .formControl(new FormControl(status.comfortMeasures ? 'Yes' : 'No', [Validators.required]))
+        .dropDownOptions([
           { value: 'Yes', label: 'Yes' },
           { value: 'No', label: 'No' }
-        ]
-      }
-    ] as Structure[];
+        ])
+        .build()
+    ];
   });
 
-  // Facility Information
+  // Facility Information using FormField with Builder pattern
   facilityInfo = computed(() => {
     const residentData = this.resident();
     if (!residentData?.facility) return [];
 
     const facility = residentData.facility;
     return [
-      {
-        title: 'Facility Name',
-        value: facility.name || '',
-        dataType: 'text',
-        required: true,
-        validators: [Validators.required]
-      },
-      {
-        title: 'Facility Phone',
-        value: facility.contactInfo?.phoneNumber || '',
-        dataType: 'tel',
-        required: true,
-        validators: [Validators.required]
-      },
-      {
-        title: 'Facility Address',
-        value: facility.contactInfo ?
-          `${facility.contactInfo.street}, ${facility.contactInfo.city}, ${facility.contactInfo.state} ${facility.contactInfo.zipCode}` : '',
-        dataType: 'text',
-        required: true,
-        validators: [Validators.required]
-      },
-      {
-        title: 'Room Number',
-        value: facility.roomNumber || '',
-        dataType: 'text',
-        required: false
-      },
-      {
-        title: 'Level of Care',
-        value: facility.levelOfCare || '',
-        dataType: 'select',
-        required: false,
-        options: [
+      Builder(FormField)
+        .dataType('text')
+        .title('Facility Name')
+        .formControl(new FormControl(facility.name || '', [Validators.required]))
+        .build(),
+      Builder(FormField)
+        .dataType('tel')
+        .title('Facility Phone')
+        .formControl(new FormControl(facility.contactInfo?.phoneNumber || '', [Validators.required]))
+        .build(),
+      Builder(FormField)
+        .dataType('text')
+        .title('Facility Address')
+        .formControl(new FormControl(facility.contactInfo ?
+          `${facility.contactInfo.street}, ${facility.contactInfo.city}, ${facility.contactInfo.state} ${facility.contactInfo.zipCode}` : '', [Validators.required]))
+        .build(),
+      Builder(FormField)
+        .dataType('text')
+        .title('Room Number')
+        .formControl(new FormControl(facility.roomNumber || ''))
+        .build(),
+      Builder(FormField)
+        .dataType('select')
+        .title('Level Of Care')
+        .formControl(new FormControl(facility.levelOfCare || ''))
+        .dropDownOptions([
           { value: 'Skilled Nursing', label: 'Skilled Nursing' },
           { value: 'Assisted Living', label: 'Assisted Living' },
           { value: 'Memory Care', label: 'Memory Care' },
           { value: 'Rehabilitation', label: 'Rehabilitation' }
-        ]
-      }
-    ] as Structure[];
+        ])
+        .build()
+    ];
   });
 
-  // Pharmacy Information
+  // Pharmacy Information using FormField with Builder pattern
   pharmacyInfo = computed(() => {
     const residentData = this.resident();
     if (!residentData) return [];
 
     return [
-      {
-        title: 'Preferred Pharmacy',
-        value: residentData.preferredPharmacy || '',
-        dataType: 'text',
-        required: false
-      }
-    ] as Structure[];
+      Builder(FormField)
+        .dataType('text')
+        .title('Preferred Pharmacy')
+        .formControl(new FormControl(residentData.preferredPharmacy || ''))
+        .build()
+    ];
   });
 
-  // Primary Care Physicians data
+  // Primary Care Physicians data with proper field mapping for table-form-v2
   primaryCarePhysicians = computed(() => {
     const residentData = this.resident();
     if (!residentData?.primaryCarePhysician) return [];
 
     return residentData.primaryCarePhysician.map(physician => ({
       id: physician.id,
-      physicianName: `Dr. ${physician.firstName} ${physician.lastName}`,
+      physician_name: `Dr. ${physician.firstName} ${physician.lastName}`,
       email: physician.email,
       phone: physician.contactInfo?.phoneNumber || '',
       specialization: physician.specialization,
@@ -282,47 +252,85 @@ export class FaceSheetComponent {
     }));
   });
 
-  // Column definitions for physicians table
-  physicianColumns: TableColumn[] = [
-    { key: 'physicianName', title: 'Physician Name', dataType: 'text', required: true, validators: [Validators.required] },
-    { key: 'email', title: 'Email', dataType: 'email', required: true, validators: [Validators.required, Validators.email] },
-    { key: 'phone', title: 'Phone', dataType: 'tel', required: true, validators: [Validators.required] },
-    { key: 'specialization', title: 'Specialization', dataType: 'text', required: false },
-    { key: 'hospital', title: 'Hospital', dataType: 'text', required: false },
-    { key: 'address', title: 'Address', dataType: 'text', required: false }
+  // FormField configuration for physicians table using Builder pattern
+  physicianFormControls: FormField[] = [
+    Builder(FormField)
+      .dataType('text')
+      .title('Physician Name')
+      .formControl(new FormControl('', [Validators.required]))
+      .build(),
+    Builder(FormField)
+      .dataType('email')
+      .title('Email')
+      .formControl(new FormControl('', [Validators.required, Validators.email]))
+      .build(),
+    Builder(FormField)
+      .dataType('tel')
+      .title('Phone')
+      .formControl(new FormControl('', [Validators.required]))
+      .build(),
+    Builder(FormField)
+      .dataType('text')
+      .title('Specialization')
+      .formControl(new FormControl(''))
+      .build(),
+    Builder(FormField)
+      .dataType('text')
+      .title('Hospital')
+      .formControl(new FormControl(''))
+      .build(),
+    Builder(FormField)
+      .dataType('text')
+      .title('Address')
+      .formControl(new FormControl(''))
+      .build()
   ];
 
-  // Allergies data
+  // Allergies data with proper field mapping for table-form-v2
   allergies = computed(() => {
     const residentData = this.resident();
     if (!residentData?.allergy) return [];
 
     return residentData.allergy.map(allergy => ({
       id: allergy.id,
-      allergyName: allergy.name,
+      allergy_name: allergy.name,
       description: allergy.description || '',
       reaction: allergy.reaction || '',
       severity: allergy.severity || ''
     }));
   });
 
-  // Column definitions for allergies table
-  allergyColumns: TableColumn[] = [
-    { key: 'allergyName', title: 'Allergy Name', dataType: 'text', required: true, validators: [Validators.required] },
-    { key: 'description', title: 'Description', dataType: 'text', required: false },
-    { key: 'reaction', title: 'Reaction', dataType: 'text', required: false },
-    {
-      key: 'severity', title: 'Severity', dataType: 'select', required: false,
-      options: [
+  // FormField configuration for allergies table using Builder pattern
+  allergyFormControls: FormField[] = [
+    Builder(FormField)
+      .dataType('text')
+      .title('Allergy Name')
+      .formControl(new FormControl('', [Validators.required]))
+      .build(),
+    Builder(FormField)
+      .dataType('text')
+      .title('Description')
+      .formControl(new FormControl(''))
+      .build(),
+    Builder(FormField)
+      .dataType('text')
+      .title('Reaction')
+      .formControl(new FormControl(''))
+      .build(),
+    Builder(FormField)
+      .dataType('select')
+      .title('Severity')
+      .formControl(new FormControl(''))
+      .dropDownOptions([
         { value: 'Mild', label: 'Mild' },
         { value: 'Moderate', label: 'Moderate' },
         { value: 'Severe', label: 'Severe' },
         { value: 'Life-threatening', label: 'Life-threatening' }
-      ]
-    }
+      ])
+      .build()
   ];
 
-  // Service providers data
+  // Service providers data with proper field mapping for table-form-v2
   serviceProviders = computed(() => {
     const residentData = this.resident();
     const providers = [];
@@ -331,7 +339,7 @@ export class FaceSheetComponent {
     if (residentData?.socialWorker) {
       providers.push({
         id: residentData.socialWorker.id,
-        providerType: 'Social Worker',
+        provider_type: 'Social Worker',
         name: residentData.socialWorker.name,
         phone: residentData.socialWorker.contactInfo?.phoneNumber || '',
         address: residentData.socialWorker.contactInfo ?
@@ -343,7 +351,7 @@ export class FaceSheetComponent {
     if (residentData?.hospice) {
       providers.push({
         id: residentData.hospice.id,
-        providerType: 'Hospice Care',
+        provider_type: 'Hospice Care',
         name: residentData.hospice.name,
         phone: residentData.hospice.contactInfo?.phoneNumber || '',
         address: residentData.hospice.contactInfo ?
@@ -354,23 +362,36 @@ export class FaceSheetComponent {
     return providers;
   });
 
-  // Column definitions for service providers table
-  serviceProviderColumns: TableColumn[] = [
-    {
-      key: 'providerType', title: 'Provider Type', dataType: 'select', required: true,
-      validators: [Validators.required],
-      options: [
+  // FormField configuration for service providers table using Builder pattern
+  serviceProviderFormControls: FormField[] = [
+    Builder(FormField)
+      .dataType('select')
+      .title('Provider Type')
+      .formControl(new FormControl('', [Validators.required]))
+      .dropDownOptions([
         { value: 'Social Worker', label: 'Social Worker' },
         { value: 'Hospice Care', label: 'Hospice Care' },
         { value: 'Physical Therapist', label: 'Physical Therapist' },
         { value: 'Occupational Therapist', label: 'Occupational Therapist' },
         { value: 'Speech Therapist', label: 'Speech Therapist' },
         { value: 'Dietitian', label: 'Dietitian' }
-      ]
-    },
-    { key: 'name', title: 'Name', dataType: 'text', required: true, validators: [Validators.required] },
-    { key: 'phone', title: 'Phone', dataType: 'tel', required: true, validators: [Validators.required] },
-    { key: 'address', title: 'Address', dataType: 'text', required: false }
+      ])
+      .build(),
+    Builder(FormField)
+      .dataType('text')
+      .title('Name')
+      .formControl(new FormControl('', [Validators.required]))
+      .build(),
+    Builder(FormField)
+      .dataType('tel')
+      .title('Phone')
+      .formControl(new FormControl('', [Validators.required]))
+      .build(),
+    Builder(FormField)
+      .dataType('text')
+      .title('Address')
+      .formControl(new FormControl(''))
+      .build()
   ];
 
   // Event handlers for card-form saves
