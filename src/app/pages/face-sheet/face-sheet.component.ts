@@ -50,26 +50,31 @@ export class FaceSheetComponent {
     if (!residentData) return [];
     return [
       Builder(FormField)
+        .key('firstName')
         .dataType('text')
         .title('First Name')
         .formControl(new FormControl(residentData.firstName || '', [Validators.required, Validators.minLength(2)]))
         .build(),
       Builder(FormField)
+        .key('lastName')
         .dataType('text')
         .title('Last Name')
         .formControl(new FormControl(residentData.lastName || '', [Validators.required, Validators.minLength(2)]))
         .build(),
       Builder(FormField)
+        .key('email')
         .dataType('email')
         .title('Email')
         .formControl(new FormControl(residentData.email || '', [Validators.email]))
         .build(),
       Builder(FormField)
+        .key('dateOfBirth')
         .dataType('date')
         .title('Date Of Birth')
         .formControl(new FormControl(residentData.dateOfBirth ? new Date(residentData.dateOfBirth).toISOString().split('T')[0] : '', [Validators.required]))
         .build(),
       Builder(FormField)
+        .key('sexAtBirth')
         .dataType('select')
         .title('Sex At Birth')
         .formControl(new FormControl(residentData.sexAtBirth || '', [Validators.required]))
@@ -80,6 +85,7 @@ export class FaceSheetComponent {
         ])
         .build(),
       Builder(FormField)
+        .key('socialSecurityNumber')
         .dataType('ssn')
         .title('Social Security Number')
         .formControl(new FormControl(residentData.socialSecurityNumber || '', [Validators.required, Validators.pattern(/^\d{3}-\d{2}-\d{4}$/)]))
@@ -94,6 +100,7 @@ export class FaceSheetComponent {
 
     return [
       Builder(FormField)
+        .key('maritalStatus')
         .dataType('select')
         .title('Marital Status')
         .formControl(new FormControl(residentData.maritalStatus || ''))
@@ -106,26 +113,31 @@ export class FaceSheetComponent {
         ])
         .build(),
       Builder(FormField)
+        .key('religion')
         .dataType('text')
         .title('Religion')
         .formControl(new FormControl(residentData.religion || ''))
         .build(),
       Builder(FormField)
+        .key('primaryLanguage')
         .dataType('text')
         .title('Primary Language')
         .formControl(new FormControl(residentData.primaryLanguage || ''))
         .build(),
       Builder(FormField)
+        .key('ethnicity')
         .dataType('text')
         .title('Ethnicity')
         .formControl(new FormControl(residentData.ethnicity || ''))
         .build(),
       Builder(FormField)
+        .key('dateOfAdmission')
         .dataType('date')
         .title('Date Of Admission')
         .formControl(new FormControl(residentData.dateOfAdmission ? new Date(residentData.dateOfAdmission).toISOString().split('T')[0] : '', [Validators.required]))
         .build(),
       Builder(FormField)
+        .key('medicalPowerOfAttorney')
         .dataType('text')
         .title('Medical Power Of Attorney')
         .formControl(new FormControl(residentData.medicalPowerOfAttorney || ''))
@@ -141,6 +153,7 @@ export class FaceSheetComponent {
     const status = residentData.medicalAndLegalStatus;
     return [
       Builder(FormField)
+        .key('fullCode')
         .dataType('radio')
         .title('Full Code')
         .formControl(new FormControl(status.fullCode ? 'Yes' : 'No', [Validators.required]))
@@ -150,6 +163,7 @@ export class FaceSheetComponent {
         ])
         .build(),
       Builder(FormField)
+        .key('dnr')
         .dataType('radio')
         .title('DNR Do Not Resuscitate')
         .formControl(new FormControl(status.dnr ? 'Yes' : 'No', [Validators.required]))
@@ -159,6 +173,7 @@ export class FaceSheetComponent {
         ])
         .build(),
       Builder(FormField)
+        .key('dni')
         .dataType('radio')
         .title('DNI Do Not Intubate')
         .formControl(new FormControl(status.dni ? 'Yes' : 'No', [Validators.required]))
@@ -168,6 +183,7 @@ export class FaceSheetComponent {
         ])
         .build(),
       Builder(FormField)
+        .key('comfortMeasures')
         .dataType('radio')
         .title('Comfort Measures')
         .formControl(new FormControl(status.comfortMeasures ? 'Yes' : 'No', [Validators.required]))

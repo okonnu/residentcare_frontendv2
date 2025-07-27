@@ -67,13 +67,14 @@ export class TableFormComponent implements OnInit, AfterViewInit {
     displayedColumns: string[] = [];
     currentMode: 'view' | 'edit' | 'add' | 'detail' = 'view';
     selectedRecord: any = null;
+    originalRecord: any = null; // Store the original record being edited
     private _dataSet: any[] = [];
     private _snackbar = inject(SnackBarService);
 
     // Extract columns from formControls
     get columns(): TableColumn[] {
         return this.formControls.map(field => ({
-            key: field.title.toLowerCase().replace(/\s+/g, '_'), // Convert title to key
+            key: field.key, // Use explicit key from FormField
             title: field.title,
             sortable: true,
             hidden: false
@@ -110,6 +111,7 @@ export class TableFormComponent implements OnInit, AfterViewInit {
     switchToViewMode() {
         this.currentMode = 'view';
         this.selectedRecord = null;
+        this.originalRecord = null; // Clear original record
     }
 
     // Start viewing a record in detail
@@ -122,6 +124,7 @@ export class TableFormComponent implements OnInit, AfterViewInit {
 
     // Start editing a record
     editRecord(row: any) {
+        this.originalRecord = { ...row }; // Store a copy of the original record
         this.loadDataIntoFormControls(row);
         this.selectedRecord = this.formControls;
         this.currentMode = 'edit';
@@ -129,6 +132,7 @@ export class TableFormComponent implements OnInit, AfterViewInit {
 
     // Start adding a new record
     addNew() {
+        this.originalRecord = null; // No original record for new entries
         this.clearFormControls();
         this.selectedRecord = this.formControls;
         this.currentMode = 'add';
@@ -145,12 +149,16 @@ export class TableFormComponent implements OnInit, AfterViewInit {
     onSave(data: any) {
         const recordToSave = this.getFormControlValues();
 
-        if (this.currentMode === 'edit') {
-            // Merge with original record to preserve ID and other fields
-            const originalRecord = this._dataSet.find(item =>
-                item[this.idField] === this.getOriginalRecordId()
-            );
-            Object.assign(recordToSave, { [this.idField]: originalRecord?.[this.idField] });
+        if (this.currentMode === 'edit' && this.originalRecord) {
+            // Preserve the ID and any other fields that shouldn't be overwritten
+            recordToSave[this.idField] = this.originalRecord[this.idField];
+
+            // Also preserve any other fields that might not be in the form but exist in the original record
+            Object.keys(this.originalRecord).forEach(key => {
+                if (!(key in recordToSave)) {
+                    recordToSave[key] = this.originalRecord[key];
+                }
+            });
         }
 
         this.save.emit(recordToSave);
@@ -174,8 +182,7 @@ export class TableFormComponent implements OnInit, AfterViewInit {
     // Load data from row into existing form controls
     private loadDataIntoFormControls(row: any): void {
         this.formControls.forEach(field => {
-            const key = field.title.toLowerCase().replace(/\s+/g, '_');
-            field.formControl.setValue(row[key] || '');
+            field.formControl.setValue(row[field.key] || '');
         });
     }
 
@@ -190,23 +197,12 @@ export class TableFormComponent implements OnInit, AfterViewInit {
     private getFormControlValues(): any {
         const result: any = {};
         this.formControls.forEach(field => {
-            const key = field.title.toLowerCase().replace(/\s+/g, '_');
-            result[key] = field.formControl.value;
+            result[field.key] = field.formControl.value;
         });
         return result;
     }
 
-    // Get original record ID for editing
-    private getOriginalRecordId(): any {
-        if (this.currentMode !== 'edit') return null;
-
-        // Find the ID field in form controls
-        const idField = this.formControls.find(field =>
-            field.title.toLowerCase().replace(/\s+/g, '_') === this.idField
-        );
-
-        return idField?.formControl?.value;
-    }    // Utility method to get value from nested property path
+    // Utility method to get value from nested property path
     getPropertyValue(obj: any, path: string): any {
         return path.split('.').reduce((o, key) => (o && o[key] !== undefined ? o[key] : null), obj);
     }

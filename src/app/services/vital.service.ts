@@ -14,7 +14,7 @@ export class VitalService {
     // For example, methods to fetch, create, update, or delete vital signs records
     // Currently, it is a placeholder for future implementation
 
-    residentVitals = signal<any[]>([]);
+    residentVitals = signal<Vital[]>([]);
     isLoading = signal<boolean>(false);
     private http = inject(HttpClient);
     private _snackBar = inject(SnackBarService);
@@ -47,58 +47,21 @@ export class VitalService {
             .subscribe();
     }
 
-    createResidentVital(vital: Vital): void {
+    saveResidentVital(vital: Vital): void {
         this.isLoading.set(true);
-        vital.residentId = this.residentId; // Ensure the resident ID is set
-
         // Determine if this is an update (has ID) or create (no ID)
         const isUpdate = vital.id && vital.id.trim() !== '';
-        const url = isUpdate
-            ? `${environment.apiUrl}/vital/${vital.id}`
-            : `${environment.apiUrl}/vital/resident/${this.residentId}`;
 
-        // Remove audit fields as they are read-only
-        const { audit, ...vitalData } = vital;
-
-        const httpRequest = isUpdate
-            ? this.http.put<RestResponse>(url, vitalData)
-            : this.http.post<RestResponse>(url, vitalData);
-
-        httpRequest
+        const url = `${environment.apiUrl}/vital/`;
+        this.http.post<RestResponse>(url, vital)
             .pipe(
                 tap(response => {
-                    const message = isUpdate
-                        ? (response.message || 'Vital record updated successfully')
-                        : (response.message || 'Vital record created successfully');
-                    this._snackBar.showSuccess(message);
+                    this._snackBar.showSuccess(response.message || 'Vital record saved successfully');
                     this.getResidentVitals(); // Refresh the list after operation
                     this.isLoading.set(false);
                 }),
                 catchError(error => {
-                    const action = isUpdate ? 'updating' : 'creating';
-                    this._snackBar.showError(`Error ${action} vital: ${error.message}`);
-                    this.isLoading.set(false);
-                    return of(null);
-                })
-            )
-            .subscribe();
-    }
-
-    updateResidentVital(vital: Vital): void {
-        this.isLoading.set(true);
-
-        // Remove audit fields as they are read-only
-        const { audit, ...vitalData } = vital;
-
-        this.http.put<RestResponse>(`${environment.apiUrl}/vital/${vital.id}`, vitalData)
-            .pipe(
-                tap(response => {
-                    this._snackBar.showSuccess(response.message || 'Vital record updated successfully');
-                    this.getResidentVitals(); // Refresh the list after update
-                    this.isLoading.set(false);
-                }),
-                catchError(error => {
-                    this._snackBar.showError(`Error updating vital: ${error.message}`);
+                    this._snackBar.showError(`Error saving vital: ${error.message}`);
                     this.isLoading.set(false);
                     return of(null);
                 })

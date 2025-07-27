@@ -86,87 +86,89 @@ export class VitalsComponent implements OnInit {
     // BMI will be calculated automatically when height and weight are set
   }
 
-  // Minimal computed property that formats data for table-form-v2 with proper field mapping
+  // Use vitals data directly - no transformation needed since keys match Vital interface
   vitalsTableData = computed(() => {
     const vitals = this.vitalsData();
     if (!vitals || vitals.length === 0) return [];
 
+    // Add only the additional fields needed for the form (date/time)
     return vitals.map((vital: Vital) => ({
-      id: vital.id,
-      date: vital.audit?.createdDate ? new Date(vital.audit.createdDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-      time: vital.audit?.createdDate ? new Date(vital.audit.createdDate).toLocaleTimeString() : new Date().toLocaleTimeString(),
-      temperature: vital.temperature,
-      heart_rate: vital.heartRate,
-      respiratory_rate: vital.respiratoryRate,
-      systolic_bp: vital.systolicBP,
-      diastolic_bp: vital.diastolicBP,
-      o2_sat: vital.oxygenSaturation,
-      weight: vital.weight,
-      height: vital.height,
-      bmi: vital.bmi,
-      pain_score: vital.painScore?.toString() || '',
-      blood_glucose_level: vital.bloodGlucoseLevel
+      ...vital, // Spread all Vital properties directly
+      date: vital.recordedAt ? new Date(vital.recordedAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+      time: vital.recordedAt ? new Date(vital.recordedAt).toLocaleTimeString('en-US', { hour12: false }) : new Date().toLocaleTimeString('en-US', { hour12: false })
     }));
   });
 
   // Form controls configuration for vitals using Builder pattern with FormField
   vitalsFormControls: FormField[] = [
     Builder(FormField)
+      .key('date')
       .dataType('date')
       .title('Date')
-      .formControl(new FormControl('', [Validators.required]))
+      .formControl(new FormControl(new Date().toISOString().split('T')[0], [Validators.required])) // Default to today
       .build(),
     Builder(FormField)
+      .key('time')
       .dataType('time')
       .title('Time')
-      .formControl(new FormControl('', [Validators.required]))
+      .formControl(new FormControl(new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' }), [Validators.required])) // Default to current time
       .build(),
     Builder(FormField)
+      .key('temperature')
       .dataType('number')
       .title('Temperature')
       .formControl(new FormControl('', [Validators.required, Validators.min(95), Validators.max(110)]))
       .build(),
     Builder(FormField)
+      .key('heartRate')
       .dataType('number')
       .title('Heart Rate')
       .formControl(new FormControl('', [Validators.required, Validators.min(40), Validators.max(200)]))
       .build(),
     Builder(FormField)
+      .key('respiratoryRate')
       .dataType('number')
       .title('Respiratory Rate')
       .formControl(new FormControl('', [Validators.required, Validators.min(8), Validators.max(40)]))
       .build(),
     Builder(FormField)
+      .key('systolicBP')
       .dataType('number')
       .title('Systolic BP')
       .formControl(new FormControl('', [Validators.required, Validators.min(70), Validators.max(250)]))
       .build(),
     Builder(FormField)
+      .key('diastolicBP')
       .dataType('number')
       .title('Diastolic BP')
       .formControl(new FormControl('', [Validators.required, Validators.min(40), Validators.max(150)]))
       .build(),
     Builder(FormField)
+      .key('oxygenSaturation')
       .dataType('number')
       .title('O2 Sat')
       .formControl(new FormControl('', [Validators.required, Validators.min(80), Validators.max(100)]))
       .build(),
     Builder(FormField)
+      .key('weight')
       .dataType('number')
-      .title('Weight (LBS)')
+      .title('Weight')
       .formControl(this.weightControl)
       .build(),
     Builder(FormField)
+      .key('height')
       .dataType('number')
-      .title('Height (CM)')
+      .title('Height')
       .formControl(this.heightControl)
       .build(),
     Builder(FormField)
+      .key('bmi')
       .dataType('number')
       .title('BMI')
       .formControl(this.bmiControl)
       .build(),
     Builder(FormField)
+      .key('painScore')
       .dataType('select')
       .title('Pain Score')
       .formControl(new FormControl(''))
@@ -185,6 +187,7 @@ export class VitalsComponent implements OnInit {
       ])
       .build(),
     Builder(FormField)
+      .key('bloodGlucoseLevel')
       .dataType('number')
       .title('Blood Glucose Level')
       .formControl(new FormControl('', [Validators.min(50), Validators.max(500)]))
@@ -388,34 +391,40 @@ export class VitalsComponent implements OnInit {
       return;
     }
 
-    // Extract form data and create Vitals object with proper field mapping
+    // Create Vitals object - use data directly with minimal processing
+    const { date, time, ...vitalData } = data;
+    
+    console.log('Date and time values:', { date, time });
+    
+    // Handle date/time properly - if missing, use current timestamp
+    let recordedAt: Date;
+    if (date && time) {
+      try {
+        recordedAt = new Date(`${date}T${time}:00`);
+        // Check if the date is valid
+        if (isNaN(recordedAt.getTime())) {
+          console.warn('Invalid date created, using current time');
+          recordedAt = new Date();
+        }
+      } catch (error) {
+        console.warn('Error creating date, using current time:', error);
+        recordedAt = new Date();
+      }
+    } else {
+      console.warn('Date or time missing, using current time. Date:', date, 'Time:', time);
+      recordedAt = new Date();
+    }
+
     const vital: Vital = {
-      id: data.id || '', // Empty string for new records
+      ...vitalData, // Spread all matching properties directly
+      id: data.id || '', // Handle new records
       residentId: this.vitalService.residentId,
-      temperature: parseFloat(data.temperature) || 0,
-      heartRate: parseInt(data.heart_rate) || 0,
-      respiratoryRate: parseInt(data.respiratory_rate) || 0,
-      systolicBP: parseInt(data.systolic_bp) || 0,
-      diastolicBP: parseInt(data.diastolic_bp) || 0,
-      oxygenSaturation: parseFloat(data.o2_sat) || 0,
-      weight: parseFloat(data.weight) || 0,
-      height: parseFloat(data.height) || 0,
-      bmi: parseFloat(this.bmiControl.value || '0') || 0, // Use the calculated BMI from the form control
-      painScore: parseInt(data.pain_score) || 0,
-      bloodGlucoseLevel: parseFloat(data.blood_glucose_level) || 0,
-      recordedAt: data.date ? new Date(`${data.date}T${data.time}`) : new Date(),
+      recordedAt: recordedAt,
       audit: null, // Will be set by the backend
     };
 
-    // Validate required fields
-    if (vital.temperature <= 0 && vital.heartRate <= 0 && vital.respiratoryRate <= 0 &&
-      vital.systolicBP <= 0 && vital.diastolicBP <= 0 && vital.oxygenSaturation <= 0) {
-      console.error('At least one vital sign measurement is required');
-      return;
-    }
-
     console.log('Saving vital:', vital);
-    this.vitalService.createResidentVital(vital);
+    this.vitalService.saveResidentVital(vital);
   }
 
   handleVitalsDelete(id: any) {
