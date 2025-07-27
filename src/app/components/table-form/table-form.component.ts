@@ -77,7 +77,7 @@ export class TableFormComponent implements OnInit, AfterViewInit {
             key: field.key, // Use explicit key from FormField
             title: field.title,
             sortable: true,
-            hidden: false
+            hidden: field.hidden || false // Use hidden property from FormField
         }));
     }
 

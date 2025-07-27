@@ -7,4 +7,5 @@ export class FormField {
     label!: string; // Added label property for better clarity
     dropDownOptions?: Array<{ value: string, label: string }>; // For dropdowns and radio buttons
     formControl!: FormControl;
+    hidden?: boolean; // Whether this field should be hidden from UI display
 }

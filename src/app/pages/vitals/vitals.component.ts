@@ -102,6 +102,7 @@ export class VitalsComponent implements OnInit {
       .dataType('string')
       .title('ID')
       .formControl(new FormControl('')) // Default to empty
+      .hidden(true) // Hide ID field from UI
       .build(),
     Builder(FormField)
       .key('vitalDate')

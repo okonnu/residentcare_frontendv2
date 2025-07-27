@@ -9,6 +9,7 @@
       <mat-card-title>{{ title }}</mat-card-title>
       <hr /><br />
       @for(data of formControls; track data.title) {
+      @if (!data.hidden) {
       <div class="row">
         <div class="col">
           <span class="mat-body-1">{{ data.title }}</span>
@@ -18,16 +19,12 @@
         </div>
       </div>
       }
+      }
       <br>
       <div class="d-flex gap-2">
         @if (showEditButton) {
         <button mat-flat-button color="primary" (click)="toggleEditMode()" class="flex-fill">
           {{ editButtonText }}
-        </button>
-        }
-        @if (showCancelButton) {
-        <button mat-flat-button color="warn" (click)="cancelEdit()" class="flex-fill">
-          {{ cancelButtonText }}
         </button>
         }
       </div>
@@ -41,6 +38,7 @@
       <hr /><br />
       <form [formGroup]="cardForm">
         @for(data of formControls; track data.title) {
+        @if (!data.hidden) {
         <div class="row mb-3">
           <div class="col-sm-4 d-flex align-items-center">
             <mat-label class="mat-subtitle-2 f-w-600 d-block">{{ data.title }}</mat-label>
@@ -74,6 +72,11 @@
             }
           </div>
         </div>
+        }
+        @if (data.hidden) {
+        <!-- Hidden fields - include in form but don't display -->
+        <input type="hidden" [formControl]="getFormControl(data.title)" />
+        }
         }
 
         <!-- Action Buttons -->
