@@ -78,7 +78,8 @@ export class InputComponent implements ControlValueAccessor {
   // Required by ControlValueAccessor
   writeValue(value: any): void {
     this._value = value;
-    this.formControl.setValue(value, { emitEvent: false });
+    // Don't call setValue on formControl here - it creates infinite recursion
+    // The FormControl is already bound via [formControl] in template
   }
 
   registerOnChange(fn: any): void {

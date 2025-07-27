@@ -5,10 +5,10 @@ import { TablerIconsModule } from 'angular-tabler-icons';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormControl } from '@angular/forms';
 import { FormField } from 'src/app/models/FormField';
 import { CardFormComponent } from '../card-form-v2/card-form.component';
+import { SnackBarService } from 'src/app/services/snackBar.service';
 
 // Simplified interface for table columns
 export interface TableColumn {
@@ -68,7 +68,7 @@ export class TableFormComponent implements OnInit, AfterViewInit {
     currentMode: 'view' | 'edit' | 'add' | 'detail' = 'view';
     selectedRecord: any = null;
     private _dataSet: any[] = [];
-    private _snackbar = inject(MatSnackBar);
+    private _snackbar = inject(SnackBarService);
 
     // Extract columns from formControls
     get columns(): TableColumn[] {
@@ -155,11 +155,12 @@ export class TableFormComponent implements OnInit, AfterViewInit {
 
         this.save.emit(recordToSave);
         this.switchToViewMode();
-        this._snackbar.open('Record saved successfully', 'Close', { duration: 3000 });
+        this._snackbar.showSuccess('Record saved successfully');
     }
 
     // Handle cancel from card-form
     onCancel() {
+        this._snackbar.showError('Operation cancelled');
         this.switchToViewMode();
         this.cancel.emit();
     }

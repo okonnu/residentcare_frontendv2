@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, Validators } from '@angular/forms';
 import { CardFormComponent } from '../../components/card-form-v2/card-form.component';
 import { FormField } from 'src/app/models/FormField';
 import { Builder } from 'builder-pattern';
+import { SnackBarService } from '../../services/snackBar.service';
 
 @Component({
     selector: 'card-form-example',
@@ -15,6 +16,8 @@ import { Builder } from 'builder-pattern';
 
 
 export class CardFormExampleComponent {
+
+    private snackBarService: SnackBarService = inject(SnackBarService);
 
     firstName = Builder(FormField)
         .dataType('text')
@@ -97,6 +100,7 @@ export class CardFormExampleComponent {
 
     onResidentCancel() {
         console.log('Resident edit cancelled');
+        this.snackBarService.showSuccess('Edit cancelled');
         // Handle cancel logic here
     }
 
