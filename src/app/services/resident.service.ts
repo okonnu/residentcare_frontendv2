@@ -4,7 +4,8 @@ import { catchError, of, tap } from 'rxjs';
 import { environment } from 'src/environments/environment.production';
 import { Router } from '@angular/router';
 import { SnackBarService } from './snackBar.service';
-import { RestResponse } from '../models/app.interface';
+import { RestResponse } from '../models/app.model';
+import { Resident } from '../models/resident.model';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ export class ResidentService {
   private _snackBar = inject(SnackBarService);
   searchResults!: any[]
   isLoading = signal<boolean>(false);
-  resident = signal<any>({});
+  resident = signal<Resident | null>(null);
 
   searchResident(query: string): void {
     this.isLoading.set(true);
@@ -71,7 +72,7 @@ export class ResidentService {
         tap(response => {
           this._snackBar.showSuccess(response.message || 'Resident details saved successfully');
           this.isLoading.set(false); // Set loading to false on success
-          this.resident.set(response); // Update resident signal with the saved data
+          this.resident.set(response.data); // Update resident signal with the saved data
         }),
         catchError(error => {
           this._snackBar.showError(`Error saving resident details: ${error.message}`);
@@ -86,7 +87,7 @@ export class ResidentService {
     if (!this.resident()) {
       return 'No Resident Selected';
     }
-    return `${this.resident().firstName || ''} ${this.resident().lastName || ''}`.trim();
+    return `${this.resident()?.firstName || ''} ${this.resident()?.lastName || ''}`.trim();
   }
 
 }

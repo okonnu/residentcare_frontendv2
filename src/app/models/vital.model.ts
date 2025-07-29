@@ -1,4 +1,4 @@
-import { Audit } from './resident.interface';
+import { Audit } from './resident.model';
 
 export class Vital {
     id: string;
@@ -19,12 +19,12 @@ export class Vital {
     audit: Audit | null;
 }
 
-export interface VitalsChartData {
+export class VitalsChartData {
     name: string;
     data: number[];
 }
 
-export interface VitalsChartOptions {
+export class VitalsChartOptions {
     series: VitalsChartData[];
     chart: any;
     xaxis: any;

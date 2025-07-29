@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, Validators } from '@angular/forms';
 import { CardFormComponent } from '../../components/card-form/card-form.component';
-import { FormField } from 'src/app/models/FormField';
+import { FormField } from 'src/app/models/FormField.model';
 import { Builder } from 'builder-pattern';
 import { SnackBarService } from '../../services/snackBar.service';
 

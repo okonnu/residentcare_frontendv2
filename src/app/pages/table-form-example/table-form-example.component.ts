@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, Validators } from '@angular/forms';
 import { TableFormComponent } from '../../components/table-form/table-form.component';
-import { FormField } from '../../models/FormField';
+import { FormField } from '../../models/FormField.model';
 import { Builder } from 'builder-pattern';
 import { SnackBarService } from '../../services/snackBar.service';
 

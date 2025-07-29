@@ -1,7 +1,7 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { AuthService } from "../../../services/auth.service";
-import { Login } from "../../../models/auth.interface";
+import { Login } from "../../../models/auth.model";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { InputComponent } from "../../../components/form-input/form-input.component";
 import { RouterModule } from '@angular/router';

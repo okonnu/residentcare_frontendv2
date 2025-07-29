@@ -1,11 +1,11 @@
-export interface Audit {
+export class Audit {
     createdBy: string;
     createdDate: string;
     lastModifiedBy: string;
     lastModifiedDate: string;
 }
 
-export interface ContactInfo {
+export class ContactInfo {
     street: string;
     city: string;
     state: string;
@@ -14,7 +14,7 @@ export interface ContactInfo {
     phoneNumber: string;
 }
 
-export interface MedicalAndLegalStatus {
+export class MedicalAndLegalStatus {
     id: string;
     diagnostics: any[];
     allergies: any[];
@@ -25,7 +25,7 @@ export interface MedicalAndLegalStatus {
     comfortMeasures: boolean;
 }
 
-export interface PrimaryCarePhysician {
+export class PrimaryCarePhysician {
     id: string;
     firstName: string;
     lastName: string;
@@ -38,7 +38,7 @@ export interface PrimaryCarePhysician {
     hospital: string;
 }
 
-export interface Allergy {
+export class Allergy {
     id: string;
     name: string;
     description: string | null;
@@ -54,7 +54,7 @@ export interface SocialWorker {
     audit: Audit;
 }
 
-export interface Facility {
+export class Facility {
     id: string;
     name: string;
     contactInfo: ContactInfo;
@@ -64,7 +64,7 @@ export interface Facility {
     levelOfCare: string | null;
 }
 
-export interface Guardian {
+export class Guardian {
     // Define based on your guardian structure
     id: string;
     firstName: string;
@@ -74,7 +74,7 @@ export interface Guardian {
     audit: Audit;
 }
 
-export interface PowerOfAttorney {
+export class PowerOfAttorney {
     // Define based on your power of attorney structure
     id: string;
     firstName: string;
@@ -83,7 +83,7 @@ export interface PowerOfAttorney {
     audit: Audit;
 }
 
-export interface MedicalProxy {
+export class MedicalProxy {
     // Define based on your medical proxy structure
     id: string;
     firstName: string;
@@ -92,7 +92,7 @@ export interface MedicalProxy {
     audit: Audit;
 }
 
-export interface PreNeedMedicalAuth {
+export class PreNeedMedicalAuth {
     // Define based on your pre-need medical authorization structure
     id: string;
     authorizationType: string;
@@ -100,7 +100,7 @@ export interface PreNeedMedicalAuth {
     audit: Audit;
 }
 
-export interface Hospice {
+export class Hospice {
     // Define based on your hospice structure
     id: string;
     name: string;
@@ -108,7 +108,7 @@ export interface Hospice {
     audit: Audit;
 }
 
-export interface Document {
+export class Document {
     // Define based on your document structure
     id: string;
     name: string;
@@ -118,7 +118,7 @@ export interface Document {
     audit: Audit;
 }
 
-export interface Insurance {
+export class Insurance {
     // Define based on your insurance structure
     id: string;
     provider: string;
@@ -129,7 +129,7 @@ export interface Insurance {
     audit: Audit;
 }
 
-export interface Resident {
+export class Resident {
     id: string;
     firstName: string;
     lastName: string;

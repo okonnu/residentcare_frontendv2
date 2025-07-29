@@ -4,8 +4,8 @@ import { Router } from "@angular/router";
 import { Observable } from "rxjs";
 import { JwtHelperService } from "@auth0/angular-jwt";
 import { environment } from "../../environments/environment.production";
-import { Login, User, LoginResponse, LoginSuccess } from "../models/auth.interface";
-import { RestResponse } from "../models/app.interface";
+import { Login, User, LoginResponse, LoginSuccess } from "../models/auth.model";
+import { RestResponse } from "../models/app.model";
 import { IS_PUBLIC } from "./auth.interceptor";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { catchError, tap } from 'rxjs/operators';
@@ -103,26 +103,26 @@ export class AuthService {
         }
     }
 
-      private decodeToken(token: string): User {
+    private decodeToken(token: string): User {
         const payload = JSON.parse(atob(token.split('.')[1]));
         const roles = [
-          ...payload.resource_access?.['residentcare-api']?.roles || []
+            ...payload.resource_access?.['residentcare-api']?.roles || []
         ];
         const firstname = payload.given_name || '';
         const lastname = payload.family_name || '';
         return {
-          id: payload.sub,
-          firstname: firstname,
-          lastname: lastname,
-          email: payload.email || '',
-          fullname: `${firstname} ${lastname}`.trim(),
-          roles: roles,
+            id: payload.sub,
+            firstname: firstname,
+            lastname: lastname,
+            email: payload.email || '',
+            fullname: `${firstname} ${lastname}`.trim(),
+            roles: roles,
         };
     }
-    
+
     public getUserFromSessionStorage(): User | null {
         const userInfo = sessionStorage.getItem('user_info');
         return userInfo ? JSON.parse(userInfo) : null;
-      }
+    }
 
 }

@@ -4,10 +4,10 @@ import { FormControl, Validators } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
 import { CardFormComponent } from '../../components/card-form/card-form.component';
 import { TableFormComponent } from '../../components/table-form/table-form.component';
-import { FormField } from 'src/app/models/FormField';
+import { FormField } from 'src/app/models/FormField.model';
 import { Builder } from 'builder-pattern';
 import { ResidentService } from 'src/app/services/resident.service';
-import { Resident } from '../../models/resident.interface';
+import { Resident } from '../../models/resident.model';
 import { MatDialog } from '@angular/material/dialog';
 import { AppSearchDialogComponent } from '../../layouts/full/vertical/header/header.component';
 

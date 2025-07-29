@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment.production';
 import { catchError, of, tap } from 'rxjs';
 import { ResidentService } from './resident.service';
-import { Vital } from '../models/vital.interface';
-import { RestResponse } from '../models/app.interface';
+import { Vital } from '../models/vital.model';
+import { RestResponse } from '../models/app.model';
 import { SnackBarService } from './snackBar.service';
 
 @Injectable({ providedIn: "root" })
@@ -21,7 +21,7 @@ export class VitalService {
     private residentService = inject(ResidentService);
 
     get residentId(): string {
-        return this.residentService.resident().id;
+        return this.residentService.resident()?.id || '';
     }
 
     getResidentVitals(): void {

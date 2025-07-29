@@ -78,7 +78,7 @@
   <!-- --------------------------------------------------------------- -->
   <button mat-fab extended color="inherit" [matMenuTriggerFor]="profileMenu" aria-label="Notifications">
     <div class="d-flex align-items-center">
-      <img src="{{ residentService.resident().profilePicture || '/assets/images/profile/user5.jpg' }}" class="rounded-circle object-cover" width="40" />
+      <img [src]="residentService.resident()?.photoUrl || '/assets/images/profile/user5.jpg'" class="rounded-circle object-cover" width="40" />
 
       <div class="m-l-16 text-left d-none d-lg-flex">
         <div>

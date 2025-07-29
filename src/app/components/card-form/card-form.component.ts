@@ -5,7 +5,7 @@ import { TablerIconsModule } from 'angular-tabler-icons';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { InputComponent } from '../form-input/form-input.component';
-import { FormField } from 'src/app/models/FormField';
+import { FormField } from 'src/app/models/FormField.model';
 import { SnackBarService } from 'src/app/services/snackBar.service';
 
 @Component({

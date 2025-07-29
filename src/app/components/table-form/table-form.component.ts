@@ -6,7 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { FormControl } from '@angular/forms';
-import { FormField } from 'src/app/models/FormField';
+import { FormField } from 'src/app/models/FormField.model';
 import { CardFormComponent } from '../card-form/card-form.component';
 import { SnackBarService } from 'src/app/services/snackBar.service';
 

@@ -18,7 +18,7 @@ import { TablerIconsModule } from 'angular-tabler-icons';
 import { HeaderComponent } from './vertical/header/header.component';
 import { AppBreadcrumbComponent } from './shared/breadcrumb/breadcrumb.component';
 import { CustomizerComponent } from './shared/customizer/customizer.component';
-import { User } from 'src/app/models/auth.interface';
+import { User } from 'src/app/models/auth.model';
 import { AuthService } from 'src/app/services/auth.service';
 
 const MOBILE_VIEW = 'screen and (max-width: 768px)';
@@ -182,7 +182,7 @@ export class FullComponent implements OnInit {
   }
 
   ngOnInit(): void {
-   }
+  }
 
   ngOnDestroy() {
     this.layoutChangesSubscription.unsubscribe();

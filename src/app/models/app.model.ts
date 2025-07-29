@@ -1,4 +1,4 @@
-export interface RestResponse {
+export class RestResponse {
     statusCode: number;
     message: string;
     data: any;
