@@ -2,10 +2,10 @@ import { HttpContextToken, HttpInterceptorFn, HttpRequest } from '@angular/commo
 import { inject } from "@angular/core";
 import { AuthService } from "./auth.service";
 import { switchMap } from "rxjs/operators";
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackBarService } from './snackBar.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-    const snackBar = inject(MatSnackBar);
+    const snackBar = inject(SnackBarService);
     const authSvc = inject(AuthService);
     // whenever this HttpContextToken is attached to a request 
     // as we did to login request earlier
@@ -18,10 +18,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         const authRequest = addAuthorizationHeader(req);
         return next(authRequest);
     } else {
-        snackBar.open('Your session has expired, please log in again', '', {
-            duration: 5000,
-            panelClass: ['error-snackbar']
-        });
+        snackBar.showError('You are not authenticated. Please log in.');
         authSvc.logout();
         return authSvc.refreshToken().pipe(
             switchMap(() => {

@@ -1,9 +1,10 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, Validators } from '@angular/forms';
 import { TableFormComponent } from '../../components/table-form/table-form.component';
 import { FormField } from '../../models/FormField';
 import { Builder } from 'builder-pattern';
+import { SnackBarService } from '../../services/snackBar.service';
 
 /**
  * Example component demonstrating the simplified table-form-v2 component
@@ -36,6 +37,7 @@ import { Builder } from 'builder-pattern';
   `
 })
 export class TableFormExampleComponent implements OnInit, AfterViewInit {
+    private snackBarService: SnackBarService = inject(SnackBarService); 
     // Sample data with enhanced properties
     records = [
         {
@@ -178,7 +180,7 @@ export class TableFormExampleComponent implements OnInit, AfterViewInit {
                 if (index !== -1) {
                     this.records[index] = { ...record };
                     console.log('Successfully updated employee:', record.full_name);
-                    this.showSuccessMessage(`Employee ${record.full_name} updated successfully!`);
+                    this.snackBarService.showSuccess(`Employee ${record.full_name} updated successfully!`);
                 }
             } else {
                 // Add Mode: Add new record with auto-generated ID
@@ -186,7 +188,7 @@ export class TableFormExampleComponent implements OnInit, AfterViewInit {
                 const newRecord = { ...record, id: newId };
                 this.records.push(newRecord);
                 console.log('Successfully added new employee:', newRecord.full_name);
-                this.showSuccessMessage(`Employee ${newRecord.full_name} added successfully!`);
+                this.snackBarService.showSuccess(`Employee ${newRecord.full_name} added successfully!`);
             }
 
             // Trigger change detection by creating new array reference
@@ -194,7 +196,7 @@ export class TableFormExampleComponent implements OnInit, AfterViewInit {
 
         } catch (error) {
             console.error('Error saving employee:', error);
-            this.showErrorMessage('Error saving employee data. Please try again.');
+            this.snackBarService.showError('Error saving employee data. Please try again.');
         }
     }
 
@@ -212,11 +214,11 @@ export class TableFormExampleComponent implements OnInit, AfterViewInit {
                     this.records.splice(index, 1);
                     this.refreshData();
                     console.log('Successfully deleted employee:', record.full_name);
-                    this.showSuccessMessage(`Employee ${record.full_name} deleted successfully.`);
+                    this.snackBarService.showSuccess(`Employee ${record.full_name} deleted successfully.`);
                 }
             } catch (error) {
                 console.error('Error deleting employee:', error);
-                this.showErrorMessage('Error deleting employee. Please try again.');
+                this.snackBarService.showError('Error deleting employee. Please try again.');
             }
         }
     }
@@ -238,21 +240,5 @@ export class TableFormExampleComponent implements OnInit, AfterViewInit {
         // You can add custom logic here if needed when user cancels
     }
 
-    /**
-     * Utility method to show success messages
-     */
-    private showSuccessMessage(message: string) {
-        // In a real app, you might use MatSnackBar or a toast service
-        console.log('SUCCESS:', message);
-        // Example: this.snackBar.open(message, 'Close', { duration: 3000 });
-    }
-
-    /**
-     * Utility method to show error messages
-     */
-    private showErrorMessage(message: string) {
-        // In a real app, you might use MatSnackBar or a toast service
-        console.error('ERROR:', message);
-        // Example: this.snackBar.open(message, 'Close', { duration: 5000, panelClass: ['error-snackbar'] });
-    }
+ 
 }

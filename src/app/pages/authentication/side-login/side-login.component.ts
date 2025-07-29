@@ -6,7 +6,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { InputComponent } from "../../../components/form-input/form-input.component";
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from '../../../material.module';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackBarService } from 'src/app/services/snackBar.service';
 
 @Component({
   selector: 'app-login',
@@ -25,7 +25,7 @@ export class AppSideLoginComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly formBuilder = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
-  private _snackBar = inject(MatSnackBar);
+  private snackBarService: SnackBarService = inject(SnackBarService);
   loginForm!: FormGroup;
 
   ngOnInit() {
@@ -37,10 +37,7 @@ export class AppSideLoginComponent implements OnInit {
 
   onLoginFormSubmitted() {
     if (this.loginForm.invalid) {
-      this._snackBar.open('Something is not right, please check your entries', '', {
-        duration: 4000,
-        panelClass: ['error-snackbar']
-      });
+      this.snackBarService.showError('Please fill in all required fields correctly.');
       return;
     }
     this.authService.login(this.loginForm.value as Login).pipe(
