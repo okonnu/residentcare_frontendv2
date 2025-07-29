@@ -14,6 +14,7 @@ import {
   provideRouter,
   withComponentInputBinding,
   withInMemoryScrolling,
+  withHashLocation,
 } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
@@ -48,7 +49,8 @@ export const appConfig: ApplicationConfig = {
         scrollPositionRestoration: 'enabled',
         anchorScrolling: 'enabled',
       }),
-      withComponentInputBinding()
+      withComponentInputBinding(),
+      withHashLocation()
     ),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideAnimationsAsync(),
