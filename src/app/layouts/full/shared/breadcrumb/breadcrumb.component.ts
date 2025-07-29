@@ -13,10 +13,11 @@ import { TablerIconsModule } from 'angular-tabler-icons';
   templateUrl: './breadcrumb.component.html',
   styleUrls: [],
 })
-export class AppBreadcrumbComponent {
+export class AppBreadcrumbComponent implements OnInit {
   // @Input() layout;
   pageInfo: Data | any = Object.create(null);
   myurl: any = this.router.url.slice(1).split('/');
+
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
@@ -38,8 +39,29 @@ export class AppBreadcrumbComponent {
       // tslint:disable-next-line - Disables all
       .subscribe((event) => {
         // tslint:disable-next-line - Disables all
-        this.titleService.setTitle(event['title'] + ' - 4.0.0');
+        console.log('Breadcrumb route data:', event);
+        this.titleService.setTitle(event['title'] ? event['title'] + ' - ResidentCare' : 'ResidentCare');
         this.pageInfo = event;
       });
+  }
+
+  ngOnInit(): void {
+    // Initial load - get the current route data
+    this.updateBreadcrumb();
+  }
+
+  private updateBreadcrumb(): void {
+    let route = this.activatedRoute;
+    while (route.firstChild) {
+      route = route.firstChild;
+    }
+
+    if (route.snapshot.data) {
+      console.log('Initial breadcrumb data:', route.snapshot.data);
+      this.pageInfo = route.snapshot.data;
+      this.titleService.setTitle(
+        this.pageInfo['title'] ? this.pageInfo['title'] + ' - ResidentCare' : 'ResidentCare'
+      );
+    }
   }
 }
