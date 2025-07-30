@@ -3,9 +3,20 @@
     <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
-                <h2 class="mb-0">
-                    {{ isEditMode() ? 'Edit Resident' : 'Add New Resident' }}
-                </h2>
+                <div>
+                    <h2 class="mb-1">
+                        {{ isEditMode() ? 'Edit Resident' : 'Add New Resident' }}
+                    </h2>
+                    <div class="completion-indicator">
+                        <span class="completion-text">Completion: {{ completionPercentage() }}%</span>
+                        <div class="progress mt-1" style="height: 6px; width: 200px;">
+                            <div class="progress-bar bg-success" role="progressbar"
+                                [style.width.%]="completionPercentage()" [attr.aria-valuenow]="completionPercentage()"
+                                aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <button mat-button color="warn" (click)="cancel()" class="ms-3">
                     <mat-icon>close</mat-icon>
                     Cancel
@@ -22,11 +33,13 @@
                     <div class="stepper-container">
                         @for (step of steps; track $index) {
                         <div class="step-item" [class.active]="currentStep() === $index"
-                            [class.completed]="currentStep() > $index" [class.valid]="isStepValid($index)"
-                            (click)="goToStep($index)" [attr.title]="step.label">
+                            [class.completed]="isStepCompleted()[$index]"
+                            [class.disabled]="$index > currentStep() && (!isCurrentStepValid() || !currentStepHasData())"
+                            (click)="goToStep($index)"
+                            [attr.title]="step.label + (isStepCompleted()[$index] ? ' (Completed)' : '')">
                             <div class="step-circle">
-                                @if (currentStep() > $index && isStepValid($index)) {
-                                <mat-icon>check</mat-icon>
+                                @if (isStepCompleted()[$index]) {
+                                <mat-icon class="check-icon">check</mat-icon>
                                 } @else {
                                 <mat-icon>{{ step.icon }}</mat-icon>
                                 }
@@ -34,7 +47,7 @@
                             <div class="step-label">{{ step.label }}</div>
                         </div>
                         @if ($index < steps.length - 1) { <div class="step-connector"
-                            [class.completed]="currentStep() > $index">
+                            [class.completed]="isStepCompleted()[$index]">
                     </div>
                     }
                     }

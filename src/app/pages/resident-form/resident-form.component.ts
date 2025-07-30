@@ -8,7 +8,7 @@ import { TableFormComponent } from 'src/app/components/table-form/table-form.com
 import { FormField } from 'src/app/models/FormField.model';
 import { Builder } from 'builder-pattern';
 import { ResidentService } from 'src/app/services/resident.service';
-import { Resident } from 'src/app/models/resident.model';
+import { Insurance, Resident } from 'src/app/models/resident.model';
 
 @Component({
     selector: 'app-resident-form',
@@ -42,6 +42,111 @@ export class ResidentFormComponent implements OnInit {
         { label: 'Documents', icon: 'description' },
         { label: 'Insurance', icon: 'security' }
     ];
+
+    // Computed property to check if each step is completed
+    isStepCompleted = computed(() => {
+        const resident = this.residentData();
+        if (!resident) return Array(this.steps.length).fill(false);
+
+        return [
+            // Step 0: Personal Information (required: firstName, lastName, sexAtBirth, dateOfBirth)
+            !!(resident.firstName && resident.lastName && resident.sexAtBirth && resident.dateOfBirth),
+
+            // Step 1: Contact Information (required: street, city, state)
+            !!(resident.contactInfo?.street && resident.contactInfo?.city && resident.contactInfo?.state),
+
+            // Step 2: Facility Information (required: name, roomNumber)
+            !!(resident.facility?.name && resident.facility?.roomNumber),
+
+            // Step 3: Medical & Legal Status (at least one field filled)
+            !!(resident.medicalAndLegalStatus?.fullCode !== undefined || resident.medicalAndLegalStatus?.dnr !== undefined),
+
+            // Step 4: Guardians (at least one guardian with required fields)
+            !!(resident.guardians && resident.guardians.length > 0 &&
+                resident.guardians.some(g => g.firstName && g.lastName && g.relationship)),
+
+            // Step 5: Primary Care Physicians (at least one physician with required fields)
+            !!(resident.primaryCarePhysician && resident.primaryCarePhysician.length > 0 &&
+                resident.primaryCarePhysician.some(p => p.firstName && p.lastName)),
+
+            // Step 6: Allergies (at least one allergy with name)
+            !!(resident.allergy && resident.allergy.length > 0 &&
+                resident.allergy.some(a => a.name)),
+
+            // Step 7: Legal Representatives (at least one representative with name)
+            !!(resident.powerOfAttorney?.firstName || resident.medicalProxy?.firstName),
+
+            // Step 8: Care Team (at least one team member)
+            !!(resident.socialWorker?.name || resident.hospice?.name || resident.preferredPharmacy),
+
+            // Step 9: Documents (at least one document)
+            !!(resident.documents && resident.documents.length > 0 &&
+                resident.documents.some(d => d.name && d.type)),
+
+            // Step 10: Insurance (at least one insurance)
+            !!(resident.insurances && resident.insurances.length > 0 &&
+                resident.insurances.some(i => i.provider && i.policyNumber))
+        ];
+    });
+
+    // Computed property for completion percentage
+    completionPercentage = computed(() => {
+        const resident = this.residentData();
+        if (!resident) return 0;
+
+        let filledFields = 0;
+        const totalFields = 32; // Total countable fields across all steps
+
+        // Personal Information (6 fields)
+        if (resident.firstName) filledFields++;
+        if (resident.lastName) filledFields++;
+        if (resident.email) filledFields++;
+        if (resident.sexAtBirth) filledFields++;
+        if (resident.dateOfBirth) filledFields++;
+        if (resident.socialSecurityNumber) filledFields++;
+
+        // Contact Information (5 fields)
+        if (resident.contactInfo?.street) filledFields++;
+        if (resident.contactInfo?.city) filledFields++;
+        if (resident.contactInfo?.state) filledFields++;
+        if (resident.contactInfo?.zipCode) filledFields++;
+        if (resident.contactInfo?.phoneNumber) filledFields++;
+
+        // Facility Information (3 fields)
+        if (resident.facility?.name) filledFields++;
+        if (resident.facility?.roomNumber) filledFields++;
+        if (resident.facility?.levelOfCare) filledFields++;
+
+        // Medical & Legal Status (2 fields)
+        if (resident.medicalAndLegalStatus?.fullCode !== undefined) filledFields++;
+        if (resident.medicalAndLegalStatus?.dnr !== undefined) filledFields++;
+
+        // Guardians (count as 3 fields if any exist)
+        if (resident.guardians && resident.guardians.length > 0) filledFields += 3;
+
+        // Primary Care Physicians (count as 3 fields if any exist)
+        if (resident.primaryCarePhysician && resident.primaryCarePhysician.length > 0) filledFields += 3;
+
+        // Allergies (count as 2 fields if any exist)
+        if (resident.allergy && resident.allergy.length > 0) filledFields += 2;
+
+        // Legal Representatives (2 fields)
+        if (resident.powerOfAttorney?.firstName) filledFields++;
+        if (resident.medicalProxy?.firstName) filledFields++;
+
+        // Care Team (3 fields)
+        if (resident.socialWorker?.name) filledFields++;
+        if (resident.hospice?.name) filledFields++;
+        if (resident.preferredPharmacy) filledFields++;
+
+        // Documents (count as 2 fields if any exist)
+        if (resident.documents && resident.documents.length > 0) filledFields += 2;
+
+        // Insurance (count as 2 fields if any exist)
+        if (resident.insurances && resident.insurances.length > 0) filledFields += 2;
+
+        return Math.round((filledFields / totalFields) * 100);
+    });
 
     ngOnInit(): void {
         // Check if we're in edit mode
@@ -484,92 +589,7 @@ export class ResidentFormComponent implements OnInit {
     ];
 
     createEmptyResident(): Resident {
-        return {
-            id: '',
-            firstName: '',
-            lastName: '',
-            email: '',
-            role: null,
-            userFacility: null,
-            contactInfo: {
-                street: '',
-                city: '',
-                state: '',
-                zipCode: '',
-                country: '',
-                phoneNumber: ''
-            },
-            audit: {
-                createdBy: '',
-                createdDate: new Date().toISOString(),
-                lastModifiedBy: '',
-                lastModifiedDate: new Date().toISOString()
-            },
-            sexAtBirth: '',
-            dateOfBirth: '',
-            socialSecurityNumber: '',
-            maritalStatus: '',
-            religion: '',
-            primaryLanguage: '',
-            ethnicity: '',
-            photoUrl: '',
-            dateOfAdmission: '',
-            medicalPowerOfAttorney: '',
-            medicalAndLegalStatus: {
-                id: '',
-                diagnostics: [],
-                allergies: [],
-                physicianOrdersForLifeSustainingTreatment: null,
-                fullCode: false,
-                dnr: false,
-                dni: false,
-                comfortMeasures: false
-            },
-            guardians: [],
-            powerOfAttorney: null,
-            medicalProxy: null,
-            preNeedMedicalAuth: null,
-            primaryCarePhysician: [],
-            allergy: [],
-            preferredPharmacy: '',
-            hospice: null,
-            socialWorker: {
-                id: '',
-                name: '',
-                contactInfo: {
-                    street: '',
-                    city: '',
-                    state: '',
-                    zipCode: '',
-                    country: '',
-                    phoneNumber: ''
-                },
-                audit: {
-                    createdBy: '',
-                    createdDate: new Date().toISOString(),
-                    lastModifiedBy: '',
-                    lastModifiedDate: new Date().toISOString()
-                }
-            },
-            facility: {
-                id: '',
-                name: '',
-                contactInfo: {
-                    street: '',
-                    city: '',
-                    state: '',
-                    zipCode: '',
-                    country: '',
-                    phoneNumber: ''
-                },
-                roomNumber: '',
-                admissionDate: '',
-                dischargeDate: '',
-                levelOfCare: ''
-            },
-            documents: [],
-            insurances: []
-        };
+        return Builder(Resident).build();
     }
 
     loadResidentData(id: string): void {
@@ -593,15 +613,56 @@ export class ResidentFormComponent implements OnInit {
     }
 
     goToStep(step: number): void {
-        this.currentStep.set(step);
+        // Check if current step has valid data before allowing navigation
+        const currentStepValid = this.isCurrentStepValid();
+        const currentStepHasData = this.currentStepHasData();
+
+        // Allow navigation if current step is valid and has data, or if going to a previous step
+        if (step <= this.currentStep() || (currentStepValid && currentStepHasData)) {
+            this.currentStep.set(step);
+        }
     }
 
     isStepValid(step: number): boolean {
-        switch (step) {
+        const completionStatus = this.isStepCompleted();
+        return completionStatus[step];
+    }
+
+    isCurrentStepValid(): boolean {
+        const current = this.currentStep();
+        switch (current) {
             case 0: return this.validateFormFields(this.personalInfoFields());
             case 1: return this.validateFormFields(this.contactInfoFields());
             case 2: return this.validateFormFields(this.facilityInfoFields());
             case 3: return this.validateFormFields(this.medicalStatusFields());
+            case 7: return this.validateFormFields(this.legalRepresentativesFields());
+            case 8: return this.validateFormFields(this.careTeamFields());
+            default: return true; // Table forms are always considered valid if they have data
+        }
+    }
+
+    currentStepHasData(): boolean {
+        const current = this.currentStep();
+        const resident = this.residentData();
+        if (!resident) return false;
+
+        switch (current) {
+            case 0: return !!(resident.firstName || resident.lastName || resident.email ||
+                resident.sexAtBirth || resident.dateOfBirth || resident.socialSecurityNumber);
+            case 1: return !!(resident.contactInfo?.street || resident.contactInfo?.city ||
+                resident.contactInfo?.state || resident.contactInfo?.zipCode ||
+                resident.contactInfo?.phoneNumber);
+            case 2: return !!(resident.facility?.name || resident.facility?.roomNumber ||
+                resident.facility?.levelOfCare);
+            case 3: return !!(resident.medicalAndLegalStatus?.fullCode !== undefined ||
+                resident.medicalAndLegalStatus?.dnr !== undefined);
+            case 4: return !!(resident.guardians && resident.guardians.length > 0);
+            case 5: return !!(resident.primaryCarePhysician && resident.primaryCarePhysician.length > 0);
+            case 6: return !!(resident.allergy && resident.allergy.length > 0);
+            case 7: return !!(resident.powerOfAttorney?.firstName || resident.medicalProxy?.firstName);
+            case 8: return !!(resident.socialWorker?.name || resident.hospice?.name || resident.preferredPharmacy);
+            case 9: return !!(resident.documents && resident.documents.length > 0);
+            case 10: return !!(resident.insurances && resident.insurances.length > 0);
             default: return true;
         }
     }
@@ -616,17 +677,69 @@ export class ResidentFormComponent implements OnInit {
     }
 
     onContactInfoSave(formData: any): void {
-        this.updateResidentData(formData);
+        const currentResident = this.residentData();
+        if (currentResident) {
+            const updatedResident = {
+                ...currentResident,
+                contactInfo: {
+                    street: formData.street || '',
+                    city: formData.city || '',
+                    state: formData.state || '',
+                    zipCode: formData.zipCode || '',
+                    country: currentResident.contactInfo?.country || '',
+                    phoneNumber: formData.phoneNumber || ''
+                }
+            };
+            this.residentData.set(updatedResident);
+        }
         this.nextStep();
     }
 
     onFacilityInfoSave(formData: any): void {
-        this.updateResidentData(formData);
+        const currentResident = this.residentData();
+        if (currentResident) {
+            const updatedResident = {
+                ...currentResident,
+                facility: {
+                    id: currentResident.facility?.id || '',
+                    name: formData.facilityName || '',
+                    contactInfo: currentResident.facility?.contactInfo || {
+                        street: '',
+                        city: '',
+                        state: '',
+                        zipCode: '',
+                        country: '',
+                        phoneNumber: ''
+                    },
+                    roomNumber: formData.roomNumber || '',
+                    admissionDate: currentResident.facility?.admissionDate || '',
+                    dischargeDate: currentResident.facility?.dischargeDate || '',
+                    levelOfCare: formData.levelOfCare || ''
+                }
+            };
+            this.residentData.set(updatedResident);
+        }
         this.nextStep();
     }
 
     onMedicalStatusSave(formData: any): void {
-        this.updateResidentData(formData);
+        const currentResident = this.residentData();
+        if (currentResident) {
+            const updatedResident = {
+                ...currentResident,
+                medicalAndLegalStatus: {
+                    id: currentResident.medicalAndLegalStatus?.id || '',
+                    diagnostics: currentResident.medicalAndLegalStatus?.diagnostics || [],
+                    allergies: currentResident.medicalAndLegalStatus?.allergies || [],
+                    physicianOrdersForLifeSustainingTreatment: currentResident.medicalAndLegalStatus?.physicianOrdersForLifeSustainingTreatment || null,
+                    fullCode: formData.fullCode === 'Yes',
+                    dnr: formData.dnr === 'Yes',
+                    dni: currentResident.medicalAndLegalStatus?.dni || false,
+                    comfortMeasures: currentResident.medicalAndLegalStatus?.comfortMeasures || false
+                }
+            };
+            this.residentData.set(updatedResident);
+        }
         this.nextStep();
     }
 
@@ -701,7 +814,7 @@ export class ResidentFormComponent implements OnInit {
                 // Add new physician with ID and required fields
                 physicians.push({
                     ...physician,
-                    id: physician.id || Date.now().toString(),
+                    id: physician.id || "",
                     email: physician.email || '',
                     role: null,
                     userFacility: null,
@@ -953,7 +1066,7 @@ export class ResidentFormComponent implements OnInit {
         console.log('Document operation cancelled');
     }
 
-    onInsurancesSave(tableData: any[]): void {
+    onInsurancesSave(tableData: Insurance[]): void {
         const currentResident = this.residentData();
         if (currentResident) {
             const updatedResident = { ...currentResident, insurances: tableData };
@@ -963,7 +1076,7 @@ export class ResidentFormComponent implements OnInit {
     }
 
     // Table form event handlers for Insurance
-    onInsuranceTableSave(insurance: any): void {
+    onInsuranceTableSave(insurance: Insurance): void {
         const currentResident = this.residentData();
         if (currentResident) {
             const insurances = [...(currentResident.insurances || [])];
@@ -985,7 +1098,7 @@ export class ResidentFormComponent implements OnInit {
         }
     }
 
-    onInsuranceDelete(insurance: any): void {
+    onInsuranceDelete(insurance: Insurance): void {
         const currentResident = this.residentData();
         if (currentResident) {
             const insurances = (currentResident.insurances || []).filter(i => i.id !== insurance.id);
@@ -994,7 +1107,7 @@ export class ResidentFormComponent implements OnInit {
         }
     }
 
-    onInsuranceView(insurance: any): void {
+    onInsuranceView(insurance: Insurance): void {
         console.log('Viewing insurance:', insurance);
     }
 
@@ -1019,7 +1132,9 @@ export class ResidentFormComponent implements OnInit {
     }
 
     isFormValid(): boolean {
-        return this.validateFormFields(this.personalInfoFields());
+        const completionStatus = this.isStepCompleted();
+        // Form is valid if at least the first 3 essential steps are completed
+        return completionStatus[0] && completionStatus[1] && completionStatus[2];
     }
 
     cancel(): void {
