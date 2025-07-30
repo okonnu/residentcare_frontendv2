@@ -135,7 +135,7 @@ export class AppSearchDialogComponent {
   }
   selectResident(residentId: string): void {
     this.residentService.getResidentDetails(residentId);
-    this.router.navigate(['pages/face-sheet']);
+    this.router.navigate(['pages/resident']);
   }
 
 }

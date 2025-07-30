@@ -1,0 +1,67 @@
+.empty-state-content {
+  max-width: 400px;
+  padding: 2rem;
+}
+
+.empty-state-icon {
+  font-size: 80px;
+  height: 80px;
+  width: 80px;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+// Loading spinner styling
+::ng-deep .mat-spinner {
+  margin: 0 auto !important;
+  display: block !important;
+}
+
+.empty-state-button {
+  min-width: 160px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .empty-state-content {
+    padding: 1.5rem;
+  }
+  
+  .empty-state-icon {
+    font-size: 64px;
+    height: 64px;
+    width: 64px;
+  }
+  
+  h3 {
+    font-size: 1.25rem;
+  }
+  
+  p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .empty-state-content {
+    padding: 1rem;
+  }
+  
+  .empty-state-icon {
+    font-size: 48px;
+    height: 48px;
+    width: 48px;
+  }
+  
+  .empty-state-button {
+    min-width: 140px;
+    font-size: 0.875rem;
+  }
+}

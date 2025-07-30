@@ -6,32 +6,48 @@
     <mat-card-content>
       <div class="row">
         <div class="col d-flex justify-content-center align-items-center">
-          <img [src]="resident()?.photoUrl || '/assets/images/profile/user5.jpg'" class="rounded-circle object-cover"
-            width="150" />
+          <img
+            [src]="resident()?.photoUrl || '/assets/images/profile/user5.jpg'"
+            class="rounded-circle object-cover"
+            width="150"
+          />
         </div>
         <div class="col">
-          <h3>{{ getFullName(resident()) || 'Not provided' }}</h3>
+          <h3>{{ getFullName(resident()) || "Not provided" }}</h3>
           <div class="row">
             <div class="col-4"><strong>Date of Birth:</strong></div>
             <div class="col-8">{{ formatDate(resident()?.dateOfBirth) }}</div>
           </div>
           <div class="row">
             <div class="col-4"><strong>Sex at Birth:</strong></div>
-            <div class="col-8">{{ resident()?.sexAtBirth || 'Not provided' }}</div>
+            <div class="col-8">
+              {{ resident()?.sexAtBirth || "Not provided" }}
+            </div>
           </div>
           <div class="row">
             <div class="col-4"><strong>Email:</strong></div>
-            <div class="col-8">{{ resident()?.email || 'Not provided' }}</div>
+            <div class="col-8">{{ resident()?.email || "Not provided" }}</div>
           </div>
         </div>
         <div class="col"></div>
         <div class="col">
           <div class="action-buttons">
-            <button mat-raised-button color="primary" (click)="printProfile()" class="me-2">
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="printProfile()"
+              class="me-2"
+            >
               <mat-icon>print</mat-icon>
               Print Profile
             </button>
-            <button mat-raised-button color="accent" (click)="editResident()" class="me-2" *ngIf="resident()">
+            <button
+              mat-raised-button
+              color="accent"
+              (click)="editResident()"
+              class="me-2"
+              *ngIf="resident()"
+            >
               <mat-icon>edit</mat-icon>
               Edit Resident
             </button>
@@ -56,29 +72,41 @@
         <div class="col-md-6">
           <div class="row">
             <div class="col-6"><strong>Social Security Number:</strong></div>
-            <div class="col-6">{{ resident()?.socialSecurityNumber || 'Not provided' }}</div>
+            <div class="col-6">
+              {{ resident()?.socialSecurityNumber || "Not provided" }}
+            </div>
           </div>
           <div class="row">
             <div class="col-6"><strong>Marital Status:</strong></div>
-            <div class="col-6">{{ resident()?.maritalStatus || 'Not provided' }}</div>
+            <div class="col-6">
+              {{ resident()?.maritalStatus || "Not provided" }}
+            </div>
           </div>
           <div class="row">
             <div class="col-6"><strong>Religion:</strong></div>
-            <div class="col-6">{{ resident()?.religion || 'Not provided' }}</div>
+            <div class="col-6">
+              {{ resident()?.religion || "Not provided" }}
+            </div>
           </div>
         </div>
         <div class="col-md-6">
           <div class="row">
             <div class="col-6"><strong>Primary Language:</strong></div>
-            <div class="col-6">{{ resident()?.primaryLanguage || 'Not provided' }}</div>
+            <div class="col-6">
+              {{ resident()?.primaryLanguage || "Not provided" }}
+            </div>
           </div>
           <div class="row">
             <div class="col-6"><strong>Ethnicity:</strong></div>
-            <div class="col-6">{{ resident()?.ethnicity || 'Not provided' }}</div>
+            <div class="col-6">
+              {{ resident()?.ethnicity || "Not provided" }}
+            </div>
           </div>
           <div class="row">
             <div class="col-6"><strong>Date of Admission:</strong></div>
-            <div class="col-6">{{ formatDate(resident()?.dateOfAdmission) }}</div>
+            <div class="col-6">
+              {{ formatDate(resident()?.dateOfAdmission) }}
+            </div>
           </div>
         </div>
       </div>
@@ -95,7 +123,9 @@
           </div>
           <div class="row">
             <div class="col-3"><strong>Phone:</strong></div>
-            <div class="col-9">{{ resident()?.contactInfo?.phoneNumber || 'Not provided' }}</div>
+            <div class="col-9">
+              {{ resident()?.contactInfo?.phoneNumber || "Not provided" }}
+            </div>
           </div>
         </div>
       </div>
@@ -114,25 +144,38 @@
         <div class="col-md-6">
           <div class="row">
             <div class="col-5"><strong>Facility Name:</strong></div>
-            <div class="col-7">{{ resident()?.facility?.name || 'Not provided' }}</div>
+            <div class="col-7">
+              {{ resident()?.facility?.name || "Not provided" }}
+            </div>
           </div>
           <div class="row">
             <div class="col-5"><strong>Room Number:</strong></div>
-            <div class="col-7">{{ resident()?.facility?.roomNumber || 'Not provided' }}</div>
+            <div class="col-7">
+              {{ resident()?.facility?.roomNumber || "Not provided" }}
+            </div>
           </div>
           <div class="row">
             <div class="col-5"><strong>Level of Care:</strong></div>
-            <div class="col-7">{{ resident()?.facility?.levelOfCare || 'Not provided' }}</div>
+            <div class="col-7">
+              {{ resident()?.facility?.levelOfCare || "Not provided" }}
+            </div>
           </div>
         </div>
         <div class="col-md-6">
           <div class="row">
             <div class="col-5"><strong>Admission Date:</strong></div>
-            <div class="col-7">{{ formatDate(resident()?.facility?.admissionDate) }}</div>
+            <div class="col-7">
+              {{ formatDate(resident()?.facility?.admissionDate) }}
+            </div>
           </div>
           <div class="row">
             <div class="col-5"><strong>Discharge Date:</strong></div>
-            <div class="col-7">{{ formatDate(resident()?.facility?.dischargeDate) || 'Not applicable' }}</div>
+            <div class="col-7">
+              {{
+                formatDate(resident()?.facility?.dischargeDate) ||
+                  "Not applicable"
+              }}
+            </div>
           </div>
         </div>
       </div>
@@ -149,7 +192,11 @@
           </div>
           <div class="row">
             <div class="col-2"><strong>Phone:</strong></div>
-            <div class="col-10">{{ resident()?.facility?.contactInfo?.phoneNumber || 'Not provided' }}</div>
+            <div class="col-10">
+              {{
+                resident()?.facility?.contactInfo?.phoneNumber || "Not provided"
+              }}
+            </div>
           </div>
         </div>
       </div>
@@ -169,19 +216,43 @@
           <div class="row mb-3 align-items-center">
             <div class="col-5"><strong>Full Code:</strong></div>
             <div class="col-7 d-flex align-items-center">
-              <mat-icon [color]="resident()?.medicalAndLegalStatus?.fullCode ? 'primary' : 'warn'" class="me-2">
-                {{ resident()?.medicalAndLegalStatus?.fullCode ? 'check_circle' : 'cancel' }}
+              <mat-icon
+                [color]="
+                  resident()?.medicalAndLegalStatus?.fullCode
+                    ? 'primary'
+                    : 'warn'
+                "
+                class="me-2"
+              >
+                {{
+                  resident()?.medicalAndLegalStatus?.fullCode
+                    ? "check_circle"
+                    : "cancel"
+                }}
               </mat-icon>
-              <span>{{ resident()?.medicalAndLegalStatus?.fullCode ? 'Yes' : 'No' }}</span>
+              <span>{{
+                resident()?.medicalAndLegalStatus?.fullCode ? "Yes" : "No"
+              }}</span>
             </div>
           </div>
           <div class="row mb-3 align-items-center">
             <div class="col-5"><strong>DNR:</strong></div>
             <div class="col-7 d-flex align-items-center">
-              <mat-icon [color]="resident()?.medicalAndLegalStatus?.dnr ? 'primary' : 'warn'" class="me-2">
-                {{ resident()?.medicalAndLegalStatus?.dnr ? 'check_circle' : 'cancel' }}
+              <mat-icon
+                [color]="
+                  resident()?.medicalAndLegalStatus?.dnr ? 'primary' : 'warn'
+                "
+                class="me-2"
+              >
+                {{
+                  resident()?.medicalAndLegalStatus?.dnr
+                    ? "check_circle"
+                    : "cancel"
+                }}
               </mat-icon>
-              <span>{{ resident()?.medicalAndLegalStatus?.dnr ? 'Yes' : 'No' }}</span>
+              <span>{{
+                resident()?.medicalAndLegalStatus?.dnr ? "Yes" : "No"
+              }}</span>
             </div>
           </div>
         </div>
@@ -189,26 +260,51 @@
           <div class="row mb-3 align-items-center">
             <div class="col-5"><strong>DNI:</strong></div>
             <div class="col-7 d-flex align-items-center">
-              <mat-icon [color]="resident()?.medicalAndLegalStatus?.dni ? 'primary' : 'warn'" class="me-2">
-                {{ resident()?.medicalAndLegalStatus?.dni ? 'check_circle' : 'cancel' }}
+              <mat-icon
+                [color]="
+                  resident()?.medicalAndLegalStatus?.dni ? 'primary' : 'warn'
+                "
+                class="me-2"
+              >
+                {{
+                  resident()?.medicalAndLegalStatus?.dni
+                    ? "check_circle"
+                    : "cancel"
+                }}
               </mat-icon>
-              <span>{{ resident()?.medicalAndLegalStatus?.dni ? 'Yes' : 'No' }}</span>
+              <span>{{
+                resident()?.medicalAndLegalStatus?.dni ? "Yes" : "No"
+              }}</span>
             </div>
           </div>
           <div class="row mb-3 align-items-center">
             <div class="col-5"><strong>Comfort Measures:</strong></div>
             <div class="col-7 d-flex align-items-center">
-              <mat-icon [color]="resident()?.medicalAndLegalStatus?.comfortMeasures ? 'primary' : 'warn'" class="me-2">
-                {{ resident()?.medicalAndLegalStatus?.comfortMeasures ? 'check_circle' : 'cancel' }}
+              <mat-icon
+                [color]="
+                  resident()?.medicalAndLegalStatus?.comfortMeasures
+                    ? 'primary'
+                    : 'warn'
+                "
+                class="me-2"
+              >
+                {{
+                  resident()?.medicalAndLegalStatus?.comfortMeasures
+                    ? "check_circle"
+                    : "cancel"
+                }}
               </mat-icon>
-              <span>{{ resident()?.medicalAndLegalStatus?.comfortMeasures ? 'Yes' : 'No' }}</span>
+              <span>{{
+                resident()?.medicalAndLegalStatus?.comfortMeasures
+                  ? "Yes"
+                  : "No"
+              }}</span>
             </div>
           </div>
         </div>
       </div>
     </mat-card-content>
   </mat-card>
-
 
   <!-- Pre-Need Medical Authorization -->
   <mat-card class="profile-section">
@@ -219,16 +315,23 @@
     <mat-card-content>
       <div class="row">
         <div class="col-md-6">
-          <p><strong>Authorization Type:</strong> {{ resident()?.preNeedMedicalAuth?.authorizationType || 'Not provided'
-            }}</p>
+          <p>
+            <strong>Authorization Type:</strong>
+            {{
+              resident()?.preNeedMedicalAuth?.authorizationType ||
+                "Not provided"
+            }}
+          </p>
         </div>
         <div class="col-md-6">
-          <p><strong>Details:</strong> {{ resident()?.preNeedMedicalAuth?.details || 'Not provided' }}</p>
+          <p>
+            <strong>Details:</strong>
+            {{ resident()?.preNeedMedicalAuth?.details || "Not provided" }}
+          </p>
         </div>
       </div>
     </mat-card-content>
   </mat-card>
-
 
   <!-- Primary Care Physicians -->
   <mat-card class="profile-section">
@@ -236,38 +339,64 @@
       <mat-card-title>Primary Care Physicians</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <table mat-table [dataSource]="resident()?.primaryCarePhysician || []" class="w-100">
+      <table
+        mat-table
+        [dataSource]="resident()?.primaryCarePhysician || []"
+        class="w-100"
+      >
         <ng-container matColumnDef="name">
           <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
-          <mat-cell *matCellDef="let physician">{{ physician.firstName }} {{ physician.lastName }}</mat-cell>
+          <mat-cell *matCellDef="let physician"
+            >{{ physician.firstName }} {{ physician.lastName }}</mat-cell
+          >
         </ng-container>
 
         <ng-container matColumnDef="email">
           <mat-header-cell *matHeaderCellDef>Email</mat-header-cell>
-          <mat-cell *matCellDef="let physician">{{ physician.email || 'Not provided' }}</mat-cell>
+          <mat-cell *matCellDef="let physician">{{
+            physician.email || "Not provided"
+          }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="specialization">
           <mat-header-cell *matHeaderCellDef>Specialization</mat-header-cell>
-          <mat-cell *matCellDef="let physician">{{ physician.specialization || 'Not provided' }}</mat-cell>
+          <mat-cell *matCellDef="let physician">{{
+            physician.specialization || "Not provided"
+          }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="hospital">
           <mat-header-cell *matHeaderCellDef>Hospital</mat-header-cell>
-          <mat-cell *matCellDef="let physician">{{ physician.hospital || 'Not provided' }}</mat-cell>
+          <mat-cell *matCellDef="let physician">{{
+            physician.hospital || "Not provided"
+          }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="phone">
           <mat-header-cell *matHeaderCellDef>Phone</mat-header-cell>
-          <mat-cell *matCellDef="let physician">{{ physician.contactInfo?.phoneNumber || 'Not provided' }}</mat-cell>
+          <mat-cell *matCellDef="let physician">{{
+            physician.contactInfo?.phoneNumber || "Not provided"
+          }}</mat-cell>
         </ng-container>
 
-        <mat-header-row *matHeaderRowDef="['name', 'email', 'specialization', 'hospital', 'phone']"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: ['name', 'email', 'specialization', 'hospital', 'phone'];"></mat-row>
+        <mat-header-row
+          *matHeaderRowDef="[
+            'name',
+            'email',
+            'specialization',
+            'hospital',
+            'phone'
+          ]"
+        ></mat-header-row>
+        <mat-row
+          *matRowDef="
+            let row;
+            columns: ['name', 'email', 'specialization', 'hospital', 'phone']
+          "
+        ></mat-row>
       </table>
     </mat-card-content>
   </mat-card>
-
 
   <!-- Allergies -->
   <mat-card class="profile-section">
@@ -283,29 +412,43 @@
 
         <ng-container matColumnDef="description">
           <mat-header-cell *matHeaderCellDef>Description</mat-header-cell>
-          <mat-cell *matCellDef="let allergy">{{ allergy.description || 'Not provided' }}</mat-cell>
+          <mat-cell *matCellDef="let allergy">{{
+            allergy.description || "Not provided"
+          }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="reaction">
           <mat-header-cell *matHeaderCellDef>Reaction</mat-header-cell>
-          <mat-cell *matCellDef="let allergy">{{ allergy.reaction || 'Not provided' }}</mat-cell>
+          <mat-cell *matCellDef="let allergy">{{
+            allergy.reaction || "Not provided"
+          }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="severity">
           <mat-header-cell *matHeaderCellDef>Severity</mat-header-cell>
           <mat-cell *matCellDef="let allergy">
-            <span [class]="'severity-' + (allergy.severity?.toLowerCase() || 'unknown')">
-              {{ allergy.severity || 'Not provided' }}
+            <span
+              [class]="
+                'severity-' + (allergy.severity?.toLowerCase() || 'unknown')
+              "
+            >
+              {{ allergy.severity || "Not provided" }}
             </span>
           </mat-cell>
         </ng-container>
 
-        <mat-header-row *matHeaderRowDef="['name', 'description', 'reaction', 'severity']"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: ['name', 'description', 'reaction', 'severity'];"></mat-row>
+        <mat-header-row
+          *matHeaderRowDef="['name', 'description', 'reaction', 'severity']"
+        ></mat-header-row>
+        <mat-row
+          *matRowDef="
+            let row;
+            columns: ['name', 'description', 'reaction', 'severity']
+          "
+        ></mat-row>
       </table>
     </mat-card-content>
   </mat-card>
-
 
   <!-- Guardians -->
   <mat-card class="profile-section">
@@ -316,36 +459,47 @@
       <table mat-table [dataSource]="resident()?.guardians || []">
         <ng-container matColumnDef="name">
           <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
-          <mat-cell *matCellDef="let guardian">{{ guardian.firstName }} {{ guardian.lastName }}</mat-cell>
+          <mat-cell *matCellDef="let guardian"
+            >{{ guardian.firstName }} {{ guardian.lastName }}</mat-cell
+          >
         </ng-container>
 
         <ng-container matColumnDef="relationship">
           <mat-header-cell *matHeaderCellDef>Relationship</mat-header-cell>
-          <mat-cell *matCellDef="let guardian">{{ guardian.relationship || 'Not provided' }}</mat-cell>
+          <mat-cell *matCellDef="let guardian">{{
+            guardian.relationship || "Not provided"
+          }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="phone">
           <mat-header-cell *matHeaderCellDef>Phone</mat-header-cell>
-          <mat-cell *matCellDef="let guardian">{{ guardian.contactInfo?.phoneNumber || 'Not provided' }}</mat-cell>
+          <mat-cell *matCellDef="let guardian">{{
+            guardian.contactInfo?.phoneNumber || "Not provided"
+          }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="address">
           <mat-header-cell *matHeaderCellDef>Address</mat-header-cell>
           <mat-cell *matCellDef="let guardian">
             @if (guardian.contactInfo) {
-            {{ guardian.contactInfo.street }}, {{ guardian.contactInfo.city }}, {{ guardian.contactInfo.state }}
-            } @else {
-            Not provided
-            }
+            {{ guardian.contactInfo.street }}, {{ guardian.contactInfo.city }},
+            {{ guardian.contactInfo.state }}
+            } @else { Not provided }
           </mat-cell>
         </ng-container>
 
-        <mat-header-row *matHeaderRowDef="['name', 'relationship', 'phone', 'address']"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: ['name', 'relationship', 'phone', 'address'];"></mat-row>
+        <mat-header-row
+          *matHeaderRowDef="['name', 'relationship', 'phone', 'address']"
+        ></mat-header-row>
+        <mat-row
+          *matRowDef="
+            let row;
+            columns: ['name', 'relationship', 'phone', 'address']
+          "
+        ></mat-row>
       </table>
     </mat-card-content>
   </mat-card>
-
 
   <!-- Power of Attorney -->
   <mat-card class="profile-section">
@@ -356,18 +510,26 @@
     <mat-card-content>
       <div class="row">
         <div class="col-md-6">
-          <p><strong>Name:</strong> {{ resident()?.powerOfAttorney?.firstName }} {{
-            resident()?.powerOfAttorney?.lastName
-            }}</p>
+          <p>
+            <strong>Name:</strong> {{ resident()?.powerOfAttorney?.firstName }}
+            {{ resident()?.powerOfAttorney?.lastName }}
+          </p>
         </div>
         <div class="col-md-6">
-          <p><strong>Phone:</strong> {{ resident()?.powerOfAttorney?.contactInfo?.phoneNumber || 'Not provided' }}</p>
+          <p>
+            <strong>Phone:</strong>
+            {{
+              resident()?.powerOfAttorney?.contactInfo?.phoneNumber ||
+                "Not provided"
+            }}
+          </p>
         </div>
       </div>
       @if (resident()?.powerOfAttorney?.contactInfo) {
       <div class="row">
         <div class="col">
-          <p><strong>Address:</strong>
+          <p>
+            <strong>Address:</strong>
             {{ resident()?.powerOfAttorney?.contactInfo?.street }},
             {{ resident()?.powerOfAttorney?.contactInfo?.city }},
             {{ resident()?.powerOfAttorney?.contactInfo?.state }}
@@ -379,7 +541,6 @@
     </mat-card-content>
   </mat-card>
 
-
   <!-- Medical Proxy -->
   <mat-card class="profile-section">
     <mat-card-header>
@@ -389,17 +550,26 @@
     <mat-card-content>
       <div class="row">
         <div class="col-md-6">
-          <p><strong>Name:</strong> {{ resident()?.medicalProxy?.firstName }} {{ resident()?.medicalProxy?.lastName }}
+          <p>
+            <strong>Name:</strong> {{ resident()?.medicalProxy?.firstName }}
+            {{ resident()?.medicalProxy?.lastName }}
           </p>
         </div>
         <div class="col-md-6">
-          <p><strong>Phone:</strong> {{ resident()?.medicalProxy?.contactInfo?.phoneNumber || 'Not provided' }}</p>
+          <p>
+            <strong>Phone:</strong>
+            {{
+              resident()?.medicalProxy?.contactInfo?.phoneNumber ||
+                "Not provided"
+            }}
+          </p>
         </div>
       </div>
       @if (resident()?.medicalProxy?.contactInfo) {
       <div class="row">
         <div class="col">
-          <p><strong>Address:</strong>
+          <p>
+            <strong>Address:</strong>
             {{ resident()?.medicalProxy?.contactInfo?.street }},
             {{ resident()?.medicalProxy?.contactInfo?.city }},
             {{ resident()?.medicalProxy?.contactInfo?.state }}
@@ -420,16 +590,26 @@
     <mat-card-content>
       <div class="row">
         <div class="col-md-6">
-          <p><strong>Name:</strong> {{ resident()?.socialWorker?.name || 'Not provided' }}</p>
+          <p>
+            <strong>Name:</strong>
+            {{ resident()?.socialWorker?.name || "Not provided" }}
+          </p>
         </div>
         <div class="col-md-6">
-          <p><strong>Phone:</strong> {{ resident()?.socialWorker?.contactInfo?.phoneNumber || 'Not provided' }}</p>
+          <p>
+            <strong>Phone:</strong>
+            {{
+              resident()?.socialWorker?.contactInfo?.phoneNumber ||
+                "Not provided"
+            }}
+          </p>
         </div>
       </div>
       @if (resident()?.socialWorker?.contactInfo) {
       <div class="row">
         <div class="col">
-          <p><strong>Address:</strong>
+          <p>
+            <strong>Address:</strong>
             {{ resident()?.socialWorker?.contactInfo?.street }},
             {{ resident()?.socialWorker?.contactInfo?.city }},
             {{ resident()?.socialWorker?.contactInfo?.state }}
@@ -452,20 +632,27 @@
         <div class="col-md-6">
           <div class="row">
             <div class="col-5"><strong>Name:</strong></div>
-            <div class="col-7">{{ resident()?.hospice?.name || 'Not provided' }}</div>
+            <div class="col-7">
+              {{ resident()?.hospice?.name || "Not provided" }}
+            </div>
           </div>
         </div>
         <div class="col-md-6">
           <div class="row">
             <div class="col-4"><strong>Phone:</strong></div>
-            <div class="col-8">{{ resident()?.hospice?.contactInfo?.phoneNumber || 'Not provided' }}</div>
+            <div class="col-8">
+              {{
+                resident()?.hospice?.contactInfo?.phoneNumber || "Not provided"
+              }}
+            </div>
           </div>
         </div>
       </div>
       @if (resident()?.hospice?.contactInfo) {
       <div class="row">
         <div class="col">
-          <p><strong>Address:</strong>
+          <p>
+            <strong>Address:</strong>
             {{ resident()?.hospice?.contactInfo?.street }},
             {{ resident()?.hospice?.contactInfo?.city }},
             {{ resident()?.hospice?.contactInfo?.state }}
@@ -486,7 +673,10 @@
     <mat-card-content>
       <div class="row">
         <div class="col">
-          <p><strong>Pharmacy:</strong> {{ resident()?.preferredPharmacy || 'Not provided' }}</p>
+          <p>
+            <strong>Pharmacy:</strong>
+            {{ resident()?.preferredPharmacy || "Not provided" }}
+          </p>
         </div>
       </div>
     </mat-card-content>
@@ -501,37 +691,63 @@
       <table mat-table [dataSource]="resident()?.insurances || []">
         <ng-container matColumnDef="provider">
           <mat-header-cell *matHeaderCellDef>Provider</mat-header-cell>
-          <mat-cell *matCellDef="let insurance">{{ insurance.provider }}</mat-cell>
+          <mat-cell *matCellDef="let insurance">{{
+            insurance.provider
+          }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="policyNumber">
           <mat-header-cell *matHeaderCellDef>Policy Number</mat-header-cell>
-          <mat-cell *matCellDef="let insurance">{{ insurance.policyNumber || 'Not provided' }}</mat-cell>
+          <mat-cell *matCellDef="let insurance">{{
+            insurance.policyNumber || "Not provided"
+          }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="groupNumber">
           <mat-header-cell *matHeaderCellDef>Group Number</mat-header-cell>
-          <mat-cell *matCellDef="let insurance">{{ insurance.groupNumber || 'Not provided' }}</mat-cell>
+          <mat-cell *matCellDef="let insurance">{{
+            insurance.groupNumber || "Not provided"
+          }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="effectiveDate">
           <mat-header-cell *matHeaderCellDef>Effective Date</mat-header-cell>
-          <mat-cell *matCellDef="let insurance">{{ formatDate(insurance.effectiveDate) }}</mat-cell>
+          <mat-cell *matCellDef="let insurance">{{
+            formatDate(insurance.effectiveDate)
+          }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="expirationDate">
           <mat-header-cell *matHeaderCellDef>Expiration Date</mat-header-cell>
-          <mat-cell *matCellDef="let insurance">{{ formatDate(insurance.expirationDate) }}</mat-cell>
+          <mat-cell *matCellDef="let insurance">{{
+            formatDate(insurance.expirationDate)
+          }}</mat-cell>
         </ng-container>
 
         <mat-header-row
-          *matHeaderRowDef="['provider', 'policyNumber', 'groupNumber', 'effectiveDate', 'expirationDate']"></mat-header-row>
+          *matHeaderRowDef="[
+            'provider',
+            'policyNumber',
+            'groupNumber',
+            'effectiveDate',
+            'expirationDate'
+          ]"
+        ></mat-header-row>
         <mat-row
-          *matRowDef="let row; columns: ['provider', 'policyNumber', 'groupNumber', 'effectiveDate', 'expirationDate'];"></mat-row>
+          *matRowDef="
+            let row;
+            columns: [
+              'provider',
+              'policyNumber',
+              'groupNumber',
+              'effectiveDate',
+              'expirationDate'
+            ]
+          "
+        ></mat-row>
       </table>
     </mat-card-content>
   </mat-card>
-
 
   <!-- Documents -->
   <mat-card class="profile-section">
@@ -547,48 +763,67 @@
 
         <ng-container matColumnDef="type">
           <mat-header-cell *matHeaderCellDef>Type</mat-header-cell>
-          <mat-cell *matCellDef="let document">{{ document.type || 'Not specified' }}</mat-cell>
+          <mat-cell *matCellDef="let document">{{
+            document.type || "Not specified"
+          }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="uploadDate">
           <mat-header-cell *matHeaderCellDef>Upload Date</mat-header-cell>
-          <mat-cell *matCellDef="let document">{{ formatDate(document.uploadDate) }}</mat-cell>
+          <mat-cell *matCellDef="let document">{{
+            formatDate(document.uploadDate)
+          }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="actions">
           <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
           <mat-cell *matCellDef="let document">
             @if (document.url) {
-            <button mat-icon-button color="primary" (click)="viewDocument(document.url)">
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="viewDocument(document.url)"
+            >
               <mat-icon>visibility</mat-icon>
             </button>
-            <button mat-icon-button color="primary" (click)="downloadDocument(document.url)">
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="downloadDocument(document.url)"
+            >
               <mat-icon>download</mat-icon>
             </button>
             }
           </mat-cell>
         </ng-container>
 
-        <mat-header-row *matHeaderRowDef="['name', 'type', 'uploadDate', 'actions']"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: ['name', 'type', 'uploadDate', 'actions'];"></mat-row>
+        <mat-header-row
+          *matHeaderRowDef="['name', 'type', 'uploadDate', 'actions']"
+        ></mat-header-row>
+        <mat-row
+          *matRowDef="
+            let row;
+            columns: ['name', 'type', 'uploadDate', 'actions']
+          "
+        ></mat-row>
       </table>
     </mat-card-content>
   </mat-card>
-
-
 </div>
-}
-
-@else {
-<div class="no-resident">
-  <mat-card>
-    <mat-card-content>
-      <div class="no-resident-content">
-        <mat-icon>person_off</mat-icon>
-        <h2>No Resident Found</h2>
-        <p>Unable to load resident information. Please check the resident ID and try again.</p>
-      </div>
-    </mat-card-content>
-  </mat-card>
-</div>
+} @else {
+<empty-state
+  [icon]="isLoading() ? 'person' : 'person_off'"
+  [title]="isLoading() ? 'Loading resident details...' : 'No Resident Selected'"
+  [description]="
+    isLoading()
+      ? 'Please wait while we fetch the resident information.'
+      : 'Please search and select a resident to view their details.'
+  "
+  [isLoading]="isLoading()"
+  [showActionButton]="!isLoading()"
+  actionButtonText="Search for Resident"
+  actionButtonIcon="search"
+  (actionClick)="openSearchDialog()"
+>
+</empty-state>
 }

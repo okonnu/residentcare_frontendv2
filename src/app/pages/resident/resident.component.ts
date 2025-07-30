@@ -3,13 +3,16 @@ import { MaterialModule } from 'src/app/material.module';
 import { ResidentService } from 'src/app/services/resident.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { EmptyStateComponent } from '../../components/empty-state/empty-state.component';
+import { MatDialog } from '@angular/material/dialog';
+import { AppSearchDialogComponent } from '../../layouts/full/vertical/header/header.component';
 import { Resident } from 'src/app/models/resident.model';
 
 @Component({
   selector: 'app-resident',
   templateUrl: './resident.component.html',
   standalone: true,
-  imports: [MaterialModule, CommonModule],
+  imports: [MaterialModule, CommonModule, EmptyStateComponent],
   styleUrls: ['./resident.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
@@ -17,6 +20,7 @@ export class ResidentComponent implements OnInit {
   residentService = inject(ResidentService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private dialog = inject(MatDialog);
 
   // Computed properties for easy access
   resident = computed(() => this.residentService.resident());
@@ -108,5 +112,14 @@ export class ResidentComponent implements OnInit {
     if (this.resident()?.id) {
       this.router.navigate(['/resident-form', this.resident()?.id]);
     }
+  }
+
+  // Method to open search dialog
+  openSearchDialog() {
+    const dialogRef = this.dialog.open(AppSearchDialogComponent);
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log(`Dialog result: ${result}`);
+    });
   }
 }

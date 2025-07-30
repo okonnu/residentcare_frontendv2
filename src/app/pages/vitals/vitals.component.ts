@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormControl, Validators } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
 import { TableFormComponent } from '../../components/table-form/table-form.component';
+import { EmptyStateComponent } from '../../components/empty-state/empty-state.component';
 import { FormField } from 'src/app/models/FormField.model';
 import { Builder } from 'builder-pattern';
 import { Vital, VitalsChartOptions } from '../../models/vital.model';
@@ -15,7 +16,7 @@ import { AppSearchDialogComponent } from '../../layouts/full/vertical/header/hea
   selector: 'app-vitals',
   templateUrl: './vitals.component.html',
   standalone: true,
-  imports: [CommonModule, MaterialModule, TableFormComponent, NgApexchartsModule],
+  imports: [CommonModule, MaterialModule, TableFormComponent, NgApexchartsModule, EmptyStateComponent],
   styleUrls: ['./vitals.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })

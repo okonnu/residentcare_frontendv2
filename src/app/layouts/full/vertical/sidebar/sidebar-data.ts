@@ -17,7 +17,13 @@ export const navItems: NavItem[] = [
     displayName: 'Face Sheet',
     iconName: 'user',
     bgcolor: 'primary',
-    route: '/pages/face-sheet',
+    route: '/pages/resident',
+  },
+  {
+    displayName: 'Onboarding',
+    iconName: 'user',
+    bgcolor: 'primary',
+    route: '/pages/resident-form',
   },
   {
     displayName: 'Vitals',

@@ -1,6 +1,6 @@
 {
   "name": "residentcare",
-  "version": "4.0.1",
+  "version": "4.2.0",
   "scripts": {
     "ng": "ng",
     "start": "nx serve",

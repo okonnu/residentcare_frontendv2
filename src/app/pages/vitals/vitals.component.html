@@ -1,29 +1,26 @@
 <div class="container-fluid">
-
   <!-- Loading State - Full Page -->
   @if (isLoading()) {
-  <div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-    <div class="text-center">
-      <mat-spinner diameter="64" class="mx-auto mb-4"></mat-spinner>
-      <h4 class="text-muted mb-2">Loading vital signs...</h4>
-      <p class="text-muted">Please wait while we fetch the data.</p>
-    </div>
-  </div>
+  <empty-state
+    title="Loading vital signs..."
+    description="Please wait while we fetch the data."
+    [isLoading]="true"
+  >
+  </empty-state>
   }
 
   <!-- No Data State - Full Page -->
   @else if (!hasVitalsData()) {
-  <div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-    <div class="text-center">
-      <mat-icon class="text-muted mb-4" style="font-size: 80px; height: 80px; width: 80px;">monitor_heart</mat-icon>
-      <h3 class="text-muted mb-3">No data available</h3>
-      <p class="text-muted mb-4">Please search for a resident first.</p>
-      <button mat-raised-button color="primary" (click)="openSearchDialog()">
-        <mat-icon class="me-2">search</mat-icon>
-        Search for Resident
-      </button>
-    </div>
-  </div>
+  <empty-state
+    icon="monitor_heart"
+    title="No data available"
+    description="Please search for a resident first."
+    [showActionButton]="true"
+    actionButtonText="Search for Resident"
+    actionButtonIcon="search"
+    (actionClick)="openSearchDialog()"
+  >
+  </empty-state>
   }
 
   <!-- Content State - Show when we have vitals data -->
@@ -36,7 +33,7 @@
           <div class="d-flex align-items-center justify-content-center">
             <mat-icon class="text-danger me-2">thermostat</mat-icon>
             <div>
-              <h4 class="mb-0">{{currentVitals().temperature || 0}}°F</h4>
+              <h4 class="mb-0">{{ currentVitals().temperature || 0 }}°F</h4>
               <p class="text-muted mb-0">Temperature</p>
             </div>
           </div>
@@ -50,7 +47,7 @@
           <div class="d-flex align-items-center justify-content-center">
             <mat-icon class="text-info me-2">favorite</mat-icon>
             <div>
-              <h4 class="mb-0">{{currentVitals().heartRate || 0}}</h4>
+              <h4 class="mb-0">{{ currentVitals().heartRate || 0 }}</h4>
               <p class="text-muted mb-0">Heart Rate (bpm)</p>
             </div>
           </div>
@@ -64,7 +61,7 @@
           <div class="d-flex align-items-center justify-content-center">
             <mat-icon class="text-primary me-2">monitor_heart</mat-icon>
             <div>
-              <h4 class="mb-0">{{currentVitals().bloodPressure || '0/0'}}</h4>
+              <h4 class="mb-0">{{ currentVitals().bloodPressure || "0/0" }}</h4>
               <p class="text-muted mb-0">Blood Pressure</p>
             </div>
           </div>
@@ -78,7 +75,7 @@
           <div class="d-flex align-items-center justify-content-center">
             <mat-icon class="text-success me-2">air</mat-icon>
             <div>
-              <h4 class="mb-0">{{currentVitals().oxygenSaturation || 0}}%</h4>
+              <h4 class="mb-0">{{ currentVitals().oxygenSaturation || 0 }}%</h4>
               <p class="text-muted mb-0">O2 Saturation</p>
             </div>
           </div>
@@ -96,11 +93,17 @@
           <div class="d-flex align-items-center justify-content-between w-100">
             <div>
               <mat-card-title>Temperature Trend</mat-card-title>
-              <mat-card-subtitle class="mat-body-1">Last 7 days</mat-card-subtitle>
+              <mat-card-subtitle class="mat-body-1"
+                >Last 7 days</mat-card-subtitle
+              >
             </div>
             <div class="text-right">
-              <mat-card-title class="text-danger">{{currentVitals().temperature || 0}}°F</mat-card-title>
-              <span class="bg-light-warning text-warning border-warning border rounded f-w-600 p-6 p-y-2 f-s-12">
+              <mat-card-title class="text-danger"
+                >{{ currentVitals().temperature || 0 }}°F</mat-card-title
+              >
+              <span
+                class="bg-light-warning text-warning border-warning border rounded f-w-600 p-6 p-y-2 f-s-12"
+              >
                 Current
               </span>
             </div>
@@ -108,11 +111,18 @@
         </mat-card-header>
         <mat-card-content>
           <div class="chart-container">
-            <apx-chart [series]="temperatureChart().series" [chart]="temperatureChart().chart"
-              [xaxis]="temperatureChart().xaxis" [yaxis]="temperatureChart().yaxis" [colors]="temperatureChart().colors"
-              [stroke]="temperatureChart().stroke" [dataLabels]="temperatureChart().dataLabels"
-              [legend]="temperatureChart().legend" [grid]="temperatureChart().grid"
-              [tooltip]="temperatureChart().tooltip">
+            <apx-chart
+              [series]="temperatureChart().series"
+              [chart]="temperatureChart().chart"
+              [xaxis]="temperatureChart().xaxis"
+              [yaxis]="temperatureChart().yaxis"
+              [colors]="temperatureChart().colors"
+              [stroke]="temperatureChart().stroke"
+              [dataLabels]="temperatureChart().dataLabels"
+              [legend]="temperatureChart().legend"
+              [grid]="temperatureChart().grid"
+              [tooltip]="temperatureChart().tooltip"
+            >
             </apx-chart>
           </div>
         </mat-card-content>
@@ -126,11 +136,17 @@
           <div class="d-flex align-items-center justify-content-between w-100">
             <div>
               <mat-card-title>Heart Rate Trend</mat-card-title>
-              <mat-card-subtitle class="mat-body-1">Last 7 days</mat-card-subtitle>
+              <mat-card-subtitle class="mat-body-1"
+                >Last 7 days</mat-card-subtitle
+              >
             </div>
             <div class="text-right">
-              <mat-card-title class="text-info">{{currentVitals().heartRate || 0}} bpm</mat-card-title>
-              <span class="bg-light-success text-success border-success border rounded f-w-600 p-6 p-y-2 f-s-12">
+              <mat-card-title class="text-info"
+                >{{ currentVitals().heartRate || 0 }} bpm</mat-card-title
+              >
+              <span
+                class="bg-light-success text-success border-success border rounded f-w-600 p-6 p-y-2 f-s-12"
+              >
                 Current
               </span>
             </div>
@@ -138,10 +154,18 @@
         </mat-card-header>
         <mat-card-content>
           <div class="chart-container">
-            <apx-chart [series]="heartRateChart().series" [chart]="heartRateChart().chart"
-              [xaxis]="heartRateChart().xaxis" [yaxis]="heartRateChart().yaxis" [colors]="heartRateChart().colors"
-              [stroke]="heartRateChart().stroke" [dataLabels]="heartRateChart().dataLabels"
-              [legend]="heartRateChart().legend" [grid]="heartRateChart().grid" [tooltip]="heartRateChart().tooltip">
+            <apx-chart
+              [series]="heartRateChart().series"
+              [chart]="heartRateChart().chart"
+              [xaxis]="heartRateChart().xaxis"
+              [yaxis]="heartRateChart().yaxis"
+              [colors]="heartRateChart().colors"
+              [stroke]="heartRateChart().stroke"
+              [dataLabels]="heartRateChart().dataLabels"
+              [legend]="heartRateChart().legend"
+              [grid]="heartRateChart().grid"
+              [tooltip]="heartRateChart().tooltip"
+            >
             </apx-chart>
           </div>
         </mat-card-content>
@@ -158,11 +182,17 @@
           <div class="d-flex align-items-center justify-content-between w-100">
             <div>
               <mat-card-title>Blood Pressure Trend</mat-card-title>
-              <mat-card-subtitle class="mat-body-1">Last 7 days</mat-card-subtitle>
+              <mat-card-subtitle class="mat-body-1"
+                >Last 7 days</mat-card-subtitle
+              >
             </div>
             <div class="text-right">
-              <mat-card-title class="text-primary">{{currentVitals().bloodPressure || '0/0'}}</mat-card-title>
-              <span class="bg-light-warning text-warning border-warning border rounded f-w-600 p-6 p-y-2 f-s-12">
+              <mat-card-title class="text-primary">{{
+                currentVitals().bloodPressure || "0/0"
+              }}</mat-card-title>
+              <span
+                class="bg-light-warning text-warning border-warning border rounded f-w-600 p-6 p-y-2 f-s-12"
+              >
                 Current
               </span>
             </div>
@@ -170,11 +200,18 @@
         </mat-card-header>
         <mat-card-content>
           <div class="chart-container">
-            <apx-chart [series]="bloodPressureChart().series" [chart]="bloodPressureChart().chart"
-              [xaxis]="bloodPressureChart().xaxis" [yaxis]="bloodPressureChart().yaxis"
-              [colors]="bloodPressureChart().colors" [stroke]="bloodPressureChart().stroke"
-              [dataLabels]="bloodPressureChart().dataLabels" [legend]="bloodPressureChart().legend"
-              [grid]="bloodPressureChart().grid" [tooltip]="bloodPressureChart().tooltip">
+            <apx-chart
+              [series]="bloodPressureChart().series"
+              [chart]="bloodPressureChart().chart"
+              [xaxis]="bloodPressureChart().xaxis"
+              [yaxis]="bloodPressureChart().yaxis"
+              [colors]="bloodPressureChart().colors"
+              [stroke]="bloodPressureChart().stroke"
+              [dataLabels]="bloodPressureChart().dataLabels"
+              [legend]="bloodPressureChart().legend"
+              [grid]="bloodPressureChart().grid"
+              [tooltip]="bloodPressureChart().tooltip"
+            >
             </apx-chart>
           </div>
         </mat-card-content>
@@ -188,11 +225,17 @@
           <div class="d-flex align-items-center justify-content-between w-100">
             <div>
               <mat-card-title>Oxygen Saturation Trend</mat-card-title>
-              <mat-card-subtitle class="mat-body-1">Last 7 days</mat-card-subtitle>
+              <mat-card-subtitle class="mat-body-1"
+                >Last 7 days</mat-card-subtitle
+              >
             </div>
             <div class="text-right">
-              <mat-card-title class="text-success">{{currentVitals().oxygenSaturation || 0}}%</mat-card-title>
-              <span class="bg-light-success text-success border-success border rounded f-w-600 p-6 p-y-2 f-s-12">
+              <mat-card-title class="text-success"
+                >{{ currentVitals().oxygenSaturation || 0 }}%</mat-card-title
+              >
+              <span
+                class="bg-light-success text-success border-success border rounded f-w-600 p-6 p-y-2 f-s-12"
+              >
                 Current
               </span>
             </div>
@@ -200,11 +243,18 @@
         </mat-card-header>
         <mat-card-content>
           <div class="chart-container">
-            <apx-chart [series]="oxygenSaturationChart().series" [chart]="oxygenSaturationChart().chart"
-              [xaxis]="oxygenSaturationChart().xaxis" [yaxis]="oxygenSaturationChart().yaxis"
-              [colors]="oxygenSaturationChart().colors" [stroke]="oxygenSaturationChart().stroke"
-              [dataLabels]="oxygenSaturationChart().dataLabels" [legend]="oxygenSaturationChart().legend"
-              [grid]="oxygenSaturationChart().grid" [tooltip]="oxygenSaturationChart().tooltip">
+            <apx-chart
+              [series]="oxygenSaturationChart().series"
+              [chart]="oxygenSaturationChart().chart"
+              [xaxis]="oxygenSaturationChart().xaxis"
+              [yaxis]="oxygenSaturationChart().yaxis"
+              [colors]="oxygenSaturationChart().colors"
+              [stroke]="oxygenSaturationChart().stroke"
+              [dataLabels]="oxygenSaturationChart().dataLabels"
+              [legend]="oxygenSaturationChart().legend"
+              [grid]="oxygenSaturationChart().grid"
+              [tooltip]="oxygenSaturationChart().tooltip"
+            >
             </apx-chart>
           </div>
         </mat-card-content>
@@ -220,17 +270,28 @@
           <h5 class="card-title mb-0">Vital Signs Records</h5>
         </div>
         <div class="card-body">
-          <table-form [title]="'Vital Signs'" [subtitle]="'Manage resident vital signs data'"
-            [dataSet]="vitalsTableData()" [formControls]="vitalsFormControls" [idField]="'id'" [showAddButton]="true"
-            [showEditButton]="true" [showDeleteButton]="true" [showViewButton]="true" (save)="handleVitalsSave($event)"
-            (delete)="handleVitalsDelete($event)" (view)="handleVitalsView($event)" (cancel)="handleCancel()"
-            style="overflow-x: auto; max-width: 100%;">
+          <table-form
+            [title]="'Vital Signs'"
+            [subtitle]="'Manage resident vital signs data'"
+            [dataSet]="vitalsTableData()"
+            [formControls]="vitalsFormControls"
+            [idField]="'id'"
+            [showAddButton]="true"
+            [showEditButton]="true"
+            [showDeleteButton]="true"
+            [showViewButton]="true"
+            (save)="handleVitalsSave($event)"
+            (delete)="handleVitalsDelete($event)"
+            (view)="handleVitalsView($event)"
+            (cancel)="handleCancel()"
+            style="overflow-x: auto; max-width: 100%"
+          >
           </table-form>
         </div>
       </div>
     </div>
   </div>
 
-  } <!-- End of @else block for content state -->
-
+  }
+  <!-- End of @else block for content state -->
 </div>

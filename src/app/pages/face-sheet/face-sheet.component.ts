@@ -4,6 +4,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
 import { CardFormComponent } from '../../components/card-form/card-form.component';
 import { TableFormComponent } from '../../components/table-form/table-form.component';
+import { EmptyStateComponent } from '../../components/empty-state/empty-state.component';
 import { FormField } from 'src/app/models/FormField.model';
 import { Builder } from 'builder-pattern';
 import { ResidentService } from 'src/app/services/resident.service';
@@ -15,7 +16,7 @@ import { AppSearchDialogComponent } from '../../layouts/full/vertical/header/hea
   selector: 'face-sheet',
   templateUrl: './face-sheet.component.html',
   standalone: true,
-  imports: [CommonModule, MaterialModule, CardFormComponent, TableFormComponent],
+  imports: [CommonModule, MaterialModule, CardFormComponent, TableFormComponent, EmptyStateComponent],
   styleUrls: ['./face-sheet.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
