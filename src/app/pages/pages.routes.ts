@@ -4,6 +4,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { FaceSheetComponent } from './face-sheet/face-sheet.component';
 import { TableFormExampleComponent } from './table-form-example/table-form-example.component';
 import { CardFormExampleComponent } from './card-form-example/card-form-example.component';
+import { ResidentComponent } from './resident/resident.component';
 export const PagesRoutes: Routes = [
   {
     path: '',
@@ -31,6 +32,20 @@ export const PagesRoutes: Routes = [
     component: FaceSheetComponent,
     data: {
       title: 'Resident Face Sheet',
+    },
+  },
+  {
+    path: 'resident/:id',
+    component: ResidentComponent,
+    data: {
+      title: 'Resident Profile',
+    },
+  },
+  {
+    path: 'resident',
+    component: ResidentComponent,
+    data: {
+      title: 'Resident Profile',
     },
   },
   {

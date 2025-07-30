@@ -64,7 +64,7 @@ export class ResidentService {
       .subscribe(); // Subscribe to initiate the HTTP request
   }
 
-  saveResidentDetails(residentData: any): void {
+  saveResidentDetails(residentData: Resident): void {
     this.isLoading.set(true); // Set loading to true
 
     this.http.post<RestResponse>(`${environment.apiUrl}/resident`, residentData)
