@@ -27,9 +27,17 @@
         <div class="col"></div>
         <div class="col">
           <div class="action-buttons">
-            <button mat-raised-button color="primary" (click)="printProfile()">
+            <button mat-raised-button color="primary" (click)="printProfile()" class="me-2">
               <mat-icon>print</mat-icon>
               Print Profile
+            </button>
+            <button mat-raised-button color="accent" (click)="editResident()" class="me-2" *ngIf="resident()">
+              <mat-icon>edit</mat-icon>
+              Edit Resident
+            </button>
+            <button mat-raised-button color="warn" (click)="addResident()">
+              <mat-icon>person_add</mat-icon>
+              Add New Resident
             </button>
           </div>
         </div>

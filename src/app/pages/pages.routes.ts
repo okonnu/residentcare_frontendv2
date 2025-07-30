@@ -5,6 +5,7 @@ import { FaceSheetComponent } from './face-sheet/face-sheet.component';
 import { TableFormExampleComponent } from './table-form-example/table-form-example.component';
 import { CardFormExampleComponent } from './card-form-example/card-form-example.component';
 import { ResidentComponent } from './resident/resident.component';
+import { ResidentFormComponent } from './resident-form/resident-form.component';
 export const PagesRoutes: Routes = [
   {
     path: '',
@@ -46,6 +47,20 @@ export const PagesRoutes: Routes = [
     component: ResidentComponent,
     data: {
       title: 'Resident Profile',
+    },
+  },
+  {
+    path: 'resident-form/:id',
+    component: ResidentFormComponent,
+    data: {
+      title: 'Edit Resident',
+    },
+  },
+  {
+    path: 'resident-form',
+    component: ResidentFormComponent,
+    data: {
+      title: 'Add New Resident',
     },
   },
   {

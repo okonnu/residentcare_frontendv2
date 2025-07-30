@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation, inject, computed } from '@angular/core';
 import { MaterialModule } from 'src/app/material.module';
 import { ResidentService } from 'src/app/services/resident.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Resident } from 'src/app/models/resident.model';
 
@@ -16,6 +16,7 @@ import { Resident } from 'src/app/models/resident.model';
 export class ResidentComponent implements OnInit {
   residentService = inject(ResidentService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   // Computed properties for easy access
   resident = computed(() => this.residentService.resident());
@@ -96,6 +97,16 @@ export class ResidentComponent implements OnInit {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+    }
+  }
+
+  addResident(): void {
+    this.router.navigate(['/resident-form']);
+  }
+
+  editResident(): void {
+    if (this.resident()?.id) {
+      this.router.navigate(['/resident-form', this.resident()?.id]);
     }
   }
 }

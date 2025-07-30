@@ -1,0 +1,220 @@
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">
+                    {{ isEditMode() ? 'Edit Resident' : 'Add New Resident' }}
+                </h2>
+                <button mat-button color="warn" (click)="cancel()" class="ms-3">
+                    <mat-icon>close</mat-icon>
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Stepper -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <mat-card class="stepper-card">
+                <mat-card-content class="p-0">
+                    <div class="stepper-container">
+                        @for (step of steps; track $index) {
+                        <div class="step-item" [class.active]="currentStep() === $index"
+                            [class.completed]="currentStep() > $index" [class.valid]="isStepValid($index)"
+                            (click)="goToStep($index)" [attr.title]="step.label">
+                            <div class="step-circle">
+                                @if (currentStep() > $index && isStepValid($index)) {
+                                <mat-icon>check</mat-icon>
+                                } @else {
+                                <mat-icon>{{ step.icon }}</mat-icon>
+                                }
+                            </div>
+                            <div class="step-label">{{ step.label }}</div>
+                        </div>
+                        @if ($index < steps.length - 1) { <div class="step-connector"
+                            [class.completed]="currentStep() > $index">
+                    </div>
+                    }
+                    }
+        </div>
+        </mat-card-content>
+        </mat-card>
+    </div>
+</div>
+
+<!-- Form Content using Card Form Components -->
+<div class="row">
+    <div class="col-12">
+
+        <!-- Step 0: Personal Information -->
+        @if (currentStep() === 0) {
+        <card-form title="Personal Information" [formControls]="personalInfoFields()" [editMode]="true"
+            [showEditButton]="false" [showCancelButton]="false" saveButtonText="Next: Contact Info"
+            (save)="onPersonalInfoSave($event)">
+        </card-form>
+        }
+
+        <!-- Step 1: Contact Information -->
+        @if (currentStep() === 1) {
+        <card-form title="Contact Information" [formControls]="contactInfoFields()" [editMode]="true"
+            [showEditButton]="false" [showCancelButton]="true" saveButtonText="Next: Facility Info"
+            cancelButtonText="Previous" (save)="onContactInfoSave($event)" (cancel)="previousStep()">
+        </card-form>
+        }
+
+        <!-- Step 2: Facility Information -->
+        @if (currentStep() === 2) {
+        <card-form title="Facility Information" [formControls]="facilityInfoFields()" [editMode]="true"
+            [showEditButton]="false" [showCancelButton]="true" saveButtonText="Next: Medical Status"
+            cancelButtonText="Previous" (save)="onFacilityInfoSave($event)" (cancel)="previousStep()">
+        </card-form>
+        }
+
+        <!-- Step 3: Medical & Legal Status -->
+        @if (currentStep() === 3) {
+        <card-form title="Medical & Legal Status" [formControls]="medicalStatusFields()" [editMode]="true"
+            [showEditButton]="false" [showCancelButton]="true" saveButtonText="Next: Guardians"
+            cancelButtonText="Previous" (save)="onMedicalStatusSave($event)" (cancel)="previousStep()">
+        </card-form>
+        }
+
+        <!-- Step 4: Guardians -->
+        @if (currentStep() === 4) {
+        <div class="row">
+            <div class="col-12">
+                <table-form [title]="'Guardians'" [subtitle]="'Manage guardian information'" [dataSet]="guardians()"
+                    [formControls]="guardianFormControls" [idField]="'id'" [showAddButton]="true"
+                    [showEditButton]="true" [showDeleteButton]="true" [showViewButton]="true"
+                    (save)="onGuardianTableSave($event)" (delete)="onGuardianDelete($event)"
+                    (view)="onGuardianView($event)" (cancel)="onGuardianCancel()">
+                </table-form>
+                <div class="d-flex justify-content-between mt-4">
+                    <button mat-button (click)="previousStep()">
+                        <mat-icon>arrow_back</mat-icon>
+                        Previous
+                    </button>
+                    <button mat-raised-button color="primary" (click)="nextStep()">
+                        Next: Primary Care Physicians
+                        <mat-icon>arrow_forward</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+        }
+
+        <!-- Step 5: Primary Care Physicians -->
+        @if (currentStep() === 5) {
+        <div class="row">
+            <div class="col-12">
+                <table-form [title]="'Primary Care Physicians'" [subtitle]="'Manage primary care physician information'"
+                    [dataSet]="primaryCarePhysicians()" [formControls]="physicianFormControls" [idField]="'id'"
+                    [showAddButton]="true" [showEditButton]="true" [showDeleteButton]="true" [showViewButton]="true"
+                    (save)="onPhysicianTableSave($event)" (delete)="onPhysicianDelete($event)"
+                    (view)="onPhysicianView($event)" (cancel)="onPhysicianCancel()">
+                </table-form>
+                <div class="d-flex justify-content-between mt-4">
+                    <button mat-button (click)="previousStep()">
+                        <mat-icon>arrow_back</mat-icon>
+                        Previous
+                    </button>
+                    <button mat-raised-button color="primary" (click)="nextStep()">
+                        Next: Allergies
+                        <mat-icon>arrow_forward</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+        }
+
+        <!-- Step 6: Allergies -->
+        @if (currentStep() === 6) {
+        <div class="row">
+            <div class="col-12">
+                <table-form [title]="'Allergies'" [subtitle]="'Manage allergy information'" [dataSet]="allergies()"
+                    [formControls]="allergyFormControls" [idField]="'id'" [showAddButton]="true" [showEditButton]="true"
+                    [showDeleteButton]="true" [showViewButton]="true" (save)="onAllergyTableSave($event)"
+                    (delete)="onAllergyDelete($event)" (view)="onAllergyView($event)" (cancel)="onAllergyCancel()">
+                </table-form>
+                <div class="d-flex justify-content-between mt-4">
+                    <button mat-button (click)="previousStep()">
+                        <mat-icon>arrow_back</mat-icon>
+                        Previous
+                    </button>
+                    <button mat-raised-button color="primary" (click)="nextStep()">
+                        Next: Legal Representatives
+                        <mat-icon>arrow_forward</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+        }
+
+        <!-- Step 7: Legal Representatives -->
+        @if (currentStep() === 7) {
+        <card-form title="Legal Representatives" [formControls]="legalRepresentativesFields()" [editMode]="true"
+            [showEditButton]="false" [showCancelButton]="true" saveButtonText="Next: Care Team"
+            cancelButtonText="Previous" (save)="onLegalRepresentativesSave($event)" (cancel)="previousStep()">
+        </card-form>
+        }
+
+        <!-- Step 8: Care Team -->
+        @if (currentStep() === 8) {
+        <card-form title="Care Team" [formControls]="careTeamFields()" [editMode]="true" [showEditButton]="false"
+            [showCancelButton]="true" saveButtonText="Next: Documents" cancelButtonText="Previous"
+            (save)="onCareTeamSave($event)" (cancel)="previousStep()">
+        </card-form>
+        }
+
+        <!-- Step 9: Documents -->
+        @if (currentStep() === 9) {
+        <div class="row">
+            <div class="col-12">
+                <table-form [title]="'Documents'" [subtitle]="'Manage document information'" [dataSet]="documents()"
+                    [formControls]="documentFormControls" [idField]="'id'" [showAddButton]="true"
+                    [showEditButton]="true" [showDeleteButton]="true" [showViewButton]="true"
+                    (save)="onDocumentTableSave($event)" (delete)="onDocumentDelete($event)"
+                    (view)="onDocumentView($event)" (cancel)="onDocumentCancel()">
+                </table-form>
+                <div class="d-flex justify-content-between mt-4">
+                    <button mat-button (click)="previousStep()">
+                        <mat-icon>arrow_back</mat-icon>
+                        Previous
+                    </button>
+                    <button mat-raised-button color="primary" (click)="nextStep()">
+                        Next: Insurance
+                        <mat-icon>arrow_forward</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+        }
+
+        <!-- Step 10: Insurance -->
+        @if (currentStep() === 10) {
+        <div class="row">
+            <div class="col-12">
+                <table-form [title]="'Insurance'" [subtitle]="'Manage insurance information'" [dataSet]="insurances()"
+                    [formControls]="insuranceFormControls" [idField]="'id'" [showAddButton]="true"
+                    [showEditButton]="true" [showDeleteButton]="true" [showViewButton]="true"
+                    (save)="onInsuranceTableSave($event)" (delete)="onInsuranceDelete($event)"
+                    (view)="onInsuranceView($event)" (cancel)="onInsuranceCancel()">
+                </table-form>
+                <div class="d-flex justify-content-between mt-4">
+                    <button mat-button (click)="previousStep()">
+                        <mat-icon>arrow_back</mat-icon>
+                        Previous
+                    </button>
+                    <button mat-raised-button color="primary" [disabled]="!isFormValid()" (click)="saveResident()">
+                        <mat-icon>save</mat-icon>
+                        {{ isEditMode() ? 'Update' : 'Save' }} Resident
+                    </button>
+                </div>
+            </div>
+        </div>
+        }
+
+    </div>
+</div>
+</div>
