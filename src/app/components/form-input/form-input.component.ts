@@ -72,7 +72,8 @@ export class InputComponent implements ControlValueAccessor {
     maxlength: 'Maximum length exceeded',
     min: 'Value is below the minimum',
     max: 'Value exceeds the maximum',
-    pattern: 'Invalid format'
+    pattern: 'Invalid format',
+    phone: 'Invalid phone number format'
   };
 
   // Required by ControlValueAccessor
@@ -137,6 +138,10 @@ export class InputComponent implements ControlValueAccessor {
     return this.type === 'ssn';
   }
 
+  get isPhoneInput(): boolean {
+    return this.type === 'phone';
+  }
+
   get effectiveMask(): string {
     if (this.type === 'ssn' && !this.mask) {
       return '000-00-0000';
@@ -147,6 +152,20 @@ export class InputComponent implements ControlValueAccessor {
   get effectivePlaceholder(): string {
     if (this.type === 'ssn' && !this.placeholder) {
       return '___-__-____';
+    }
+    return this.placeholder;
+  }
+
+  get effectivePhoneMask(): string {
+    if (this.type === 'phone' && !this.mask) {
+      return '(000) 000-0000';
+    }
+    return this.mask;
+  }
+
+  get effectivePhonePlaceholder(): string {
+    if (this.type === 'phone' && !this.placeholder) {
+      return '(555) 123-4567';
     }
     return this.placeholder;
   }

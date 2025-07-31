@@ -1,0 +1,13 @@
+<card-form
+  [formControls]="personalInfoFields()"
+  [editMode]="editMode"
+  [showEditButton]="showEditButton"
+  [showCancelButton]="showCancelButton"
+  [saveButtonText]="saveButtonText"
+  [cancelButtonText]="cancelButtonText"
+  [title]="'Personal Information'"
+  (save)="onSave($event)"
+  (cancel)="onCancel()"
+  (edit)="onEdit()"
+>
+</card-form>

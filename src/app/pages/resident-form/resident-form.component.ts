@@ -5,15 +5,17 @@ import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { CardFormComponent } from 'src/app/components/card-form/card-form.component';
 import { TableFormComponent } from 'src/app/components/table-form/table-form.component';
+import { ContactInfoComponent } from 'src/app/components/resident-components/contact-info-form/contact-info.component';
+import { PersonalInfoFormComponent } from 'src/app/components/resident-components/personal-info-form/personal-info-form.component';
 import { FormField } from 'src/app/models/FormField.model';
 import { Builder } from 'builder-pattern';
 import { ResidentService } from 'src/app/services/resident.service';
-import { Insurance, Resident } from 'src/app/models/resident.model';
+import { Insurance, Resident, ContactInfo } from 'src/app/models/resident.model';
 
 @Component({
     selector: 'app-resident-form',
     standalone: true,
-    imports: [CommonModule, MaterialModule, CardFormComponent, TableFormComponent],
+    imports: [CommonModule, MaterialModule, CardFormComponent, TableFormComponent, ContactInfoComponent, PersonalInfoFormComponent],
     templateUrl: './resident-form.component.html',
     styleUrls: ['./resident-form.component.scss']
 })
@@ -160,94 +162,6 @@ export class ResidentFormComponent implements OnInit {
             this.residentData.set(this.createEmptyResident());
         }
     }
-
-    // Personal Information FormFields
-    personalInfoFields = computed(() => {
-        const resident = this.residentData();
-        if (!resident) return [];
-
-        return [
-            Builder(FormField)
-                .key('firstName')
-                .dataType('text')
-                .title('First Name')
-                .formControl(new FormControl(resident.firstName || '', [Validators.required]))
-                .build(),
-            Builder(FormField)
-                .key('lastName')
-                .dataType('text')
-                .title('Last Name')
-                .formControl(new FormControl(resident.lastName || '', [Validators.required]))
-                .build(),
-            Builder(FormField)
-                .key('email')
-                .dataType('email')
-                .title('Email')
-                .formControl(new FormControl(resident.email || '', [Validators.email]))
-                .build(),
-            Builder(FormField)
-                .key('sexAtBirth')
-                .dataType('select')
-                .title('Sex at Birth')
-                .formControl(new FormControl(resident.sexAtBirth || '', [Validators.required]))
-                .dropDownOptions([
-                    { value: 'Male', label: 'Male' },
-                    { value: 'Female', label: 'Female' }
-                ])
-                .build(),
-            Builder(FormField)
-                .key('dateOfBirth')
-                .dataType('date')
-                .title('Date of Birth')
-                .formControl(new FormControl(resident.dateOfBirth ? new Date(resident.dateOfBirth).toISOString().split('T')[0] : '', [Validators.required]))
-                .build(),
-            Builder(FormField)
-                .key('socialSecurityNumber')
-                .dataType('text')
-                .title('Social Security Number')
-                .formControl(new FormControl(resident.socialSecurityNumber || ''))
-                .build()
-        ];
-    });
-
-    // Contact Information FormFields
-    contactInfoFields = computed(() => {
-        const resident = this.residentData();
-        const contact = resident?.contactInfo;
-
-        return [
-            Builder(FormField)
-                .key('street')
-                .dataType('text')
-                .title('Street Address')
-                .formControl(new FormControl(contact?.street || ''))
-                .build(),
-            Builder(FormField)
-                .key('city')
-                .dataType('text')
-                .title('City')
-                .formControl(new FormControl(contact?.city || ''))
-                .build(),
-            Builder(FormField)
-                .key('state')
-                .dataType('text')
-                .title('State')
-                .formControl(new FormControl(contact?.state || ''))
-                .build(),
-            Builder(FormField)
-                .key('zipCode')
-                .dataType('text')
-                .title('Zip Code')
-                .formControl(new FormControl(contact?.zipCode || ''))
-                .build(),
-            Builder(FormField)
-                .key('phoneNumber')
-                .dataType('text')
-                .title('Phone Number')
-                .formControl(new FormControl(contact?.phoneNumber || ''))
-                .build()
-        ];
-    });
 
     // Facility Information FormFields
     facilityInfoFields = computed(() => {
@@ -631,8 +545,8 @@ export class ResidentFormComponent implements OnInit {
     isCurrentStepValid(): boolean {
         const current = this.currentStep();
         switch (current) {
-            case 0: return this.validateFormFields(this.personalInfoFields());
-            case 1: return this.validateFormFields(this.contactInfoFields());
+            case 0: return this.isStepCompleted()[0]; // Personal info validation handled by PersonalInfoFormComponent
+            case 1: return true; // Contact info validation handled by the ContactInfoComponent
             case 2: return this.validateFormFields(this.facilityInfoFields());
             case 3: return this.validateFormFields(this.medicalStatusFields());
             case 7: return this.validateFormFields(this.legalRepresentativesFields());
@@ -671,28 +585,32 @@ export class ResidentFormComponent implements OnInit {
         return fields.every(field => field.formControl.valid);
     }
 
-    onPersonalInfoSave(formData: any): void {
-        this.updateResidentData(formData);
+    onPersonalInfoSave(updatedResident: Resident): void {
+        console.log('Saving personal info:', updatedResident);
+        this.residentData.set(updatedResident);
         this.nextStep();
     }
 
-    onContactInfoSave(formData: any): void {
+    onPersonalInfoCancel(): void {
+        // Handle personal info cancel - navigate away or reset form
+        this.cancel();
+    }
+
+    onContactInfoSave(contactInfo: ContactInfo): void {
         const currentResident = this.residentData();
         if (currentResident) {
             const updatedResident = {
                 ...currentResident,
-                contactInfo: {
-                    street: formData.street || '',
-                    city: formData.city || '',
-                    state: formData.state || '',
-                    zipCode: formData.zipCode || '',
-                    country: currentResident.contactInfo?.country || '',
-                    phoneNumber: formData.phoneNumber || ''
-                }
+                contactInfo: contactInfo
             };
             this.residentData.set(updatedResident);
         }
         this.nextStep();
+    }
+
+    onContactInfoCancel(): void {
+        // Handle contact info cancel - could revert changes if needed
+        this.previousStep();
     }
 
     onFacilityInfoSave(formData: any): void {

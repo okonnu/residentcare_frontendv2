@@ -47,7 +47,7 @@ export class Allergy {
     audit: Audit | null;
 }
 
-export interface SocialWorker {
+export class SocialWorker {
     id: string;
     name: string;
     contactInfo: ContactInfo;
@@ -134,10 +134,7 @@ export class Resident {
     firstName: string;
     lastName: string;
     email: string;
-    role: any | null;
-    userFacility: any | null;
-    contactInfo: ContactInfo | null;
-    audit: Audit;
+    role: string; // always ROLE_RESIDENT
     sexAtBirth: string;
     dateOfBirth: string;
     socialSecurityNumber: string;
@@ -148,6 +145,8 @@ export class Resident {
     photoUrl: string | null;
     dateOfAdmission: string;
     medicalPowerOfAttorney: string;
+    preferredPharmacy: string;
+    contactInfo: ContactInfo | null;
     medicalAndLegalStatus: MedicalAndLegalStatus;
     guardians: Guardian[];
     powerOfAttorney: PowerOfAttorney | null;
@@ -155,10 +154,11 @@ export class Resident {
     preNeedMedicalAuth: PreNeedMedicalAuth | null;
     primaryCarePhysician: PrimaryCarePhysician[];
     allergy: Allergy[];
-    preferredPharmacy: string;
     hospice: Hospice | null;
     socialWorker: SocialWorker;
     facility: Facility;
+    userFacility: Facility;
     documents: Document[];
     insurances: Insurance[];
+    audit: Audit;
 }

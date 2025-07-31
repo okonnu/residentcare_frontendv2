@@ -83,10 +83,10 @@ export class CardFormComponent implements OnInit {
       this.markFormGroupTouched(this.cardForm);
       return;
     }
-
     // Emit save event with current data
     const updatedData = this.getDataAsObject();
     this.save.emit(updatedData);
+    console.log('Saving personal info - in card-form:', updatedData);
 
     // Exit edit mode
     this.editMode = false;
@@ -134,15 +134,15 @@ export class CardFormComponent implements OnInit {
   private storeOriginalData(): void {
     this.originalData = {};
     this.formControls.forEach(field => {
-      this.originalData[field.title] = field.formControl?.value;
+      this.originalData[field.key] = field.formControl?.value;
     });
   }
 
   // Restore original data on cancel
   private restoreOriginalData(): void {
     this.formControls.forEach(field => {
-      if (this.originalData.hasOwnProperty(field.title) && field.formControl) {
-        field.formControl.setValue(this.originalData[field.title]);
+      if (this.originalData.hasOwnProperty(field.key) && field.formControl) {
+        field.formControl.setValue(this.originalData[field.key]);
       }
     });
   }
@@ -151,8 +151,10 @@ export class CardFormComponent implements OnInit {
   private getDataAsObject(): any {
     const result: any = {};
     this.formControls.forEach(field => {
-      result[field.title] = field.formControl?.value;
+      result[field.key] = field.formControl?.value;
     });
+    console.log('Saving data - in card-form component:', result);
+
     return result;
   }
 

@@ -1,0 +1,14 @@
+<!-- Contact Info Component Template -->
+<card-form
+  title="Contact Information"
+  [formControls]="contactInfoFields()"
+  [editMode]="editMode"
+  [showEditButton]="showEditButton"
+  [showCancelButton]="showCancelButton"
+  [saveButtonText]="saveButtonText"
+  [cancelButtonText]="cancelButtonText"
+  (save)="onSave($event)"
+  (cancel)="onCancel()"
+  (edit)="onEdit()"
+>
+</card-form>

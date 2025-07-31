@@ -1,0 +1,17 @@
+<!-- Allergy Form Component Template -->
+<table-form
+  [title]="title"
+  [subtitle]="subtitle"
+  [dataSet]="allergiesData()"
+  [formControls]="allergyFormControls"
+  [idField]="'id'"
+  [showAddButton]="showAddButton"
+  [showEditButton]="showEditButton"
+  [showDeleteButton]="showDeleteButton"
+  [showViewButton]="showViewButton"
+  (save)="onTableSave($event)"
+  (delete)="onDelete($event)"
+  (view)="onView($event)"
+  (cancel)="onCancel()"
+>
+</table-form>

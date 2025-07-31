@@ -1,0 +1,17 @@
+/* Contact Info Component Styles */
+:host {
+  display: block;
+  width: 100%;
+}
+
+/* Additional styling can be added here if needed */
+.contact-info-container {
+  margin-bottom: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  :host {
+    padding: 0.5rem;
+  }
+}

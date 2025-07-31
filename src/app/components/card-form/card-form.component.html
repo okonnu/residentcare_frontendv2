@@ -7,23 +7,29 @@
     @if (!editMode) {
     <mat-card-content class="p-y-24">
       <mat-card-title>{{ title }}</mat-card-title>
-      <hr /><br />
-      @for(data of formControls; track data.title) {
-      @if (!data.hidden) {
+      <hr />
+      <br />
+      @for(data of formControls; track data.title) { @if (!data.hidden) {
       <div class="row">
         <div class="col">
           <span class="mat-body-1">{{ data.title }}</span>
         </div>
         <div class="col">
-          <span class="mat-body-1"><strong>: {{ data.formControl.value }}</strong></span>
+          <span class="mat-body-1"
+            ><strong>: {{ data.formControl.value }}</strong></span
+          >
         </div>
       </div>
-      }
-      }
-      <br>
+      } }
+      <br />
       <div class="d-flex gap-2">
         @if (showEditButton) {
-        <button mat-flat-button color="primary" (click)="toggleEditMode()" class="flex-fill">
+        <button
+          mat-flat-button
+          color="primary"
+          (click)="toggleEditMode()"
+          class="flex-fill"
+        >
           {{ editButtonText }}
         </button>
         }
@@ -35,59 +41,100 @@
     @if (editMode) {
     <mat-card-content class="p-y-24">
       <mat-card-title>{{ title }}</mat-card-title>
-      <hr /><br />
+      <hr />
+      <br />
       <form [formGroup]="cardForm">
-        @for(data of formControls; track data.title) {
-        @if (!data.hidden) {
+        @for(data of formControls; track data.title) { @if (!data.hidden) {
         <div class="row mb-3">
           <div class="col-sm-4 d-flex align-items-center">
-            <mat-label class="mat-subtitle-2 f-w-600 d-block">{{ data.title }}</mat-label>
+            <mat-label class="mat-subtitle-2 f-w-600 d-block">{{
+              data.title
+            }}</mat-label>
           </div>
           <div class="col-sm-8">
             <!-- Text, Number, Date, Email, Tel, Time inputs using enhanced form-input -->
-            @if (['text', 'number', 'date', 'email', 'tel', 'time'].includes(data.dataType)) {
-            <form-input [type]="data.dataType" [label]="''" [formControl]="getFormControl(data.title)"
-              [placeholder]="'Enter ' + data.title">
+            @if (['text', 'number', 'date', 'email', 'tel',
+            'time'].includes(data.dataType)) {
+            <form-input
+              [type]="data.dataType"
+              [label]="''"
+              [formControl]="getFormControl(data.title)"
+              [placeholder]="'Enter ' + data.title"
+            >
             </form-input>
             }
 
             <!-- SSN input using enhanced form-input -->
             @if (data.dataType === 'ssn') {
-            <form-input type="ssn" [label]="''" [formControl]="getFormControl(data.title)" [showMaskTyped]="true">
+            <form-input
+              type="ssn"
+              [label]="''"
+              [formControl]="getFormControl(data.title)"
+              [showMaskTyped]="true"
+            >
+            </form-input>
+            }
+
+            <!-- Phone input using enhanced form-input -->
+            @if (data.dataType === 'phone') {
+            <form-input
+              type="phone"
+              [label]="''"
+              [formControl]="getFormControl(data.title)"
+              [placeholder]="'Enter ' + data.title"
+            >
             </form-input>
             }
 
             <!-- Select dropdown using enhanced form-input -->
             @if (data.dataType === 'select') {
-            <form-input type="select" [label]="''" [formControl]="getFormControl(data.title)"
-              [options]="data.dropDownOptions || []" [placeholder]="'Select ' + data.title">
+            <form-input
+              type="select"
+              [label]="''"
+              [formControl]="getFormControl(data.title)"
+              [options]="data.dropDownOptions || []"
+              [placeholder]="'Select ' + data.title"
+            >
             </form-input>
             }
 
             <!-- Radio buttons using enhanced form-input -->
             @if (data.dataType === 'radio') {
-            <form-input type="radio" [label]="''" [formControl]="getFormControl(data.title)"
-              [options]="data.dropDownOptions || []">
+            <form-input
+              type="radio"
+              [label]="''"
+              [formControl]="getFormControl(data.title)"
+              [options]="data.dropDownOptions || []"
+            >
             </form-input>
             }
           </div>
         </div>
-        }
-        @if (data.hidden) {
+        } @if (data.hidden) {
         <!-- Hidden fields - include in form but don't display -->
         <input type="hidden" [formControl]="getFormControl(data.title)" />
-        }
-        }
+        } }
 
         <!-- Action Buttons -->
         <div class="row justify-content-end mt-4">
           <div class="col-sm-8">
-            <button type="button" mat-flat-button color="primary" (click)="saveChanges()"
-              [disabled]="!cardForm || cardForm.invalid" class="me-2">
+            <button
+              type="button"
+              mat-flat-button
+              color="primary"
+              (click)="saveChanges()"
+              [disabled]="!cardForm || cardForm.invalid"
+              class="me-2"
+            >
               {{ saveButtonText }}
             </button>
             @if (showCancelButton) {
-            <button type="button" mat-flat-button color="warn" (click)="cancelEdit()">
+            <button
+              type="button"
+              mat-flat-button
+              color="warn"
+              (click)="cancelEdit()"
+            >
               {{ cancelButtonText }}
             </button>
             }

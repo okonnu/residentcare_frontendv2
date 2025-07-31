@@ -1,0 +1,74 @@
+// Phone input styling
+.phone-input-container {
+  width: 100%;
+  
+  .phone-input {
+    width: 100%;
+  }
+  
+  // Override ngx-intl-tel-input styles to match Material Design
+  ::ng-deep {
+    ngx-intl-tel-input {
+      .iti {
+        width: 100%;
+        
+        .iti__flag-container {
+          .iti__selected-flag {
+            border: 1px solid rgba(0, 0, 0, 0.12);
+            border-radius: 4px 0 0 4px;
+            height: 56px;
+            padding: 0 11px;
+            background: transparent;
+            
+            &:hover, &:focus {
+              border-color: rgba(0, 0, 0, 0.87);
+            }
+          }
+          
+          .iti__country-list {
+            border-radius: 4px;
+            box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 
+                        0 4px 5px 0 rgba(0, 0, 0, 0.14), 
+                        0 1px 10px 0 rgba(0, 0, 0, 0.12);
+          }
+        }
+        
+        input[type="tel"] {
+          border: 1px solid rgba(0, 0, 0, 0.12);
+          border-left: none;
+          border-radius: 0 4px 4px 0;
+          height: 56px;
+          padding: 16px 12px;
+          font-size: 16px;
+          transition: border-color 0.2s ease-in-out;
+          
+          &:focus {
+            outline: none;
+            border-color: #1976d2;
+            border-width: 2px;
+          }
+          
+          &::placeholder {
+            color: rgba(0, 0, 0, 0.6);
+          }
+        }
+        
+        &.iti--invalid {
+          input[type="tel"] {
+            border-color: #f44336;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Error message styling
+.error-msg {
+  .text-error {
+    color: #f44336;
+    font-size: 12px;
+    line-height: 1.33;
+    margin-top: 4px;
+  }
+}

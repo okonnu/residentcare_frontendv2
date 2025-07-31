@@ -1,0 +1,61 @@
+/* Allergy Form Component Styles */
+:host {
+  display: block;
+  width: 100%;
+}
+
+/* Table form container styling */
+.allergy-table-container {
+  margin-bottom: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  :host {
+    padding: 0.5rem;
+  }
+}
+
+/* Severity indicator styles for table cells */
+::ng-deep .severity-cell {
+  &.severity-mild {
+    color: #28a745;
+    font-weight: 500;
+  }
+
+  &.severity-moderate {
+    color: #ffc107;
+    font-weight: 500;
+  }
+
+  &.severity-severe {
+    color: #fd7e14;
+    font-weight: 600;
+  }
+
+  &.severity-life-threatening {
+    color: #dc3545;
+    font-weight: bold;
+  }
+}
+
+/* Allergy name styling */
+::ng-deep .allergy-name {
+  font-weight: 600;
+  color: #333;
+}
+
+/* Description column styling */
+::ng-deep .description-cell {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Action buttons styling */
+::ng-deep .table-actions {
+  .mat-button, .mat-icon-button {
+    margin: 0 2px;
+  }
+}
