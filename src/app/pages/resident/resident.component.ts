@@ -110,7 +110,7 @@ export class ResidentComponent implements OnInit {
 
   editResident(): void {
     if (this.resident()?.id) {
-      this.router.navigate(['/resident-form', this.resident()?.id]);
+      this.router.navigate(['/resident-form/', this.resident()?.id]);
     }
   }
 

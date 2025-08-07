@@ -155,13 +155,6 @@ export class PersonalInfoFormComponent implements OnInit, OnChanges {
                 ])
                 .build(),
             Builder(FormField)
-                .key('photoUrl')
-                .dataType('text')
-                .title('Photo URL')
-                .label('Photo URL')
-                .formControl(new FormControl(resident.photoUrl || ''))
-                .build(),
-            Builder(FormField)
                 .key('dateOfAdmission')
                 .dataType('date')
                 .title('Date of Admission')

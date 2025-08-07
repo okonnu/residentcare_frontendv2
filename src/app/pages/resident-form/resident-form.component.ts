@@ -586,8 +586,9 @@ export class ResidentFormComponent implements OnInit {
     }
 
     onPersonalInfoSave(updatedResident: Resident): void {
-        console.log('Saving personal info:', updatedResident);
+        console.log('Saving personal info -resident form:', updatedResident);
         this.residentData.set(updatedResident);
+        this.residentService.saveResidentDetails(updatedResident);
         this.nextStep();
     }
 

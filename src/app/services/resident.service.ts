@@ -67,7 +67,7 @@ export class ResidentService {
   saveResidentDetails(residentData: Resident): void {
     this.isLoading.set(true); // Set loading to true
 
-    this.http.post<RestResponse>(`${environment.apiUrl}/resident`, residentData)
+    this.http.post<RestResponse>(`${environment.apiUrl}/resident/`, residentData)
       .pipe(
         tap(response => {
           this._snackBar.showSuccess(response.message || 'Resident details saved successfully');
@@ -75,7 +75,8 @@ export class ResidentService {
           this.resident.set(response.data); // Update resident signal with the saved data
         }),
         catchError(error => {
-          this._snackBar.showError(`Error saving resident details: ${error.message}`);
+          this._snackBar.showError(`Error saving resident details: ${error.error.message}`);
+          console.log (error);
           this.isLoading.set(false); // Set loading to false on error
           return of(null); // Return null on error
         })
